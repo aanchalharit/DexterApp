@@ -14,20 +14,18 @@ import java.util.Vector;
 public class fragmentPagerAdapter extends FragmentPagerAdapter
 {
 
-    public static List<String> fragments = new Vector<String>();
-    final int PAGE_COUNT = 3;
+   // public static List<String> fragments = new Vector<String>();
+    private static int PAGE_COUNT = 3;
 
-    private String tabTitles[] = new String[] { "Tab1", "Tab2", "Tab3" };
-    private Context _context;
+    private String tabTitles[] = new String[] { "Products", "Service", "Whats New" };
+    //private Context _context;
 
-    public fragmentPagerAdapter(Context context,FragmentManager fm) {
+    public fragmentPagerAdapter(FragmentManager fm) {
         super(fm);
-
-        fragments.add(ProductsFragment.class.getName());
-        fragments.add(ServicesFragment.class.getName());
-        fragments.add(WhatsNewFragment.class.getName());
-        _context = context;
-
+        //fragments.add(ProductsFragment.class.getName());
+        //fragments.add(ServicesFragment.class.getName());
+        //fragments.add(WhatsNewFragment.class.getName());
+        //_context = context;
     }
 
     @Override
@@ -38,23 +36,22 @@ public class fragmentPagerAdapter extends FragmentPagerAdapter
     @Override
     public Fragment getItem(int position) {
 
-      /*  switch (position) {
+        switch (position) {
             case 0:
-                ProductsFragment tab1 =  Fragment.instantiate(context,ProductsFragment.class.getName());
-                return tab1;
+                return ProductsFragment.newInstance(0,"Products");
             case 1:
-                ServicesFragment tab2 = new ServicesFragment();
-                return tab2;
+                return ServicesFragment.newInstance(1,"Services");
             case 2:
-                WhatsNewFragment tab3 = new WhatsNewFragment();
-                return tab3;
+                return WhatsNewFragment.newInstance(2,"WhatsNew");
             default:
                 return null;
+        }
+    }
 
-        } */
-
-        return Fragment.instantiate(_context,fragments.get(position));
+    // Returns the page title for the top indicator
+  @Override
+    public CharSequence getPageTitle(int position) {
+        return tabTitles[position];
     }
 
     }
-

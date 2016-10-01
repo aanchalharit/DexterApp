@@ -17,21 +17,25 @@ public class WhatsNewFragment extends Fragment {
 
     public static final String ARG_PAGE = "ARG_PAGE";
 
-    private int mPage;
+    private int Page;
+    private String Title;
 
-    /*public static WhatsNewFragment newInstance(int page) {
+    public static WhatsNewFragment newInstance(int page,String title )
+    {
+        WhatsNewFragment whatsNewFragment = new WhatsNewFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_PAGE, page);
-        WhatsNewFragment fragment = new WhatsNewFragment();
-        fragment.setArguments(args);
-        return fragment;
-    } */
+        args.putInt("mypageint3", page);
+        args.putString("mypagetitle3", title);
+        whatsNewFragment.setArguments(args);
+        return whatsNewFragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      //  mPage = getArguments().getInt(ARG_PAGE);
-    }
+        Page = getArguments().getInt("mypageint3",2);
+        Title = getArguments().getString("mypagetitle3");
+}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

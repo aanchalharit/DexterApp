@@ -17,20 +17,24 @@ public class ServicesFragment extends Fragment {
 
     public static final String ARG_PAGE = "ARG_PAGE";
 
-    private int mPage;
+    private int Page;
+    private String Title;
 
-   /* public static ServicesFragment newInstance(int page) {
+    public static ServicesFragment newInstance(int page,String title )
+    {
+        ServicesFragment servicesfragment = new ServicesFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_PAGE, page);
-        ServicesFragment fragment = new ServicesFragment();
-        fragment.setArguments(args);
-        return fragment;
-    } */
+        args.putInt("mypageint2", page);
+        args.putString("mypagetitle2", title);
+        servicesfragment.setArguments(args);
+        return servicesfragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // mPage = getArguments().getInt(ARG_PAGE);
+        Page = getArguments().getInt("mypageint2",1);
+        Title = getArguments().getString("mypagetitle2");
     }
 
 

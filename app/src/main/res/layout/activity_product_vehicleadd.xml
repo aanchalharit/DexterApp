@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -81,8 +85,7 @@
         android:id="@+id/tv_pollutioncheckdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pollution Check Date"
-        android:textSize="22sp" />
+        android:text="Pollution Check Date"/>
 
     <Button
         android:id="@+id/btn_pollutioncheckdate"
@@ -94,8 +97,7 @@
         android:id="@+id/tv_nextpollutioncheckdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Next Pollution Check Date"
-        android:textSize="22sp" />
+        android:text="Next Pollution Check Date"/>
 
     <Button
         android:id="@+id/btn_nextpollutioncheckdate"
@@ -107,8 +109,7 @@
         android:id="@+id/tv_insurencepurchasedate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Insurance Purchase Date"
-        android:textSize="22sp" />
+        android:text="Insurance Purchase Date"/>
 
     <Button
         android:id="@+id/btn_insurancepurchasedate"
@@ -120,8 +121,7 @@
         android:id="@+id/tv_insurenceduedate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Insurance Due Date"
-        android:textSize="22sp" />
+        android:text="Insurance Due Date"/>
 
     <Button
         android:id="@+id/btn_insuranceduedate"
@@ -130,8 +130,12 @@
         android:text="Insurance Due Date" />
 
     <Button
-        android:id="@+id/buttonSave"
+        android:id="@+id/btn_carSave"
         android:text="Add Vehicle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="@color/mdtp_red_focused"
+        android:background="@color/mdtp_light_gray"
+        />
 </LinearLayout>
+</ScrollView>

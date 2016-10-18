@@ -1,66 +1,206 @@
 package com.ccec.dexterapp;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CalendarView;
+import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 
-public class ProductAddActivity_Vehicle extends BaseActivity {
+import com.wdullaer.materialdatetimepicker.Utils;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
-    private EditText editTextName;
-    private EditText editTextAddress;
-    private TextInputLayout tilname;
-    private TextInputLayout tiladdress;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
-    private Button buttonSave;
 
-    private DatabaseReference firebasedbrefper;
+public class ProductAddActivity_Vehicle extends BaseActivity implements DatePickerDialog.OnDateSetListener {
+
+    private EditText etmake, etmodel, etmanufacturedin, etregnumber, etchessisnumber, etkilometer;
+    private TextInputLayout tilmake, tilmodel, tilmanufacturedin, tilregnumber, tilchessisnumber, tilkilometer;
+    private Button btnpollutionchkdate, btnnextpollutionchkdate, btninsurancepurchasedate, btninsuranceduedate, btnaddvehicle;
+    private DatabaseReference firebasedbrefcar;
+    private int year, month, day;
+    public DatePickerDialog mDatePickerDialog;
+    private int clickedbuttonid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_product_add);
+        setContentView(R.layout.activity_product_vehicleadd);
 
-        buttonSave = (Button) findViewById(R.id.buttonSave);
-        editTextName = (EditText) findViewById(R.id.editTextName);
-        editTextAddress = (EditText) findViewById(R.id.editTextAddress);
-        tilname = (TextInputLayout) findViewById(R.id.TILname);
-        tiladdress = (TextInputLayout) findViewById(R.id.TILaddress);
+        etmake = (EditText) findViewById(R.id.editcarMake);
+        etmodel = (EditText) findViewById(R.id.editTextcarModel);
+        etmanufacturedin = (EditText) findViewById(R.id.editTextcarManufacturedIn);
+        etregnumber = (EditText) findViewById(R.id.editTextcarRegNo);
+        etchessisnumber = (EditText) findViewById(R.id.editTextcarChessisNo);
+        etkilometer = (EditText) findViewById(R.id.editTextcarKilometer);
 
-        buttonSave.setOnClickListener(new View.OnClickListener() {
+        tilmake = (TextInputLayout) findViewById(R.id.TILcarmake);
+        tilmodel = (TextInputLayout) findViewById(R.id.TILcarmodel);
+        tilmanufacturedin = (TextInputLayout) findViewById(R.id.TILcarmanufacturedin);
+        tilregnumber = (TextInputLayout) findViewById(R.id.TILcarRegNo);
+        tilchessisnumber = (TextInputLayout) findViewById(R.id.TILcarChessisNo);
+        tilkilometer = (TextInputLayout) findViewById(R.id.TILcarKilometer);
+
+        btnpollutionchkdate = (Button) findViewById(R.id.btn_pollutioncheckdate);
+        btnnextpollutionchkdate = (Button) findViewById(R.id.btn_nextpollutioncheckdate);
+        btninsurancepurchasedate = (Button) findViewById(R.id.btn_insurancepurchasedate);
+        btninsuranceduedate = (Button) findViewById(R.id.btn_insuranceduedate);
+        btnaddvehicle = (Button) findViewById(R.id.btn_carSave);
+
+
+        btnpollutionchkdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               clickedbuttonid  = v.getId();
+                Calendar now = Calendar.getInstance();
+                DatePickerDialog dpd;
+                dpd = DatePickerDialog.newInstance(
+                        ProductAddActivity_Vehicle.this,
+                        now.get(Calendar.YEAR),
+                        now.get(Calendar.MONTH),
+                        now.get(Calendar.DAY_OF_MONTH)
+                );
+                dpd.show(getFragmentManager(), "PollutionCheckDatepickerdialog");
+            }
+        });
+
+        btninsurancepurchasedate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickedbuttonid = v.getId();
+                Calendar now = Calendar.getInstance();
+                DatePickerDialog dpd1 = DatePickerDialog.newInstance(
+                        ProductAddActivity_Vehicle.this,
+                        now.get(Calendar.YEAR),
+                        now.get(Calendar.MONTH),
+                        now.get(Calendar.DAY_OF_MONTH)
+                );
+                dpd1.show(getFragmentManager(), "InsurancePurchasepickerdialog");
+            }
+        });
+
+
+
+
+        btnaddvehicle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 //Creating firebase object
-                firebasedbrefper = FirebaseDatabase.getInstance().getReference().child("Car");
+                firebasedbrefcar = FirebaseDatabase.getInstance().getReference().child("Car");
                 //Getting values to store
-                String name = editTextName.getText().toString().trim();
-                String address = editTextAddress.getText().toString().trim();
+                String carMake = etmake.getText().toString().trim();
+                String carModel = etmodel.getText().toString().trim();
+                String carManufacturedIn = etmanufacturedin.getText().toString().trim();
+                String carRegnumber = etregnumber.getText().toString().trim();
+                String carchessisnumber = etchessisnumber.getText().toString().trim();
+                String carKilometer = etkilometer.getText().toString().trim();
 
-                //Creating Person object
-                person person = new person();
+                String carPollutionchkdate =  btnpollutionchkdate.getText().toString().trim();
+                String carNextPollutionchkdate =  btnnextpollutionchkdate.getText().toString().trim();
+                String carInsurancePurchasedate =  btninsurancepurchasedate.getText().toString().trim();
+                String carInsuranceDuedate =  btninsuranceduedate.getText().toString().trim();
+
+                //Creating vehicle object
+                Vehicle vehicle = new Vehicle();
+
 
                 //Adding values
-                person.setName(name);
-                person.setAddress(address);
+                vehicle.setMake(carMake);
+                vehicle.setModel(carModel);
+                vehicle.setManufacturedin(carManufacturedIn);
+                vehicle.setRegistrationnumber(carRegnumber);
+                vehicle.setChessisnumber(carchessisnumber);
+                vehicle.setKilometer(carKilometer);
+
+                vehicle.setPolluctionchkdate(carPollutionchkdate);
+                vehicle.setNextpolluctionchkdate(carNextPollutionchkdate);
+                vehicle.setInsurancepurchasedate(carInsurancePurchasedate);
+                vehicle.setInsuranceduedate(carInsuranceDuedate);
+
 
                 //Storing values to firebase
-                firebasedbrefper.push().setValue(person);
+                firebasedbrefcar.push().setValue(vehicle);
 
-                editTextName.setText("");
-                editTextAddress.setText("");
                 Intent intent = new Intent(ProductAddActivity_Vehicle.this,MainActivity.class);
                 startActivity(intent);
             }
         });
 
     }
+
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        DatePickerDialog dpd =
+                (DatePickerDialog) getFragmentManager().findFragmentByTag("PollutionCheckDatepickerdialog");
+
+        DatePickerDialog dpd1 =
+                (DatePickerDialog) getFragmentManager().findFragmentByTag("InsurancePurchasepickerdialog");
+
+        if(dpd != null) dpd.setOnDateSetListener(this);
+    }
+
+    @Override
+    public void onDateSet
+            (DatePickerDialog view, int year, int monthOfYear, int dayOfMonth)
+    {
+        if(clickedbuttonid==R.id.btn_pollutioncheckdate) {
+            String date1 = dayOfMonth + "-" + (++monthOfYear) + "-" + year;
+            SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
+            Date selecteddate = null;
+            try {
+                selecteddate = dateformat.parse(date1);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+              Calendar calender = Calendar.getInstance();
+              calender.setTime(selecteddate);
+              calender.add(Calendar.MONTH,3);
+              calender.add(Calendar.DATE,-1);
+              Date nextdate = calender.getTime();
+              String shownextdate = dateformat.format(nextdate);
+
+             btnpollutionchkdate.setText(date1);
+             btnnextpollutionchkdate.setText(shownextdate);
+        }
+        if(clickedbuttonid==R.id.btn_insurancepurchasedate) {
+            String date2 = dayOfMonth + "-" + (++monthOfYear) + "-" + year;
+            SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
+            Date selecteddate = null;
+            try {
+                selecteddate = dateformat.parse(date2);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            Calendar calender = Calendar.getInstance();
+            calender.setTime(selecteddate);
+            calender.add(Calendar.YEAR,1);
+            calender.add(Calendar.DATE,-1);
+            Date insurancenextdate = calender.getTime();
+            String shownextduedate = dateformat.format(insurancenextdate);
+            btninsurancepurchasedate.setText(date2);
+            btninsuranceduedate.setText(shownextduedate);
+        }
+    }
 }
+

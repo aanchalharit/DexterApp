@@ -38,8 +38,8 @@ public class ProductsFragment extends Fragment {
     private String Title;
     private FloatingActionButton productFab;
     private RecyclerView ProductsRV;
-    private DatabaseReference firebasedbrefperson;
-    private List<person> allperson;
+    private DatabaseReference firebasedbrefproducts;
+    private List<Vehicle> allproducts;
 
     public static ProductsFragment newInstance(int page,String title )
     {
@@ -67,13 +67,38 @@ public class ProductsFragment extends Fragment {
 
         ProductsRV = (RecyclerView) view.findViewById(R.id.allproducts);
         ProductsRV.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false));
-        allperson = new ArrayList<person>();
-        firebasedbrefperson = FirebaseDatabase.getInstance().getReference().child("Person");
 
-        firebasedbrefperson.addValueEventListener(new ValueEventListener() {
+        ProductsRV.OnItemTouchListener(new productsrvClickListener(getActivity(),new productsrvClickListener.OnItemClickListener(){
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(getActivity(), ProductDetailsActivity.class);
+                intent.putExtra(DetailsActivity.ID, Contact.CONTACTS[position].getId());
+
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        // the context of the activity
+                        MainActivity.this,
+
+                        // For each shared element, add to this method a new Pair item,
+                        // which contains the reference of the view we are transitioning *from*,
+                        // and the value of the transitionName attribute
+                        new Pair<View, String>(view.findViewById(R.id.CONTACT_circle),
+                                getString(R.string.transition_name_circle)),
+                        new Pair<View, String>(view.findViewById(R.id.CONTACT_name),
+                                getString(R.string.transition_name_name)),
+                        new Pair<View, String>(view.findViewById(R.id.CONTACT_phone),
+                                getString(R.string.transition_name_phone))
+                );
+                ActivityCompat.startActivity(MainActivity.this, intent, options.toBundle());
+            }
+        }));
+
+        allproducts = new ArrayList<Vehicle>();
+        firebasedbrefproducts = FirebaseDatabase.getInstance().getReference().child("Car");
+
+        firebasedbrefproducts.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                getAllperson(dataSnapshot);
+                getAllProducts(dataSnapshot);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -122,12 +147,12 @@ public class ProductsFragment extends Fragment {
         return view;
     }
 
-    private void getAllperson(DataSnapshot dataSnapshot) {
+    private void getAllProducts(DataSnapshot dataSnapshot) {
         for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-            person Person  = singleSnapshot.getValue(person.class);
-            allperson.add(Person);
+            Vehicle vehicle  = singleSnapshot.getValue(Vehicle.class);
+            allproducts.add(vehicle);
         }
-        personrvViewAdapter adapter = new personrvViewAdapter(getActivity(), allperson);
+        productsrvViewAdapter adapter = new productsrvViewAdapter(getActivity(), allproducts);
         ProductsRV.setAdapter(adapter);
    }
 

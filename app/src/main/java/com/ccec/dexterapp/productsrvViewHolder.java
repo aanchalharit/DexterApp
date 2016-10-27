@@ -14,7 +14,8 @@ public class productsrvViewHolder extends RecyclerView.ViewHolder
 {
 
          public CardView RVSinglerowCard;
-         public ImageView RVSinglerowProductImage;
+         //public ImageView RVSinglerowProductImage;
+         public View RVCircle;
          public TextView RVSinglerowMake;
          public TextView RVSinglerowModel;
          public TextView RVSinglerowRegNumber;
@@ -24,6 +25,7 @@ public class productsrvViewHolder extends RecyclerView.ViewHolder
         super(itemView);
 
         RVSinglerowCard = (CardView)itemView.findViewById(R.id.singleitemCardView);
+        RVCircle = (View)itemView.findViewById(R.id.product_circle);
         //RVSinglerowProductImage = (ImageView)itemView.findViewById(R.id.product_cardviewphoto);
         RVSinglerowMake = (TextView)itemView.findViewById(R.id.product_cardviewMake);
         RVSinglerowModel = (TextView)itemView.findViewById(R.id.product_cardviewModel);

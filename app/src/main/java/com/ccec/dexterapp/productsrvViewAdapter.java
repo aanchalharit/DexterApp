@@ -1,6 +1,7 @@
 package com.ccec.dexterapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,12 +33,20 @@ public class productsrvViewAdapter extends RecyclerView.Adapter<productsrvViewHo
     }
 
     @Override
-    public void onBindViewHolder(productsrvViewHolder holder, int position)
+    public void onBindViewHolder(productsrvViewHolder holder,final int position)
     {
        // holder.RVSinglerowProductImage.setImageResource(R.drawable.ic_directions_car_black_24dp);
         holder.RVSinglerowMake.setText(allproductsva.get(position).getMake());
         holder.RVSinglerowModel.setText(allproductsva.get(position).getModel());
         holder.RVSinglerowRegNumber.setText(allproductsva.get(position).getRegistrationnumber());
+        holder.RVSinglerowCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, ProductDetailsActivity.class);
+                intent.putExtra("REG_NO",allproductsva.get(position).getRegistrationnumber());
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override

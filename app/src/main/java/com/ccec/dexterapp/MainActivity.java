@@ -43,7 +43,7 @@ public class MainActivity extends BaseActivity {
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.MainPager);
         mfragmentPagerAdapter  = new fragmentPagerAdapter(getSupportFragmentManager());
-        // Get the ViewPager and set it's PagerAdapter so that it can display items
+        // Get the ViewPagerand set it's PagerAdapter so that it can display items
 
         viewPager.setAdapter(mfragmentPagerAdapter);
 

@@ -41,6 +41,25 @@ public class ProductDetailsActivity extends AppCompatActivity {
         });
 
         firebasedbrefproducts = FirebaseDatabase.getInstance().getReference().child("Car");
+
+        firebasedbrefproducts.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren())
+                {
+
+                    Vehicle vehicle  = snapshot.getValue(Vehicle.class);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         Query query = firebasedbrefproducts.orderByChild("registrationnumber").equalTo(regNo);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {

@@ -4,7 +4,10 @@
     <string name="title_activity_base">BaseActivity</string>
     <string name="nav_drawer_opened">drawer opened</string>
     <string name="nav_drawer_closed">drawer closed</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="city">Present Location</string>
+    <string name="no_text"> </string>
+    <string name="title_activity_maps_person_service_center">Map</string>
+    <string name="title_activity_service_center_around_maps">NearbyServiceCenters</string>
 </resources>

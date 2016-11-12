@@ -35,7 +35,6 @@ public class MainActivity extends BaseActivity {
 
     private RecyclerView ProductsRV;
     private DatabaseReference firebasedbrefperson;
-    private List<person> allperson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

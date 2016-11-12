@@ -40,6 +40,7 @@ public class ProductsFragment extends Fragment {
     private RecyclerView ProductsRV;
     private DatabaseReference firebasedbrefproducts;
     private List<Vehicle> allproducts;
+    private Vehicle VehicleDetails;
 
     public static ProductsFragment newInstance(int page,String title )
     {

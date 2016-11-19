@@ -195,19 +195,18 @@ public class SignUp extends AppCompatActivity {
 
                             session.createUserLoginSession(user.getUid(), Login_Email, Login_Password);
 
-                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("/users/ServiceCenter/" + user.getUid());
+                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("/users/Customer/" + user.getUid());
 
                             databaseReference.child("name").setValue("na");
                             databaseReference.child("location").setValue("na");
                             databaseReference.child("contact").setValue("na");
-                            databaseReference.child("website").setValue("na");
 
-                            session.createUserLoginSession("na", "", "na", "na", "na");
+                            session.createUserLoginSession("na", "", "na", "na");
 
                             Toast.makeText(getApplicationContext(), "Sign up successful",
                                     Toast.LENGTH_LONG).show();
 
-                            Intent in = new Intent(SignUp.this, HomePage.class);
+                            Intent in = new Intent(SignUp.this, MainActivity.class);
                             startActivity(in);
                             SignUp.this.finish();
                         }

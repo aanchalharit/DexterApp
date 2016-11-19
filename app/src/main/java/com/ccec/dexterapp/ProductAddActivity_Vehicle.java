@@ -10,6 +10,7 @@ import android.widget.CalendarView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
+import com.ccec.dexterapp.managers.UserSessionManager;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
@@ -25,6 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 
 public class ProductAddActivity_Vehicle extends BaseActivity implements DatePickerDialog.OnDateSetListener {
@@ -32,15 +34,21 @@ public class ProductAddActivity_Vehicle extends BaseActivity implements DatePick
     private EditText etmake, etmodel, etmanufacturedin, etregnumber, etchessisnumber, etkilometer;
     private TextInputLayout tilmake, tilmodel, tilmanufacturedin, tilregnumber, tilchessisnumber, tilkilometer;
     private Button btnpollutionchkdate, btnnextpollutionchkdate, btninsurancepurchasedate, btninsuranceduedate, btnaddvehicle;
-    private DatabaseReference firebasedbrefcar;
+    private DatabaseReference firebasedbref;
     private int year, month, day;
     public DatePickerDialog mDatePickerDialog;
     private int clickedbuttonid;
+    private UserSessionManager session;
+    private String id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_vehicleadd);
+
+        session = new UserSessionManager(getApplicationContext());
+        HashMap<String, String> user = session.getUserDetails();
+        id = user.get(UserSessionManager.TAG_id);
 
         etmake = (EditText) findViewById(R.id.editcarMake);
         etmodel = (EditText) findViewById(R.id.editTextcarModel);
@@ -102,7 +110,7 @@ public class ProductAddActivity_Vehicle extends BaseActivity implements DatePick
             public void onClick(View v) {
 
                 //Creating firebase object
-                firebasedbrefcar = FirebaseDatabase.getInstance().getReference().child("Car");
+                firebasedbref = FirebaseDatabase.getInstance().getReference().child("items/Car");
                 //Getting values to store
                 String carMake = etmake.getText().toString().trim();
                 String carModel = etmodel.getText().toString().trim();
@@ -135,7 +143,12 @@ public class ProductAddActivity_Vehicle extends BaseActivity implements DatePick
 
 
                 //Storing values to firebase
-                firebasedbrefcar.push().setValue(vehicle);
+                String key = firebasedbref.push().getKey();
+                firebasedbref.child(key).setValue(vehicle);
+
+                firebasedbref = FirebaseDatabase.getInstance().getReference().child("users/Customer/" +id +"/items/Car");
+                firebasedbref.push().setValue(key);
+
 
                 Intent intent = new Intent(ProductAddActivity_Vehicle.this,MainActivity.class);
                 startActivity(intent);

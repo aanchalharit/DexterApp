@@ -15,11 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
         </activity>
         <activity android:name=".BaseActivity">
         </activity>
@@ -64,14 +59,17 @@
             android:label="@string/title_activity_service_center_around_maps">
         </activity>
         <activity android:name=".Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
         </activity>
         <activity android:name=".Login">
         </activity>
         <activity android:name=".ForgotPass">
         </activity>
         <activity android:name=".SignUp">
-        </activity>
-        <activity android:name=".HomePage">
         </activity>
     </application>
 

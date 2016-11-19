@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ccec.dexterapp.managers.UserSessionManager;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -22,8 +23,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -41,6 +46,10 @@ public class ProductsFragment extends Fragment {
     private DatabaseReference firebasedbrefproducts;
     private List<Vehicle> allproducts;
     private Vehicle VehicleDetails;
+    private UserSessionManager session;
+    private String id;
+    public List<String> carkeysarray;
+
 
     public static ProductsFragment newInstance(int page,String title )
     {
@@ -57,7 +66,10 @@ public class ProductsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Page = getArguments().getInt("mypageint1",0);
         Title = getArguments().getString("mypagetitle1");
-
+        session = new UserSessionManager(getActivity());
+        HashMap<String, String> user = session.getUserDetails();
+        id = user.get(UserSessionManager.TAG_id);
+        carkeysarray = new ArrayList<>();
     }
 
     @Override
@@ -94,18 +106,62 @@ public class ProductsFragment extends Fragment {
 //        }));
 
         allproducts = new ArrayList<Vehicle>();
-        firebasedbrefproducts = FirebaseDatabase.getInstance().getReference().child("Car");
+
+        firebasedbrefproducts = FirebaseDatabase.getInstance().getReference().child("users/Customer/" +id +"/items/Car");
+
+//        firebasedbrefproducts.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+////                    Vehicle vehicle = singleSnapshot.getValue(Vehicle.class);
+//
+//
+//                }
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
 
         firebasedbrefproducts.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                getAllProducts(dataSnapshot);
+                Map<String, Object> itemMap = (HashMap<String, Object>) dataSnapshot.getValue();
+              for (Object value : itemMap.values()) {
+                    carkeysarray.add(value.toString());
+                }
+
+                for (int carkey = 0 ; carkey <carkeysarray.size() ; carkey++)
+                {
+                    String dbcarkey = carkeysarray.get(carkey);
+                    firebasedbrefproducts = FirebaseDatabase.getInstance().getReference().child("items/Car/" +dbcarkey);
+                    firebasedbrefproducts.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot1) {
+                            Vehicle vehicle  = dataSnapshot1.getValue(Vehicle.class);
+                            allproducts.add(vehicle);
+                            productsrvViewAdapter adapter = new productsrvViewAdapter(getActivity(), allproducts);
+                            ProductsRV.setAdapter(adapter);
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+
+
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 return;
             }
         });
+
+
 
 //        firebasedbrefperson.addChildEventListener(new ChildEventListener() {
 //            @Override

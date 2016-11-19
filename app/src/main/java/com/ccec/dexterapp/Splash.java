@@ -9,6 +9,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.ccec.dexterapp.managers.UserSessionManager;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 
@@ -18,6 +19,7 @@ public class Splash extends AppCompatActivity {
     private static final int TIME = 1 * 1000;
     private UserSessionManager session;
     private String firstTime = "";
+    static boolean calledAlready = false;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,13 +31,19 @@ public class Splash extends AppCompatActivity {
             window.setStatusBarColor(getResources().getColor(R.color.colorGreen));
         }
 
+        if (!calledAlready)
+        {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            calledAlready = true;
+        }
+
         session = new UserSessionManager(getApplicationContext());
         HashMap<String, String> user = session.getUserDetails();
         firstTime = user.get(UserSessionManager.FIRST_TIME);
 
         if (session.isUserLoggedIn()) {handler.postDelayed(new Runnable() {
             public void run() {
-                Intent intent = new Intent(getApplicationContext(), HomePage.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
                 Splash.this.finish();
             }

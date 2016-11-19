@@ -29,9 +29,16 @@ import android.widget.Toast;
 
 import com.ccec.dexterapp.managers.FontsManager;
 import com.ccec.dexterapp.managers.UserSessionManager;
+import com.ccec.dexterapp.profiles.ProfileOne;
+import com.ccec.dexterapp.profiles.ProfileThree;
+import com.ccec.dexterapp.profiles.ProfileTwo;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.pkmmte.view.CircularImageView;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -272,7 +279,7 @@ public class ProfileFragment extends Fragment {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Toast.makeText(getActivity(), "Image updated", Toast.LENGTH_SHORT).show();
 
-                        ((HomePage) getActivity()).getPic();
+//                        ((MainActivity) getActivity()).getPic();
 
                         if (source.equals("camera"))
                             circularImageView.setImageBitmap(thumbnail);

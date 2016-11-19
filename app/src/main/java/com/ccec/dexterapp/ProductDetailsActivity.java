@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,7 +41,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
             }
         });
 
-        firebasedbrefproducts = FirebaseDatabase.getInstance().getReference().child("Car");
+        firebasedbrefproducts = FirebaseDatabase.getInstance().getReference().child("items/Car");
 
         firebasedbrefproducts.addValueEventListener(new ValueEventListener() {
             @Override
@@ -62,12 +63,27 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
         Query query = firebasedbrefproducts.orderByChild("registrationnumber").equalTo(regNo);
 
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+        query.addChildEventListener(new ChildEventListener() {
 
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Vehicle vehicle = dataSnapshot.getValue(Vehicle.class);
                 kilometer = vehicle.getKilometer();
+                Toast.makeText(getApplicationContext(), kilometer, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
             }
 

@@ -28,7 +28,6 @@ public class UserSessionManager {
     public static final String TAG_pwd = "pwd";
     public static final String TAG_email = "email";
     public static final String TAG_profilepic = "pic";
-    public static final String TAG_website = "website";
     public static final String TAG_contact = "contact";
     public static final String TAG_location = "location";
 
@@ -51,10 +50,9 @@ public class UserSessionManager {
     }
 
     //updated from login and signup
-    public void createUserLoginSession(String uName, String pic, String website, String contact, String location) {
+    public void createUserLoginSession(String uName, String pic, String contact, String location) {
         editor.putBoolean(IS_USER_LOGIN, true);
 
-        editor.putString(TAG_website, website);
         editor.putString(TAG_contact, contact);
         editor.putString(TAG_fullname, uName);
         editor.putString(TAG_location, location);
@@ -77,7 +75,6 @@ public class UserSessionManager {
         user.put(TAG_email, pref.getString(TAG_email, null));
         user.put(TAG_pwd, pref.getString(TAG_pwd, null));
         user.put(TAG_profilepic, pref.getString(TAG_profilepic, null));
-        user.put(TAG_website, pref.getString(TAG_website, null));
         user.put(TAG_contact, pref.getString(TAG_contact, null));
         user.put(TAG_location, pref.getString(TAG_location, null));
 

@@ -10,4 +10,13 @@
     <string name="no_text"> </string>
     <string name="title_activity_maps_person_service_center">Map</string>
     <string name="title_activity_service_center_around_maps">NearbyServiceCenters</string>
+    <string name="auth_failed">Authentication failed</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="no_location_data_provided">No location data provided</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

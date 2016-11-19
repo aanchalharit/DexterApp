@@ -81,7 +81,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
             // Use home/back button instead
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(ContextCompat
-                    .getDrawable(this,android.support.v7.appcompat.R.drawable.abc_ic_ab_back_mtrl_am_alpha));
+                    .getDrawable(this,android.support.v7.appcompat.R.drawable.abc_ic_ab_back_material));
         }
     }
 

@@ -49,7 +49,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren())
                 {
 
-                    Vehicle vehicles  = snapshot.getValue(Vehicle.class);
+                    Vehicle vehiclesers  = snapshot.getValue(Vehicle.class);
 
                 }
             }

@@ -195,7 +195,7 @@ public class Login extends AppCompatActivity {
                                     Toast.makeText(getApplicationContext(), "Welcome",
                                             Toast.LENGTH_LONG).show();
 
-                                    Intent in = new Intent(Login.this, MainActivity.class);
+                                    Intent in = new Intent(Login.this, HomePage.class);
                                     startActivity(in);
 
                                     pDialog.dismiss();

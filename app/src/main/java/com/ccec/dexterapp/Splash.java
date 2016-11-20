@@ -43,7 +43,7 @@ public class Splash extends AppCompatActivity {
 
         if (session.isUserLoggedIn()) {handler.postDelayed(new Runnable() {
             public void run() {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent = new Intent(getApplicationContext(), HomePage.class);
                 startActivity(intent);
                 Splash.this.finish();
             }

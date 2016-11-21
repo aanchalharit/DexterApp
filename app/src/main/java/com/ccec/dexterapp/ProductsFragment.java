@@ -70,6 +70,8 @@ public class ProductsFragment extends Fragment {
         HashMap<String, String> user = session.getUserDetails();
         id = user.get(UserSessionManager.TAG_id);
         carkeysarray = new ArrayList<>();
+
+
     }
 
     @Override

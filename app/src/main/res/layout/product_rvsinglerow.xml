@@ -1,43 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
     <android.support.v7.widget.CardView
+        android:id="@+id/singleitemCardView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/singleitemCardView">
+        android:layout_height="wrap_content">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp">
+
             <View
                 android:id="@+id/product_circle"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:padding="5dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 android:layout_marginRight="5dp"
                 android:background="@drawable/circle"
-                android:layout_centerVertical="true"
-                android:layout_alignParentLeft="true"/>
+                android:padding="5dp" />
+
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/product_cardviewMake"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_toRightOf="@id/product_circle"/>
+                android:layout_toRightOf="@id/product_circle" />
+
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/product_cardviewModel"
-                android:layout_toRightOf="@+id/product_cardviewMake"
-                android:layout_alignParentTop="true"/>
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/product_cardviewMake" />
+
+            <TextView
                 android:id="@+id/product_cardviewRegNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/product_cardviewMake"
-                android:layout_toRightOf="@id/product_circle"/>
+                android:layout_toRightOf="@id/product_circle" />
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 

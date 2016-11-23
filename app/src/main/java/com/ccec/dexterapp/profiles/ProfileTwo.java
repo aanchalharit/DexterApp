@@ -30,11 +30,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 
 public class ProfileTwo extends Fragment {
-    private EditText fName, website, contact, location;
+    private EditText fName, contact, location;
     private Button btn;
     private UserSessionManager session;
-    private String fNameE, websiteE, contactE, locationE, uid;
-    private String fNameS, websiteS, contactS, locationS;
+    private String fNameE, contactE, locationE, uid;
+    private String fNameS, contactS, locationS;
     private DatabaseReference databaseReference;
     private ProgressDialog pDialog;
 
@@ -58,7 +58,6 @@ public class ProfileTwo extends Fragment {
 
         fName.setTypeface(FontsManager.getRegularTypeface(getContext()));
         location.setTypeface(FontsManager.getRegularTypeface(getContext()));
-        website.setTypeface(FontsManager.getRegularTypeface(getContext()));
         contact.setTypeface(FontsManager.getRegularTypeface(getContext()));
 
         location.setOnClickListener(new View.OnClickListener() {
@@ -76,7 +75,6 @@ public class ProfileTwo extends Fragment {
             public void onClick(View v) {
                 fNameE = fName.getText().toString();
                 locationE = location.getText().toString();
-                websiteE = website.getText().toString();
                 contactE = contact.getText().toString();
 
                 if (validate() && isNetwork()) {
@@ -84,7 +82,6 @@ public class ProfileTwo extends Fragment {
 
                     fName.setText("");
                     location.setText("");
-                    website.setText("");
                     contact.setText("");
                 } else if (!isNetwork()) {
                     Toast.makeText(getContext(), "Please connect to internet", Toast.LENGTH_SHORT).show();
@@ -98,7 +95,7 @@ public class ProfileTwo extends Fragment {
     private boolean validate() {
         boolean valid = true;
 
-        if (fNameE.isEmpty() && websiteE.isEmpty() && contactE.isEmpty() && locationE.isEmpty()) {
+        if (fNameE.isEmpty() && contactE.isEmpty() && locationE.isEmpty()) {
             Toast.makeText(getActivity(), "Enter atleast one field", Toast.LENGTH_SHORT).show();
             fName.setError("Enter atleast one field");
             valid = false;
@@ -147,9 +144,6 @@ public class ProfileTwo extends Fragment {
         if (!fNameE.isEmpty()) {
             fNameS = fNameE;
         }
-        if (!websiteE.isEmpty()) {
-            websiteS = websiteE;
-        }
         if (!contactE.isEmpty()) {
             contactS = contactE;
         }
@@ -163,9 +157,8 @@ public class ProfileTwo extends Fragment {
         pDialog.setCancelable(false);
         pDialog.show();
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("/users/ServiceCenter/" + uid);
+        databaseReference = FirebaseDatabase.getInstance().getReference("/users/Customer/" + uid);
         databaseReference.child("name").setValue(fNameS);
-        databaseReference.child("website").setValue(websiteS);
         databaseReference.child("contact").setValue(contactS);
         databaseReference.child("location").setValue(locationS);
 

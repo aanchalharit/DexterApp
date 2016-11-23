@@ -39,6 +39,7 @@ public class HomeFragment extends Fragment {
 
         mViewPager = (ViewPager) view.findViewById(R.id.containerHomeTabs);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setOffscreenPageLimit(2);
 
         tabLayout = (TabLayout) view.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);

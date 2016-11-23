@@ -1,6 +1,5 @@
 package com.ccec.dexterapp;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.ccec.dexterapp.entities.Requests;
+import com.ccec.dexterapp.entities.Vehicle;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -16,11 +17,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ProductDetailsActivity extends AppCompatActivity {
 
     private Button btnServiceRequest;
     private DatabaseReference firebasedbrefproducts;
     public String kilometer;
+    private DatabaseReference firebasedbref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,15 +34,49 @@ public class ProductDetailsActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         final String regNo = bundle.getString("REG_NO");
 
+        Toast.makeText(this, regNo, Toast.LENGTH_SHORT).show();
 
-
-       Toast.makeText(this, regNo, Toast.LENGTH_SHORT).show();
-
-        btnServiceRequest = (Button)findViewById(R.id.btn_carServiceRequest);
+        btnServiceRequest = (Button) findViewById(R.id.btn_carServiceRequest);
         btnServiceRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ProductDetailsActivity.this,ServiceCenterAroundMapsActivity.class);
+                //temporary send request
+//                firebasedbref = FirebaseDatabase.getInstance().getReference("/variables/serviceNumber");
+//                firebasedbref.addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot dataSnapshot) {
+//                        int serviceNumber = dataSnapshot.getValue(Integer.class);
+//
+//                        Requests add = new Requests();
+//
+//                        add.setIssuedTo("M9dsAfxziQQuQVsZXD0j0Qc4hDX2");
+//                        add.setIssuedBy("euishcijfdjfbkldv83d");
+//                        add.setStatus("open");
+//                        add.setOpenTime("23/11/2016");
+//                        add.setScheduleTime("23/11/2016");
+//                        add.setKey("DexterSR" + serviceNumber);
+//                        add.setItem("-KWw6GTDfMvKtOIN_H7l");
+//
+//                        firebasedbref.setValue(serviceNumber + 1);
+//
+//                        firebasedbref = FirebaseDatabase.getInstance().getReference("/requests/Car");
+//                        firebasedbref.child("DexterSR" + serviceNumber).setValue(add);
+//
+//                        firebasedbref = FirebaseDatabase.getInstance().getReference("/notifs");
+//                        Map notification = new HashMap<>();
+//                        notification.put("username", "dMJTDYsHUBg:APA91bEGWjGWvSRaLR7NUjHk3C2Y44HJGEU6WeWfCVjFV_4jVQtXUOzkeGiwUPmj7YyeYMnfpa1YjG6NUnOD3OHSM5a2kSPwlVZOt1W72iJMSiIAxdcQGeR");
+//                        notification.put("message", "helloo");
+//                        firebasedbref.push().setValue(notification);
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//                        Toast.makeText(getApplicationContext(), "Something went wrong.", Toast.LENGTH_SHORT).show();
+//                        return;
+//                    }
+//                });
+
+                Intent intent = new Intent(ProductDetailsActivity.this, ServiceCenterAroundMapsActivity.class);
                 startActivity(intent);
             }
         });
@@ -47,10 +87,9 @@ public class ProductDetailsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                for (DataSnapshot snapshot : dataSnapshot.getChildren())
-                {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-                    Vehicle vehiclesers  = snapshot.getValue(Vehicle.class);
+                    Vehicle vehiclesers = snapshot.getValue(Vehicle.class);
 
                 }
             }
@@ -92,10 +131,5 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
             }
         });
-
-   //     Toast.makeText(this, kilometer, Toast.LENGTH_SHORT).show();
-
     }
-
-
 }

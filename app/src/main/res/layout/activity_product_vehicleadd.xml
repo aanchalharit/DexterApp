@@ -1,141 +1,211 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
-    tools:context=".ProductAddActivity_Vehicle">
+    android:fitsSystemWindows="true"
+    tools:context="com.ccec.dexterapp.ProductAddActivity_Vehicle">
 
-    <android.support.design.widget.TextInputLayout
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/TILcarmake">
-    <EditText
-        android:id="@+id/editcarMake"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Make"/>
-    </android.support.design.widget.TextInputLayout>
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/TILcarmodel">
-        <EditText
-            android:id="@+id/editTextcarModel"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Model"/>
-    </android.support.design.widget.TextInputLayout>
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-    <android.support.design.widget.TextInputLayout
+    </android.support.design.widget.AppBarLayout>
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/TILcarmanufacturedin">
-        <EditText
-            android:id="@+id/editTextcarManufacturedIn"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/appBar">
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Manufactured In"/>
-    </android.support.design.widget.TextInputLayout>
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            tools:context=".ProductAddActivity_Vehicle">
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/TILcarRegNo">
-        <EditText
-            android:id="@+id/editTextcarRegNo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Registrantion Number"/>
-    </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/TILcarmake"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/TILcarChessisNo">
-        <EditText
-            android:id="@+id/editTextcarChessisNo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Chessis Number"/>
-    </android.support.design.widget.TextInputLayout>
+                <EditText
+                    android:id="@+id/editcarMake"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Make" />
+            </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/TILcarKilometer">
-        <EditText
-            android:id="@+id/editTextcarKilometer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Kilometer"/>
-    </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/TILcarmodel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tv_pollutioncheckdate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pollution Check Date"/>
+                <EditText
+                    android:id="@+id/editTextcarModel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Model" />
+            </android.support.design.widget.TextInputLayout>
 
-    <Button
-        android:id="@+id/btn_pollutioncheckdate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Pollution Check Date" />
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/TILcarmanufacturedin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tv_nextpollutioncheckdate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Next Pollution Check Date"/>
+                <EditText
+                    android:id="@+id/editTextcarManufacturedIn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Manufactured In" />
+            </android.support.design.widget.TextInputLayout>
 
-    <Button
-        android:id="@+id/btn_nextpollutioncheckdate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Next Pollution Check Date" />
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/TILcarRegNo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tv_insurencepurchasedate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Insurance Purchase Date"/>
+                <EditText
+                    android:id="@+id/editTextcarRegNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Registration Number" />
+            </android.support.design.widget.TextInputLayout>
 
-    <Button
-        android:id="@+id/btn_insurancepurchasedate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Insurance Purchase Date" />
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/TILcarChessisNo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tv_insurenceduedate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Insurance Due Date"/>
+                <EditText
+                    android:id="@+id/editTextcarChessisNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Chassis Number" />
+            </android.support.design.widget.TextInputLayout>
 
-    <Button
-        android:id="@+id/btn_insuranceduedate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Insurance Due Date" />
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/TILcarKilometer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/btn_carSave"
-        android:text="Add Vehicle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/mdtp_red_focused"
-        android:background="@color/mdtp_light_gray"
-        />
-</LinearLayout>
-</ScrollView>
+                <EditText
+                    android:id="@+id/editTextcarKilometer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Kilometer"
+                    android:inputType="number" />
+            </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:id="@+id/tv_pollutioncheckdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Pollution Check Date" />
+
+            <Button
+                android:id="@+id/btn_pollutioncheckdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@color/colorPrimary"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="Pollution Check Date"
+                android:textColor="#fff" />
+
+            <RelativeLayout
+                android:id="@+id/rel1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tv_nextpollutioncheckdate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Next Pollution Check Date" />
+
+                <Button
+                    android:id="@+id/btn_nextpollutioncheckdate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_nextpollutioncheckdate"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/colorPrimary"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="Next Pollution Check Date"
+                    android:textColor="#fff" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_insurencepurchasedate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Insurance Purchase Date" />
+
+            <Button
+                android:id="@+id/btn_insurancepurchasedate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@color/colorPrimary"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="Insurance Purchase Date"
+                android:textColor="#fff" />
+
+            <RelativeLayout
+                android:id="@+id/rel2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tv_insurenceduedate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Insurance Due Date" />
+
+                <Button
+                    android:layout_below="@+id/tv_insurenceduedate"
+                    android:id="@+id/btn_insuranceduedate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/colorPrimary"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="Insurance Due Date"
+                    android:textColor="#fff" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/btn_carSave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/back_button_round_green"
+                android:text="Add Vehicle"
+                android:textColor="#fff" />
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

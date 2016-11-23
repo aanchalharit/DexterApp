@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.ccec.dexterapp.Login;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 
@@ -84,6 +86,9 @@ public class UserSessionManager {
     }
 
     public void logoutUser() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("/users/Customer/" + pref.getString(TAG_id, null));
+        databaseReference.child("fcm").setValue("out");
+
         editor.clear();
         editor.commit();
 

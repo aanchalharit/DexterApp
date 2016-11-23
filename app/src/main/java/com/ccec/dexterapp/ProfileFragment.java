@@ -279,7 +279,7 @@ public class ProfileFragment extends Fragment {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Toast.makeText(getActivity(), "Image updated", Toast.LENGTH_SHORT).show();
 
-//                        ((MainActivity) getActivity()).getPic();
+                        ((HomePage) getActivity()).getPic();
 
                         if (source.equals("camera"))
                             circularImageView.setImageBitmap(thumbnail);

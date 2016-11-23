@@ -1,4 +1,4 @@
-package com.ccec.dexterapp;
+package com.ccec.dexterapp.entities;
 
 import android.widget.Button;
 

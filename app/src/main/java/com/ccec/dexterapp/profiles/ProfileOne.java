@@ -46,12 +46,6 @@ public class ProfileOne extends Fragment {
             nameD.setText(pname);
         }
 
-        if (pwebsite.equals("") || pwebsite == null || pwebsite.equals("na")) {
-            websiteD.setText("Not Mentioned");
-        } else {
-            websiteD.setText(pwebsite);
-        }
-
         if (pcontact.equals("") || pcontact == null || pcontact.equals("na")) {
             contactD.setText("Not Mentioned");
         } else {

@@ -177,7 +177,11 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (!task.isSuccessful()) {
-                            Toast.makeText(Login.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
+                            try {
+                                throw task.getException();
+                            } catch (Exception e) {
+                                Toast.makeText(Login.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
                             pDialog.dismiss();
                         } else {
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

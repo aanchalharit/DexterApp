@@ -1,7 +1,7 @@
 package com.ccec.dexterapp;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ccec.dexterapp.entities.Vehicle;
+import com.ccec.dexterapp.managers.AppData;
 import com.ccec.dexterapp.managers.UserSessionManager;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ProductsFragment extends Fragment {
-    private FloatingActionButton productFab;
+    private FloatingActionButton productFab, viewF, edit, raise, delete;
     private RecyclerView ProductsRV;
     private DatabaseReference firebasedbrefproducts;
     private List<Vehicle> allproducts;
@@ -32,6 +33,7 @@ public class ProductsFragment extends Fragment {
     private UserSessionManager session;
     private String id;
     public List<String> carkeysarray;
+    private ProductsViewAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,35 +47,10 @@ public class ProductsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_products, container, false);
 
         ProductsRV = (RecyclerView) view.findViewById(R.id.allproducts);
         ProductsRV.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-
-//        ProductsRV.OnItemTouchListener(new productsrvClickListener(getActivity(),new productsrvClickListener.OnItemClickListener(){
-//            @Override
-//            public void onItemClick(View view, int position) {
-//                Intent intent = new Intent(getActivity(), ProductDetailsActivity.class);
-//                intent.putExtra(ProductDetailsActivity.ID, Contact.CONTACTS[position].getId());
-//
-//                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-//                        // the context of the activity
-//                        MainActivity.this,
-//
-//                        // For each shared element, add to this method a new Pair item,
-//                        // which contains the reference of the view we are transitioning *from*,
-//                        // and the value of the transitionName attribute
-//                        new Pair<View, String>(view.findViewById(R.id.CONTACT_circle),
-//                                getString(R.string.transition_name_circle)),
-//                        new Pair<View, String>(view.findViewById(R.id.CONTACT_name),
-//                                getString(R.string.transition_name_name)),
-//                        new Pair<View, String>(view.findViewById(R.id.CONTACT_phone),
-//                                getString(R.string.transition_name_phone))
-//                );
-//                ActivityCompat.startActivity(MainActivity.this, intent, options.toBundle());
-//            }
-//        }));
 
         allproducts = new ArrayList<Vehicle>();
 
@@ -94,9 +71,8 @@ public class ProductsFragment extends Fragment {
                         public void onDataChange(DataSnapshot dataSnapshot1) {
                             Vehicle vehicle = dataSnapshot1.getValue(Vehicle.class);
                             allproducts.add(vehicle);
-                            productsrvViewAdapter adapter = new productsrvViewAdapter(getActivity(), allproducts);
+                            adapter = new ProductsViewAdapter(getActivity(), allproducts, carkeysarray, ProductsFragment.this);
                             ProductsRV.setAdapter(adapter);
-
                         }
 
                         @Override
@@ -114,54 +90,54 @@ public class ProductsFragment extends Fragment {
         });
         firebasedbrefproducts.keepSynced(true);
 
-//        firebasedbrefperson.addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                getAllperson(dataSnapshot);
-//            }
-//
-//            @Override
-//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//                getAllperson(dataSnapshot);
-//            }
-//
-//            @Override
-//            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//            }
-//        });
-
-
-        final BottomSheetDialogFragment productbottomsheet = ProductAddBottomsheetFragment.newInstance("Add Products");
+        viewF = (FloatingActionButton) view.findViewById(R.id.productView);
+        delete = (FloatingActionButton) view.findViewById(R.id.productDelete);
+        edit = (FloatingActionButton) view.findViewById(R.id.productEdit);
+        raise = (FloatingActionButton) view.findViewById(R.id.productRaise);
+        hideLinFab();
 
         productFab = (FloatingActionButton) view.findViewById(R.id.productAddFab);
         productFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                productbottomsheet.show(getFragmentManager(), productbottomsheet.getTag());
+                Intent intent = new Intent(getActivity(), AddVehicle.class);
+                startActivity(intent);
+            }
+        });
 
-                //Intent intent = new Intent(getActivity(),ProductAddActivity_Vehicle.class);
-                //startActivity(intent);
+        viewF.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                adapter.getProductDetails();
+                hideLinFab();
+                showAddFab();
             }
         });
         return view;
     }
 
-    private void getAllProducts(DataSnapshot dataSnapshot) {
-        for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-            Vehicle vehicle = singleSnapshot.getValue(Vehicle.class);
-            allproducts.add(vehicle);
-        }
-        productsrvViewAdapter adapter = new productsrvViewAdapter(getActivity(), allproducts);
-        ProductsRV.setAdapter(adapter);
+    public void showAddFab() {
+        productFab.show();
+    }
+
+    public void hideAddFab() {
+        productFab.hide();
+    }
+
+    public void showLinFab() {
+        AppData.fabVisible = true;
+        viewF.show();
+        edit.show();
+        delete.show();
+        raise.show();
+    }
+
+    public void hideLinFab() {
+        AppData.fabVisible = false;
+        viewF.hide();
+        edit.hide();
+        delete.hide();
+        raise.hide();
     }
 }
 

@@ -10,7 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.ccec.dexterapp.managers.AppData;
 import com.ccec.dexterapp.managers.FontsManager;
 import com.ccec.dexterapp.managers.UserSessionManager;
 
@@ -21,6 +23,7 @@ public class HomeFragment extends Fragment {
     private ViewPager mViewPager;
     UserSessionManager session;
     private TabLayout tabLayout;
+    private ProductsFragment fragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,12 +43,35 @@ public class HomeFragment extends Fragment {
         mViewPager = (ViewPager) view.findViewById(R.id.containerHomeTabs);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setOffscreenPageLimit(2);
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if (AppData.fabVisible = true) {
+                    processFab();
+                }
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         tabLayout = (TabLayout) view.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         changeTabsFont();
 
         return view;
+    }
+
+    public void processFab() {
+        fragment.hideLinFab();
+        fragment.showAddFab();
     }
 
     private void changeTabsFont() {
@@ -73,7 +99,7 @@ public class HomeFragment extends Fragment {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    ProductsFragment fragment = new ProductsFragment();
+                    fragment = new ProductsFragment();
                     return fragment;
                 case 1:
                     ServicesFragment fragment2 = new ServicesFragment();

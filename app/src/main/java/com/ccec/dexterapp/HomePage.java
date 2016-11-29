@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
+import android.support.v4.app.Fragment;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
@@ -28,7 +29,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
+import com.ccec.dexterapp.managers.AppData;
 import com.ccec.dexterapp.managers.CustomTypefaceSpan;
 import com.ccec.dexterapp.managers.FontsManager;
 import com.ccec.dexterapp.managers.HelperFragment;
@@ -204,20 +205,28 @@ public class HomePage extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if (doubleBackToExitPressedOnce) {
-                super.onBackPressed();
-                return;
-            }
-
-            this.doubleBackToExitPressedOnce = true;
-            Toast.makeText(this, "Click back again to exit", Toast.LENGTH_SHORT).show();
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    doubleBackToExitPressedOnce = false;
+            if (AppData.fabVisible == true) {
+                try {
+                    HomeFragment fragment = (HomeFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                    fragment.processFab();
+                } catch (Exception e) {
                 }
-            }, 2000);
+            } else {
+                if (doubleBackToExitPressedOnce) {
+                    super.onBackPressed();
+                    return;
+                }
+
+                this.doubleBackToExitPressedOnce = true;
+                Toast.makeText(this, "Click back again to exit", Toast.LENGTH_SHORT).show();
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        doubleBackToExitPressedOnce = false;
+                    }
+                }, 2000);
+            }
         }
     }
 
@@ -230,7 +239,7 @@ public class HomePage extends AppCompatActivity
             //check for verification
             HomeFragment homeFragment = new HomeFragment();
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, homeFragment).commit();
+                    .replace(R.id.fragment_container, homeFragment, "homeFragment").commit();
             getSupportActionBar().setTitle(FontsManager.actionBarTypeface(getApplicationContext(), "Home"));
         } else if (id == R.id.profile) {
             //check for verification

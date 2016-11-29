@@ -45,9 +45,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 
-
-
-
 public class ProfileFragment extends Fragment {
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;

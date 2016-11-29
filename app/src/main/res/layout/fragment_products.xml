@@ -1,9 +1,7 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f5f5f5"
-    android:orientation="vertical"
     tools:context="com.ccec.dexterapp.ProductsFragment">
 
     <android.support.v7.widget.RecyclerView
@@ -15,8 +13,56 @@
         android:id="@+id/productAddFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:src="@drawable/icon_plus" />
 
-</FrameLayout>
+    <LinearLayout
+        android:id="@+id/fabLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/productView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/icon_view" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/productEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/icon_edit" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/productRaise"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/icon_raise" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/productDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/icon_delete" />
+
+    </LinearLayout>
+
+</RelativeLayout>

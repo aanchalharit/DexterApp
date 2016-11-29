@@ -24,13 +24,13 @@
         <activity
             android:name=".HomePage"
             android:label="Dexter"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity android:name=".managers.Global" />
         <activity
-            android:name=".ProductAddActivity_Vehicle"
+            android:name=".AddVehicle"
             android:label="Add Car"
-            android:parentActivityName="com.ccec.dexterapp.HomePage"
-            android:screenOrientation="portrait"></activity>
+            android:parentActivityName=".HomePage"
+            android:screenOrientation="portrait" />
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -39,9 +39,6 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity
-            android:name=".ProductDetailsActivity"
-            android:screenOrientation="portrait"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -66,7 +63,7 @@
 
         <activity
             android:name=".ServiceCenterAroundMapsActivity"
-            android:label="@string/title_activity_service_center_around_maps"></activity>
+            android:label="@string/title_activity_service_center_around_maps" />
         <activity
             android:name=".Splash"
             android:screenOrientation="portrait">
@@ -79,15 +76,15 @@
         <activity
             android:name=".Login"
             android:label="Dexter"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ForgotPass"
             android:label="Dexter"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".SignUp"
             android:label="Dexter"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".maps.UpdateMe"
             android:label="@string/title_activity_maps"
@@ -106,5 +103,15 @@
             </intent-filter>
         </service>
         <!-- [END firebase_iid_service] -->
+        <activity
+            android:name=".VehicleDetail"
+            android:label="Details"
+            android:parentActivityName=".HomePage"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ccec.dexterapp.HomePage" />
+        </activity>
     </application>
+
 </manifest>

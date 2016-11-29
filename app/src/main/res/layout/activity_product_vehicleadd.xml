@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.ccec.dexterapp.ProductAddActivity_Vehicle">
+    tools:context="com.ccec.dexterapp.AddVehicle">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBar"
@@ -35,7 +35,21 @@
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin"
-            tools:context=".ProductAddActivity_Vehicle">
+            tools:context=".AddVehicle">
+
+            <com.pkmmte.view.CircularImageView
+                android:id="@+id/circularProduct"
+                android:layout_width="150dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="28dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/icon_color_car"
+                app:border="true"
+                app:border_color="#EEEEEE"
+                app:border_width="2dp"
+                app:shadow="true" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/TILcarmake"
@@ -70,7 +84,8 @@
                     android:id="@+id/editTextcarManufacturedIn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Manufactured In" />
+                    android:hint="Manufactured In"
+                    android:inputType="number" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -186,10 +201,10 @@
                     android:text="Insurance Due Date" />
 
                 <Button
-                    android:layout_below="@+id/tv_insurenceduedate"
                     android:id="@+id/btn_insuranceduedate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_insurenceduedate"
                     android:layout_marginTop="4dp"
                     android:background="@color/colorPrimary"
                     android:paddingLeft="10dp"

@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -46,9 +47,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +74,9 @@ public class ProductsFragment extends Fragment {
     private ProductsViewAdapter adapter;
     private String rpm, spee, air, thr, tem, deviceAddress;
     private ProgressDialog pDialog;
-    BluetoothSocket socket = null;
+    private BluetoothSocket socket = null;
+    private HashMap<String, String> carSets;
+    private String set1, set2, set3, set4, set5;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,6 +85,13 @@ public class ProductsFragment extends Fragment {
         HashMap<String, String> user = session.getUserDetails();
         id = user.get(UserSessionManager.TAG_id);
         carkeysarray = new ArrayList<>();
+
+        carSets = session.getSetDetails();
+        set1 = carSets.get(UserSessionManager.TAG_set1);
+        set2 = carSets.get(UserSessionManager.TAG_set2);
+        set3 = carSets.get(UserSessionManager.TAG_set3);
+        set4 = carSets.get(UserSessionManager.TAG_set4);
+        set5 = carSets.get(UserSessionManager.TAG_set5);
     }
 
     @Override
@@ -254,38 +267,356 @@ public class ProductsFragment extends Fragment {
             e.printStackTrace();
         }
 
-        final RPMCommand engineRpmCommand = new RPMCommand();
-        final SpeedCommand speedCommand = new SpeedCommand();
-        final MassAirFlowCommand mafCommand = new MassAirFlowCommand();
-        final ThrottlePositionCommand thCommand = new ThrottlePositionCommand();
-        final EngineCoolantTemperatureCommand enCommand = new EngineCoolantTemperatureCommand();
-        final ObdCommand cmd = new ObdRawCommand("0100");
+        if (set1 == null) {
+//        final RPMCommand engineRpmCommand = new RPMCommand();
+//        final SpeedCommand speedCommand = new SpeedCommand();
+//        final MassAirFlowCommand mafCommand = new MassAirFlowCommand();
+//        final ThrottlePositionCommand thCommand = new ThrottlePositionCommand();
+//        final EngineCoolantTemperatureCommand enCommand = new EngineCoolantTemperatureCommand();
+            final ObdCommand cmd = new ObdRawCommand("0100");
+            final ObdCommand cmd2 = new ObdRawCommand("0120");
+            final ObdCommand cmd3 = new ObdRawCommand("0140");
+            final ObdCommand cmd4 = new ObdRawCommand("0160");
+            final ObdCommand cmd5 = new ObdRawCommand("0180");
 
-        int i = 0;
-        while (i < 2) {
+            int i = 0;
+            while (i < 2) {
+                try {
+                    cmd.run(socket.getInputStream(), socket.getOutputStream());
+                    cmd2.run(socket.getInputStream(), socket.getOutputStream());
+                    cmd3.run(socket.getInputStream(), socket.getOutputStream());
+                    cmd4.run(socket.getInputStream(), socket.getOutputStream());
+                    cmd5.run(socket.getInputStream(), socket.getOutputStream());
+                } catch (Exception e) {
+                    pDialog.dismiss();
+                    e.printStackTrace();
+                }
+
+                Log.d("cmd1", "cmd1: " + cmd.getFormattedResult());
+                Log.d("cmd2", "cmd2: " + cmd2.getFormattedResult());
+                Log.d("cmd3", "cmd3: " + cmd3.getFormattedResult());
+                Log.d("cmd4", "cmd4: " + cmd4.getFormattedResult());
+                Log.d("cmd5", "cmd5: " + cmd5.getFormattedResult());
+
+                set1 = cmd.getFormattedResult();
+                set2 = cmd2.getFormattedResult();
+                set3 = cmd3.getFormattedResult();
+                set4 = cmd4.getFormattedResult();
+                set5 = cmd5.getFormattedResult();
+
+                if (set1 != null)
+                    if (set1.length() > 8)
+                        rpm = getStrin(getVal(set1.substring(set1.length() - 8)));
+                    else
+                        rpm = "Not Supported";
+
+                if (set2 != null)
+                    if (set2.length() > 8)
+                        thr = getStrin2(getVal(set2.substring(set2.length() - 8)));
+                    else
+                        thr = "Not Supported";
+
+                if (set3 != null)
+                    if (set3.length() > 8)
+                        tem = getStrin3(getVal(set3.substring(set3.length() - 8)));
+                    else
+                        tem = "Not Supported";
+
+                if (set4 != null)
+                    if (set4.length() > 8)
+                        air = getStrin4(getVal(set4.substring(set4.length() - 8)));
+                    else
+                        air = "Not Supported";
+
+                if (set5 != null)
+                    if (set5.length() > 8)
+                        spee = getStrin5(getVal(set5.substring(set5.length() - 8)));
+                    else
+                        spee = "Not Supported";
+
+                session.createUserLoginSession(rpm, thr, tem, air, spee);
+
+                if (i == 1) {
+                    rpm = cmd.getFormattedResult();
+                    thr = cmd2.getFormattedResult();
+                    tem = cmd3.getFormattedResult();
+                    air = cmd4.getFormattedResult();
+                    spee = cmd5.getFormattedResult();
+                }
+
+                i++;
+            }
+        } else {
+            ObdCommand cmd;
+            StringBuilder output = new StringBuilder();
+            output.append("PID's (00 - 20)\n");
+            List<String> list1 = Arrays.asList(set1.split(","));
+            for (int i = 0; i < list1.size(); i++) {
+                try {
+                    cmd = new ObdRawCommand("01" + list1.get(i));
+                    cmd.run(socket.getInputStream(), socket.getOutputStream());
+                    Log.d("cmd" + i, output.toString());
+                    output.append("01" + list1.get(i) + "\n");
+                    output.append(cmd.getFormattedResult() + " ");
+                    output.append("\n");
+                    rpm = "Saved";
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            StringBuilder output2 = new StringBuilder();
+            output2.append("\nPID's (20 - 40)\n");
+            if (!set2.equals("") && !set2.equals("Not Supported")) {
+                List<String> list2 = Arrays.asList(set2.split(","));
+                for (int i = 0; i < list2.size(); i++) {
+                    try {
+                        cmd = new ObdRawCommand("01" + list2.get(i));
+                        cmd.run(socket.getInputStream(), socket.getOutputStream());
+                        Log.d("cmd" + i, output.toString());
+                        output2.append("01" + list2.get(i) + "\n");
+                        output2.append(cmd.getFormattedResult() + " ");
+                        output2.append("\n");
+                        thr = "Saved";
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                thr = "Not supported";
+            }
+
+            StringBuilder output3 = new StringBuilder();
+            output3.append("\nPID's (40 - 60)\n");
+            if (!set3.equals("") && !set3.equals("Not Supported")) {
+                List<String> list3 = Arrays.asList(set3.split(","));
+                for (int i = 0; i < list3.size(); i++) {
+                    try {
+                        cmd = new ObdRawCommand("01" + list3.get(i));
+                        cmd.run(socket.getInputStream(), socket.getOutputStream());
+                        Log.d("cmd" + i, output.toString());
+                        output3.append("01" + list3.get(i) + "\n");
+                        output3.append(cmd.getFormattedResult() + " ");
+                        output3.append("\n");
+                        tem = "Saved";
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                tem = "Not supported";
+            }
+
+            StringBuilder output4 = new StringBuilder();
+            output4.append("\nPID's (60 - 80)\n");
+            if (!set4.equals("") && !set4.equals("Not Supported")) {
+                List<String> list4 = Arrays.asList(set4.split(","));
+                for (int i = 0; i < list4.size(); i++) {
+                    try {
+                        cmd = new ObdRawCommand("01" + list4.get(i));
+                        cmd.run(socket.getInputStream(), socket.getOutputStream());
+                        Log.d("cmd" + i, output.toString());
+                        output4.append("01" + list4.get(i) + "\n");
+                        output4.append(cmd.getFormattedResult() + " ");
+                        output4.append("\n");
+                        air = "Saved";
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                air = "Not supported";
+            }
+
+            StringBuilder output5 = new StringBuilder();
+            output5.append("\nPID's (80 - 87)\n");
             try {
-                engineRpmCommand.run(socket.getInputStream(), socket.getOutputStream());
-                cmd.run(socket.getInputStream(), socket.getOutputStream());
-                mafCommand.run(socket.getInputStream(), socket.getOutputStream());
-                thCommand.run(socket.getInputStream(), socket.getOutputStream());
-                enCommand.run(socket.getInputStream(), socket.getOutputStream());
-            } catch (Exception e) {
-                pDialog.dismiss();
+                if (!set5.equals("") && !set5.equals("Not Supported")) {
+                    List<String> list5 = Arrays.asList(set5.split(","));
+                    for (int i = 0; i < list5.size(); i++) {
+                        try {
+                            cmd = new ObdRawCommand("01" + list5.get(i));
+                            cmd.run(socket.getInputStream(), socket.getOutputStream());
+                            Log.d("cmd" + i, output.toString());
+                            output5.append("01" + list5.get(i) + "\n");
+                            output5.append(cmd.getFormattedResult() + " ");
+                            output5.append("\n");
+                            spee = "Saved";
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    spee = "Not supported";
+                }
+            } catch (NullPointerException e) {
+                spee = "Not supported";
+            }
+
+            File file = new File(Environment.getExternalStorageDirectory(), "dexter_obd_output.txt");
+            try {
+                FileOutputStream stream = new FileOutputStream(file);
+                try {
+                    stream.write(output.toString().getBytes());
+                    stream.write(output2.toString().getBytes());
+                    stream.write(output3.toString().getBytes());
+                    stream.write(output4.toString().getBytes());
+                    stream.write(output5.toString().getBytes());
+                } finally {
+                    stream.close();
+                }
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            Log.d("RPMMMMMMM", "RPM: " + engineRpmCommand.getFormattedResult());
-
-            if (i == 1) {
-                rpm = engineRpmCommand.getFormattedResult();
-                spee = cmd.getFormattedResult();
-                air = mafCommand.getFormattedResult();
-                thr = thCommand.getFormattedResult();
-                tem = enCommand.getFormattedResult();
-            }
-
-            i++;
         }
+    }
+
+    private static String getVal(String s) {
+        String m = "";
+        for (int i = 0; i < s.length(); i++) {
+            m += getBin(s.charAt(i));
+        }
+        return m;
+    }
+
+    private static String getBin(char a) {
+        String s = "";
+        switch (a) {
+            case '0':
+                s = "0000";
+                break;
+            case '1':
+                s = "0001";
+                break;
+            case '2':
+                s = "0010";
+                break;
+            case '3':
+                s = "0011";
+                break;
+            case '4':
+                s = "0100";
+                break;
+            case '5':
+                s = "0101";
+                break;
+            case '6':
+                s = "0110";
+                break;
+            case '7':
+                s = "0111";
+                break;
+            case '8':
+                s = "1000";
+                break;
+            case '9':
+                s = "1001";
+                break;
+            case 'A':
+                s = "1010";
+                break;
+            case 'B':
+                s = "1011";
+                break;
+            case 'C':
+                s = "1100";
+                break;
+            case 'D':
+                s = "1101";
+                break;
+            case 'E':
+                s = "1110";
+                break;
+            case 'F':
+                s = "1111";
+                break;
+        }
+
+        return s;
+    }
+
+    private static String getStrin(String s) {
+        String[] ar = new String[]{"01", "02", "03", "04", "05", "06", "07", "08", "09", "0A", "0B", "0C", "0D", "0E", "0F",
+                "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "1A", "1B", "1C", "1D", "1E", "1F"};
+
+        String m = "";
+        for (int i = 0; i < ar.length; i++) {
+            if (s.charAt(i) == '1') {
+                m += ar[i];
+                if (i != ar.length - 1)
+                    m += ",";
+            }
+        }
+        return m;
+    }
+
+    private static String getStrin2(String s) {
+        String[] ar = new String[]{"21", "22", "23", "24", "25", "26", "27", "28", "29", "2A", "2B", "2C", "2D", "2E", "2F",
+                "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "3A", "3B", "3C", "3D", "3E", "3F"};
+
+        String m = "";
+        for (int i = 0; i < ar.length; i++) {
+            if (s.charAt(i) == '1') {
+                m += ar[i];
+                if (i != ar.length - 1)
+                    m += ",";
+            }
+        }
+        return m;
+    }
+
+    private static String getStrin3(String s) {
+        String[] ar = new String[]{"41", "42", "43", "44", "45", "46", "47", "48", "49", "4A", "4B", "4C", "4D", "4E", "4F",
+                "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "5A", "5B", "5C", "5D", "5E", "5F"};
+
+        String m = "";
+        for (int i = 0; i < ar.length; i++) {
+            if (s.charAt(i) == '1') {
+                m += ar[i];
+                if (i != ar.length - 1)
+                    m += ",";
+            }
+        }
+        return m;
+    }
+
+    private static String getStrin4(String s) {
+        String[] ar = new String[]{"61", "62", "63", "64", "65", "66", "67", "68", "69", "6A", "6B", "6C", "6D", "6E", "6F",
+                "70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "7A", "7B", "7C", "7D", "7E", "7F"};
+
+        String m = "";
+        for (int i = 0; i < ar.length; i++) {
+            if (s.charAt(i) == '1') {
+                m += ar[i];
+                if (i != ar.length - 1)
+                    m += ",";
+            }
+        }
+        return m;
+    }
+
+    private static String getStrin5(String s) {
+        String[] ar = new String[]{"81", "82", "83", "84", "85", "86", "87"};
+
+        String m = "";
+        for (int i = 0; i < ar.length; i++) {
+            if (s.charAt(i) == '1') {
+                m += ar[i];
+                if (i != ar.length - 1)
+                    m += ",";
+            }
+        }
+        return m;
     }
 
     private void showOBDData() {
@@ -313,10 +644,10 @@ public class ProductsFragment extends Fragment {
         speed.setTypeface(FontsManager.getRegularTypeface(getActivity()));
 
         rpmm.setText(rpm);
-        speed.setText(spee);
-        airflow.setText(air);
         throttle.setText(thr);
         temp.setText(tem);
+        airflow.setText(air);
+        speed.setText(spee);
 
         final Button cancel = (Button) dialoglayout.findViewById(R.id.cancelButton);
         cancel.setTypeface(FontsManager.getBoldTypeface(getActivity()));

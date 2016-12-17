@@ -33,6 +33,12 @@ public class UserSessionManager {
     public static final String TAG_contact = "contact";
     public static final String TAG_location = "location";
 
+    public static final String TAG_set1 = "set1";
+    public static final String TAG_set2 = "set2";
+    public static final String TAG_set3 = "set3";
+    public static final String TAG_set4 = "set4";
+    public static final String TAG_set5 = "set5";
+
 
     public UserSessionManager(Context context) {
         this._context = context;
@@ -63,6 +69,19 @@ public class UserSessionManager {
         editor.commit();
     }
 
+    //updated from products fragment
+    public void createUserLoginSession(String uName, String pic, String contact, String location, String set5) {
+        editor.putBoolean(IS_USER_LOGIN, true);
+
+        editor.putString(TAG_set1, uName);
+        editor.putString(TAG_set2, pic);
+        editor.putString(TAG_set3, contact);
+        editor.putString(TAG_set4, location);
+        editor.putString(TAG_set5, set5);
+
+        editor.commit();
+    }
+
     //alone update from splash second visit
     public void createUserLoginSession(int secondTime) {
         editor.putString(FIRST_TIME, "NO");
@@ -81,6 +100,18 @@ public class UserSessionManager {
         user.put(TAG_location, pref.getString(TAG_location, null));
 
         user.put(FIRST_TIME, pref.getString(FIRST_TIME, null));
+
+        return user;
+    }
+
+    public HashMap<String, String> getSetDetails() {
+        HashMap<String, String> user = new HashMap<String, String>();
+
+        user.put(TAG_set1, pref.getString(TAG_set1, null));
+        user.put(TAG_set2, pref.getString(TAG_set2, null));
+        user.put(TAG_set3, pref.getString(TAG_set3, null));
+        user.put(TAG_set4, pref.getString(TAG_set4, null));
+        user.put(TAG_set5, pref.getString(TAG_set5, null));
 
         return user;
     }

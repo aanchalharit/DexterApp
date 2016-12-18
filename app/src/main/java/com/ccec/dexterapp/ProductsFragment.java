@@ -6,10 +6,12 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -24,6 +26,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ccec.dexterapp.entities.Files;
 import com.ccec.dexterapp.entities.Vehicle;
 import com.ccec.dexterapp.managers.AppData;
 import com.ccec.dexterapp.managers.FontsManager;
@@ -41,11 +44,16 @@ import com.github.pires.obd.commands.protocol.TimeoutCommand;
 import com.github.pires.obd.commands.temperature.AmbientAirTemperatureCommand;
 import com.github.pires.obd.commands.temperature.EngineCoolantTemperatureCommand;
 import com.github.pires.obd.enums.ObdProtocols;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -69,7 +77,7 @@ public class ProductsFragment extends Fragment {
     private List<Vehicle> allproducts;
     private Vehicle VehicleDetails;
     private UserSessionManager session;
-    private String id;
+    private String id, name;
     public List<String> carkeysarray;
     private ProductsViewAdapter adapter;
     private String rpm, spee, air, thr, tem, deviceAddress;
@@ -84,6 +92,7 @@ public class ProductsFragment extends Fragment {
         session = new UserSessionManager(getActivity());
         HashMap<String, String> user = session.getUserDetails();
         id = user.get(UserSessionManager.TAG_id);
+        name = user.get(UserSessionManager.TAG_fullname);
         carkeysarray = new ArrayList<>();
 
         carSets = session.getSetDetails();
@@ -140,13 +149,12 @@ public class ProductsFragment extends Fragment {
         return view;
     }
 
-
     class PostData extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             pDialog = new ProgressDialog(getActivity());
-            pDialog.setMessage("Logging In...");
+            pDialog.setMessage("Loading..");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(false);
 
@@ -164,7 +172,6 @@ public class ProductsFragment extends Fragment {
             showOBDData();
         }
     }
-
 
     private void getOBDDevice() {
         ArrayList deviceStrs = new ArrayList();
@@ -356,7 +363,8 @@ public class ProductsFragment extends Fragment {
                     cmd = new ObdRawCommand("01" + list1.get(i));
                     cmd.run(socket.getInputStream(), socket.getOutputStream());
                     Log.d("cmd" + i, output.toString());
-                    output.append("01" + list1.get(i) + "\n");
+//                    output.append("01" + list1.get(i) + "\n");
+                    output.append(getPIDDesc(list1.get(i)) + "\n");
                     output.append(cmd.getFormattedResult() + " ");
                     output.append("\n");
                     rpm = "Saved";
@@ -376,7 +384,8 @@ public class ProductsFragment extends Fragment {
                         cmd = new ObdRawCommand("01" + list2.get(i));
                         cmd.run(socket.getInputStream(), socket.getOutputStream());
                         Log.d("cmd" + i, output.toString());
-                        output2.append("01" + list2.get(i) + "\n");
+//                        output2.append("01" + list2.get(i) + "\n");
+                        output2.append(getPIDDesc(list2.get(i)) + "\n");
                         output2.append(cmd.getFormattedResult() + " ");
                         output2.append("\n");
                         thr = "Saved";
@@ -399,7 +408,8 @@ public class ProductsFragment extends Fragment {
                         cmd = new ObdRawCommand("01" + list3.get(i));
                         cmd.run(socket.getInputStream(), socket.getOutputStream());
                         Log.d("cmd" + i, output.toString());
-                        output3.append("01" + list3.get(i) + "\n");
+                        output3.append(getPIDDesc(list3.get(i)) + "\n");
+//                        output3.append("01" + list3.get(i) + "\n");
                         output3.append(cmd.getFormattedResult() + " ");
                         output3.append("\n");
                         tem = "Saved";
@@ -422,7 +432,8 @@ public class ProductsFragment extends Fragment {
                         cmd = new ObdRawCommand("01" + list4.get(i));
                         cmd.run(socket.getInputStream(), socket.getOutputStream());
                         Log.d("cmd" + i, output.toString());
-                        output4.append("01" + list4.get(i) + "\n");
+//                        output4.append("01" + list4.get(i) + "\n");
+                        output4.append(getPIDDesc(list4.get(i)) + "\n");
                         output4.append(cmd.getFormattedResult() + " ");
                         output4.append("\n");
                         air = "Saved";
@@ -446,7 +457,8 @@ public class ProductsFragment extends Fragment {
                             cmd = new ObdRawCommand("01" + list5.get(i));
                             cmd.run(socket.getInputStream(), socket.getOutputStream());
                             Log.d("cmd" + i, output.toString());
-                            output5.append("01" + list5.get(i) + "\n");
+//                            output5.append("01" + list5.get(i) + "\n");
+                            output5.append(getPIDDesc(list5.get(i)) + "\n");
                             output5.append(cmd.getFormattedResult() + " ");
                             output5.append("\n");
                             spee = "Saved";
@@ -474,10 +486,47 @@ public class ProductsFragment extends Fragment {
                     stream.write(output5.toString().getBytes());
                 } finally {
                     stream.close();
+                    uploadFile(file);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void uploadFile(File file2) {
+        Uri file = Uri.fromFile(file2);
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReferenceFromUrl("gs://dexterapp-bb161.appspot.com");
+        StorageReference riversRef = storageRef.child("obdFiles/" + id + ".txt");
+        UploadTask uploadTask = riversRef.putFile(file);
+
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("obdFiles");
+                databaseReference.push().setValue(id);
+            }
+        });
+    }
+
+    private static String getPIDDesc(String code) {
+        switch (code) {
+            case "00":
+                return "PIDs supported [01 - 20]";
+            case "01":
+                return "Monitor status since DTCs cleared. (Includes malfunction indicator lamp (MIL) status and number of DTCs.)";
+            case "87":
+                return "Intake manifold absolute pressure";
+            default:
+                return "got it";
         }
     }
 

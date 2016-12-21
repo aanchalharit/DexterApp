@@ -29,6 +29,10 @@ import com.ccec.dexterapp.R;
 import com.ccec.dexterapp.managers.AppData;
 import com.ccec.dexterapp.managers.FontsManager;
 import com.ccec.dexterapp.managers.UserSessionManager;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
@@ -42,9 +46,13 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -66,6 +74,7 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
     private FloatingActionButton fab;
     private String source = "normal";
     private Place place;
+    DatabaseReference mFirebaseDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -235,6 +244,7 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
                     .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             if (location!=null) {
                 getCurrentName();
+
                 updateMyLocation(googleMap, location);
             }
         }
@@ -250,6 +260,8 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
                         .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
                 updateMyLocation(googleMap, location);
+
+
 
                 if (result != null)
                     enterLoc.setText(result);
@@ -294,11 +306,46 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
         if (myMarker == null)
             myMarker = mMap.addMarker(new MarkerOptions().position(myLoc).
                     title("My location")
+                    .snippet("address:588 , sector 45 , gurgaon")
                     .icon(getMarkerIcon("#8b3e58")));
         else
             myMarker.setPosition(myLoc);
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLoc, 16));
+       // myMarker.showInfoWindow();
+
+        mFirebaseDatabase = FirebaseDatabase.getInstance().getReference().child("geofire");
+        GeoFire geoFire = new GeoFire(mFirebaseDatabase);
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(28.5501207,77.1882102),5.0);
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude,location.longitude)).title(key));
+
+            }
+
+            @Override
+            public void onKeyExited(String key) {
+
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+
+            }
+        });
+
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLoc, 14));
+        mMap.addCircle(new CircleOptions().center(myLoc).radius(5000).strokeColor(Color.RED).fillColor(Color.BLUE));
     }
 
     public BitmapDescriptor getMarkerIcon(String color) {

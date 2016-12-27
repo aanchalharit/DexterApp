@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -54,6 +55,7 @@ public class HomePage extends AppCompatActivity
     private CircularImageView view1;
     private String id, email, location;
     private TextView header;
+    private TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +81,8 @@ public class HomePage extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
         changeDrawerFont();
+
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
 
         session = new UserSessionManager(getApplicationContext());
         HashMap<String, String> user = session.getUserDetails();
@@ -106,7 +110,8 @@ public class HomePage extends AppCompatActivity
                 drawer.closeDrawer(GravityCompat.START);
 
                 navigationView.getMenu().getItem(1).setChecked(true);
-//                CloudletData.setSelectedItem(1);
+                tabLayout.setVisibility(View.GONE);
+                AppData.setSelectedItem(1);
             }
         });
 
@@ -116,6 +121,8 @@ public class HomePage extends AppCompatActivity
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, homeFragment).commit();
                 getSupportActionBar().setTitle(FontsManager.actionBarTypeface(getApplicationContext(), "Home"));
+                tabLayout.setVisibility(View.VISIBLE);
+                AppData.setSelectedItem(0);
             } else {
                 showHelperNoConnection();
             }
@@ -128,6 +135,7 @@ public class HomePage extends AppCompatActivity
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, helpFragment).commit();
             getSupportActionBar().setTitle(FontsManager.actionBarTypeface(getApplicationContext(), "Home"));
+            tabLayout.setVisibility(View.GONE);
         }
     }
 
@@ -236,22 +244,25 @@ public class HomePage extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.home) {
-            //check for verification
             HomeFragment homeFragment = new HomeFragment();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, homeFragment, "homeFragment").commit();
             getSupportActionBar().setTitle(FontsManager.actionBarTypeface(getApplicationContext(), "Home"));
+            tabLayout.setVisibility(View.VISIBLE);
+            AppData.setSelectedItem(0);
         } else if (id == R.id.profile) {
-            //check for verification
             ProfileFragment profileFragment = new ProfileFragment();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, profileFragment).commit();
             getSupportActionBar().setTitle(FontsManager.actionBarTypeface(getApplicationContext(), "Profile"));
-            // CloudletData.setSelectedItem(5);
+            AppData.setSelectedItem(1);
+            tabLayout.setVisibility(View.GONE);
         } else if (id == R.id.bla) {
-
+            tabLayout.setVisibility(View.GONE);
+            AppData.setSelectedItem(2);
         } else if (id == R.id.blabla) {
-
+            tabLayout.setVisibility(View.GONE);
+            AppData.setSelectedItem(3);
         } else if (id == R.id.logout) {
             builder = new AlertDialog.Builder(HomePage.this);
             builder.setTitle("Logout");
@@ -279,7 +290,11 @@ public class HomePage extends AppCompatActivity
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();
                     NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-//                    navigationView.getMenu().getItem(CloudletData.getSelectedItem()).setChecked(true);
+                    navigationView.getMenu().getItem(AppData.getSelectedItem()).setChecked(true);
+                    if (AppData.getSelectedItem() != 0)
+                        tabLayout.setVisibility(View.GONE);
+                    else
+                        tabLayout.setVisibility(View.VISIBLE);
                 }
             });
 

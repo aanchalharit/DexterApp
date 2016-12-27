@@ -14,7 +14,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         releaseUnsigned.initWith(buildTypes.release)
@@ -46,10 +46,11 @@ dependencies {
     compile 'com.wdullaer:materialdatetimepicker:2.5.0'
     compile 'com.google.android.gms:play-services:9.8.0'
     compile 'com.pkmmte.view:circularimageview:1.1'
-    compile 'com.android.support:multidex:+'
     compile 'com.github.pires:obd-java-api:1.0'
     testCompile 'junit:junit:4.12'
 }
+
+
 
 
 apply plugin: 'com.google.gms.google-services'

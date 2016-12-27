@@ -20,4 +20,14 @@ public class AppData {
 
     public static Vehicle currentVeh = null;
     public static String currentImagePath = null;
+
+    public static int selectedItem = 0;
+
+    public static int getSelectedItem() {
+        return selectedItem;
+    }
+
+    public static void setSelectedItem(int selectedItem) {
+        AppData.selectedItem = selectedItem;
+    }
 }

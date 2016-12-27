@@ -1,0 +1,763 @@
+
+    private String rpm, spee, air, thr, tem, deviceAddress, spee2;
+    private ProgressDialog pDialog;
+    private BluetoothSocket socket = null;
+    private HashMap<String, String> carSets;
+    private String set1, set2, set3, set4, set5;
+    private boolean connectFailed = false;
+
+
+    class PostData extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        protected String doInBackground(String... args) {
+            getOBDData(socket);
+
+            return null;
+        }
+
+        protected void onPostExecute(String file_url) {
+            showOBDData();
+            setBluetooth(true);
+        }
+    }
+
+    private void getOBDDevice() {
+        ArrayList deviceStrs = new ArrayList();
+        final ArrayList devices = new ArrayList();
+
+        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (!btAdapter.isEnabled()) {
+            Toast.makeText(getActivity(), "Please turn on the bluetooth", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Set pairedDevices = btAdapter.getBondedDevices();
+        if (pairedDevices.size() > 0) {
+            for (Object device : pairedDevices) {
+                BluetoothDevice bdDevice = (BluetoothDevice) device;
+                deviceStrs.add(bdDevice.getName());
+                devices.add(bdDevice.getAddress());
+            }
+        }
+
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+
+        ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.select_dialog_singlechoice,
+                deviceStrs.toArray(new String[deviceStrs.size()]));
+
+        alertDialog.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+                pDialog = new ProgressDialog(getActivity());
+                pDialog.setMessage("Connecting..");
+                pDialog.setIndeterminate(false);
+                pDialog.setCancelable(false);
+
+                pDialog.show();
+
+                int position = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
+                deviceAddress = devices.get(position) + "";
+                new ConnSocket().execute();
+            }
+        });
+
+        alertDialog.setTitle("Choose Bluetooth device");
+        alertDialog.show();
+    }
+
+    class ConnSocket extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            connectFailed = false;
+        }
+
+        protected String doInBackground(String... args) {
+            connectSocket();
+
+            return null;
+        }
+
+        protected void onPostExecute(String file_url) {
+            if (connectFailed)
+                Toast.makeText(getActivity(), "Couldn't establish Bluetooth connection!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void connectSocket() {
+        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        if (btAdapter.isEnabled()) {
+            if (deviceAddress != "?") {
+                BluetoothDevice device = btAdapter.getRemoteDevice(deviceAddress);
+
+                UUID SERIAL_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+
+                try {
+                    socket = device.createRfcommSocketToServiceRecord(SERIAL_UUID);
+                } catch (Exception e) {
+                    Log.e("", "Error creating socket");
+                    pDialog.dismiss();
+                }
+
+                try {
+                    socket.connect();
+                    new PostData().execute();
+                } catch (IOException e) {
+                    try {
+                        Log.e("", "trying fallback...");
+
+                        socket = (BluetoothSocket) device.getClass().getMethod("createRfcommSocket", new Class[]{int.class}).invoke(device, 1);
+                        socket.connect();
+
+                        new PostData().execute();
+                    } catch (Exception e2) {
+                        connectFailed = true;
+                        pDialog.dismiss();
+                    }
+                }
+            } else {
+                pDialog.dismiss();
+            }
+        }
+    }
+
+    private Runnable changeMessage = new Runnable() {
+        @Override
+        public void run() {
+            pDialog.setMessage("Capturing data\nPhase 1");
+        }
+    };
+
+    private Runnable changeMessage2 = new Runnable() {
+        @Override
+        public void run() {
+            pDialog.setMessage("Capturing data\nPhase 2");
+        }
+    };
+
+    private void getOBDData(final BluetoothSocket socket) {
+        getActivity().runOnUiThread(changeMessage);
+
+        try {
+            new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
+            new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
+            new TimeoutCommand(125).run(socket.getInputStream(), socket.getOutputStream());
+            new SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream());
+            new ThrottlePositionCommand().run(socket.getInputStream(), socket.getOutputStream());
+            new MassAirFlowCommand().run(socket.getInputStream(), socket.getOutputStream());
+            new EngineCoolantTemperatureCommand().run(socket.getInputStream(), socket.getOutputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        final ObdCommand cmd1 = new ObdRawCommand("0100");
+        final ObdCommand cmd2 = new ObdRawCommand("0120");
+        final ObdCommand cmd3 = new ObdRawCommand("0140");
+        final ObdCommand cmd4 = new ObdRawCommand("0160");
+        final ObdCommand cmd5 = new ObdRawCommand("0180");
+
+        int j = 0;
+        while (j < 2) {
+            try {
+                cmd1.run(socket.getInputStream(), socket.getOutputStream());
+                cmd2.run(socket.getInputStream(), socket.getOutputStream());
+                cmd3.run(socket.getInputStream(), socket.getOutputStream());
+                cmd4.run(socket.getInputStream(), socket.getOutputStream());
+                cmd5.run(socket.getInputStream(), socket.getOutputStream());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            Log.d("cmd1", "cmd1: " + cmd1.getFormattedResult());
+            Log.d("cmd2", "cmd2: " + cmd2.getFormattedResult());
+            Log.d("cmd3", "cmd3: " + cmd3.getFormattedResult());
+            Log.d("cmd4", "cmd4: " + cmd4.getFormattedResult());
+            Log.d("cmd5", "cmd5: " + cmd5.getFormattedResult());
+
+            set1 = cmd1.getFormattedResult();
+            set2 = cmd2.getFormattedResult();
+            set3 = cmd3.getFormattedResult();
+            set4 = cmd4.getFormattedResult();
+            set5 = cmd5.getFormattedResult();
+
+            if (set1 != null)
+                if (set1.length() > 8)
+                    rpm = getStrin(getVal(set1.substring(set1.length() - 8)));
+                else
+                    rpm = "Not Supported";
+
+            if (set2 != null)
+                if (set2.length() > 8)
+                    thr = getStrin2(getVal(set2.substring(set2.length() - 8)));
+                else
+                    thr = "Not Supported";
+
+            if (set3 != null)
+                if (set3.length() > 8)
+                    tem = getStrin3(getVal(set3.substring(set3.length() - 8)));
+                else
+                    tem = "Not Supported";
+
+            if (set4 != null)
+                if (set4.length() > 8)
+                    air = getStrin4(getVal(set4.substring(set4.length() - 8)));
+                else
+                    air = "Not Supported";
+
+            if (set5 != null)
+                if (set5.length() > 8)
+                    spee = getStrin5(getVal(set5.substring(set5.length() - 8)));
+                else
+                    spee = "Not Supported";
+
+            session.createUserLoginSession(rpm, thr, tem, air, spee);
+
+            if (j == 1) {
+                rpm = cmd1.getFormattedResult();
+                thr = cmd2.getFormattedResult();
+                tem = cmd3.getFormattedResult();
+                air = cmd4.getFormattedResult();
+                spee = cmd5.getFormattedResult();
+            }
+
+            j++;
+        }
+
+        carSets = session.getSetDetails();
+        set1 = carSets.get(UserSessionManager.TAG_set1);
+        set2 = carSets.get(UserSessionManager.TAG_set2);
+        set3 = carSets.get(UserSessionManager.TAG_set3);
+        set4 = carSets.get(UserSessionManager.TAG_set4);
+        set5 = carSets.get(UserSessionManager.TAG_set5);
+
+        ObdCommand cmd;
+        StringBuilder output = new StringBuilder();
+        output.append("PID's (00 - 20)\n");
+        List<String> list1 = Arrays.asList(set1.split(","));
+        for (int i = 0; i < list1.size(); i++) {
+            try {
+                cmd = new ObdRawCommand("01" + list1.get(i));
+                cmd.run(socket.getInputStream(), socket.getOutputStream());
+                Log.d("cmd" + i, output.toString());
+                output.append(PIDDesc.getPIDDesc(list1.get(i)) + "\n");
+                output.append(cmd.getFormattedResult() + " ");
+                output.append("\n");
+                rpm = "Saved";
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        StringBuilder output2 = new StringBuilder();
+        output2.append("\nPID's (20 - 40)\n");
+        if (!set2.equals("") && !set2.equals("Not Supported")) {
+            List<String> list2 = Arrays.asList(set2.split(","));
+            for (int i = 0; i < list2.size(); i++) {
+                try {
+                    cmd = new ObdRawCommand("01" + list2.get(i));
+                    cmd.run(socket.getInputStream(), socket.getOutputStream());
+                    Log.d("cmd" + i, output.toString());
+                    output2.append(PIDDesc.getPIDDesc(list2.get(i)) + "\n");
+                    output2.append(cmd.getFormattedResult() + " ");
+                    output2.append("\n");
+                    thr = "Saved";
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            thr = "Not supported";
+        }
+
+        StringBuilder output3 = new StringBuilder();
+        output3.append("\nPID's (40 - 60)\n");
+        if (!set3.equals("") && !set3.equals("Not Supported")) {
+            List<String> list3 = Arrays.asList(set3.split(","));
+            for (int i = 0; i < list3.size(); i++) {
+                try {
+                    cmd = new ObdRawCommand("01" + list3.get(i));
+                    cmd.run(socket.getInputStream(), socket.getOutputStream());
+                    Log.d("cmd" + i, output.toString());
+                    output3.append(PIDDesc.getPIDDesc(list3.get(i)) + "\n");
+                    output3.append(cmd.getFormattedResult() + " ");
+                    output3.append("\n");
+                    tem = "Saved";
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            tem = "Not supported";
+        }
+
+        StringBuilder output4 = new StringBuilder();
+        output4.append("\nPID's (60 - 80)\n");
+        if (!set4.equals("") && !set4.equals("Not Supported")) {
+            List<String> list4 = Arrays.asList(set4.split(","));
+            for (int i = 0; i < list4.size(); i++) {
+                try {
+                    cmd = new ObdRawCommand("01" + list4.get(i));
+                    cmd.run(socket.getInputStream(), socket.getOutputStream());
+                    Log.d("cmd" + i, output.toString());
+                    output4.append(PIDDesc.getPIDDesc(list4.get(i)) + "\n");
+                    output4.append(cmd.getFormattedResult() + " ");
+                    output4.append("\n");
+                    air = "Saved";
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            air = "Not supported";
+        }
+
+        StringBuilder output5 = new StringBuilder();
+        output5.append("\nPID's (80 - 87)\n");
+        try {
+            if (!set5.equals("") && !set5.equals("Not Supported")) {
+                List<String> list5 = Arrays.asList(set5.split(","));
+                for (int i = 0; i < list5.size(); i++) {
+                    try {
+                        cmd = new ObdRawCommand("01" + list5.get(i));
+                        cmd.run(socket.getInputStream(), socket.getOutputStream());
+                        Log.d("cmd" + i, output.toString());
+                        output5.append(PIDDesc.getPIDDesc(list5.get(i)) + "\n");
+                        output5.append(cmd.getFormattedResult() + " ");
+                        output5.append("\n");
+                        spee = "Saved";
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                spee = "Not supported";
+            }
+        } catch (NullPointerException e) {
+            spee = "Not supported";
+        }
+
+        getActivity().runOnUiThread(changeMessage2);
+
+        StringBuilder output6 = new StringBuilder();
+        output6.append("\n\nDTC CODES\n");
+        for (int i = 0; i < 99; i++) {
+            try {
+                String temp = "";
+                if (i < 10)
+                    temp = "0" + i;
+                else
+                    temp = i + "";
+
+                cmd = new ObdRawCommand("01" + temp);
+                cmd.run(socket.getInputStream(), socket.getOutputStream());
+                output6.append("01" + temp + "\n");
+                output6.append(cmd.getFormattedResult() + " ");
+                output6.append("\n");
+                spee2 = "Saved";
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        StringBuilder output7 = new StringBuilder();
+        for (int i = 0; i < 99; i++) {
+            try {
+                String temp = "";
+                if (i < 10)
+                    temp = "0" + i;
+                else
+                    temp = i + "";
+
+                cmd = new ObdRawCommand("02" + temp);
+                cmd.run(socket.getInputStream(), socket.getOutputStream());
+                output7.append("02" + temp + "\n");
+                output7.append(cmd.getFormattedResult() + " ");
+                output7.append("\n");
+                spee2 = "Saved";
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        StringBuilder output8 = new StringBuilder();
+        for (int i = 0; i < 99; i++) {
+            try {
+                String temp = "";
+                if (i < 10)
+                    temp = "0" + i;
+                else
+                    temp = i + "";
+
+                cmd = new ObdRawCommand("03" + temp);
+                cmd.run(socket.getInputStream(), socket.getOutputStream());
+                output8.append("03" + temp + "\n");
+                output8.append(cmd.getFormattedResult() + " ");
+                output8.append("\n");
+                spee2 = "Saved";
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        StringBuilder output9 = new StringBuilder();
+        for (int i = 0; i < 99; i++) {
+            try {
+                String temp = "";
+                if (i < 10)
+                    temp = "0" + i;
+                else
+                    temp = i + "";
+
+                cmd = new ObdRawCommand("04" + temp);
+                cmd.run(socket.getInputStream(), socket.getOutputStream());
+                output9.append("04" + temp + "\n");
+                output9.append(cmd.getFormattedResult() + " ");
+                output9.append("\n");
+                spee2 = "Saved";
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        StringBuilder output10 = new StringBuilder();
+        for (int i = 0; i < 99; i++) {
+            try {
+                String temp = "";
+                if (i < 10)
+                    temp = "0" + i;
+                else
+                    temp = i + "";
+
+                cmd = new ObdRawCommand("05" + temp);
+                cmd.run(socket.getInputStream(), socket.getOutputStream());
+                output10.append("05" + temp + "\n");
+                output10.append(cmd.getFormattedResult() + " ");
+                output10.append("\n");
+                spee2 = "Saved";
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        StringBuilder output11 = new StringBuilder();
+        for (int i = 0; i < 99; i++) {
+            try {
+                String temp = "";
+                if (i < 10)
+                    temp = "0" + i;
+                else
+                    temp = i + "";
+
+                cmd = new ObdRawCommand("06" + temp);
+                cmd.run(socket.getInputStream(), socket.getOutputStream());
+                output11.append("06" + temp + "\n");
+                output11.append(cmd.getFormattedResult() + " ");
+                output11.append("\n");
+                spee2 = "Saved";
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        StringBuilder output12 = new StringBuilder();
+        for (int i = 0; i < 99; i++) {
+            try {
+                String temp = "";
+                if (i < 10)
+                    temp = "0" + i;
+                else
+                    temp = i + "";
+
+                cmd = new ObdRawCommand("07" + temp);
+                cmd.run(socket.getInputStream(), socket.getOutputStream());
+                output12.append("07" + temp + "\n");
+                output12.append(cmd.getFormattedResult() + " ");
+                output12.append("\n");
+                spee2 = "Saved";
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        StringBuilder output13 = new StringBuilder();
+        for (int i = 0; i < 5; i++) {
+            try {
+                String temp = "";
+                if (i < 10)
+                    temp = "0" + i;
+                else
+                    temp = i + "";
+
+                cmd = new ObdRawCommand("08" + temp);
+                cmd.run(socket.getInputStream(), socket.getOutputStream());
+                output13.append("08" + temp + "\n");
+                output13.append(cmd.getFormattedResult() + " ");
+                output13.append("\n");
+                spee2 = "Saved";
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        File file = new File(Environment.getExternalStorageDirectory(), "dexter_obd_output.txt");
+        try {
+            FileOutputStream stream = new FileOutputStream(file);
+            try {
+                stream.write(output.toString().getBytes());
+                stream.write(output2.toString().getBytes());
+                stream.write(output3.toString().getBytes());
+                stream.write(output4.toString().getBytes());
+                stream.write(output5.toString().getBytes());
+                stream.write(output6.toString().getBytes());
+                stream.write(output7.toString().getBytes());
+                stream.write(output8.toString().getBytes());
+                stream.write(output9.toString().getBytes());
+                stream.write(output10.toString().getBytes());
+                stream.write(output11.toString().getBytes());
+                stream.write(output12.toString().getBytes());
+                stream.write(output13.toString().getBytes());
+            } finally {
+                stream.close();
+                uploadFile(file);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void uploadFile(File file2) {
+        Uri file = Uri.fromFile(file2);
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReferenceFromUrl("gs://dexterapp-bb161.appspot.com");
+        StorageReference riversRef = storageRef.child("obdFiles/" + id + ".txt");
+        UploadTask uploadTask = riversRef.putFile(file);
+
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("obdFiles");
+                databaseReference.push().setValue(id);
+            }
+        });
+    }
+
+    private static String getVal(String s) {
+        String m = "";
+        for (int i = 0; i < s.length(); i++) {
+            m += getBin(s.charAt(i));
+        }
+        return m;
+    }
+
+    private static String getBin(char a) {
+        String s = "";
+        switch (a) {
+            case '0':
+                s = "0000";
+                break;
+            case '1':
+                s = "0001";
+                break;
+            case '2':
+                s = "0010";
+                break;
+            case '3':
+                s = "0011";
+                break;
+            case '4':
+                s = "0100";
+                break;
+            case '5':
+                s = "0101";
+                break;
+            case '6':
+                s = "0110";
+                break;
+            case '7':
+                s = "0111";
+                break;
+            case '8':
+                s = "1000";
+                break;
+            case '9':
+                s = "1001";
+                break;
+            case 'A':
+                s = "1010";
+                break;
+            case 'B':
+                s = "1011";
+                break;
+            case 'C':
+                s = "1100";
+                break;
+            case 'D':
+                s = "1101";
+                break;
+            case 'E':
+                s = "1110";
+                break;
+            case 'F':
+                s = "1111";
+                break;
+        }
+
+        return s;
+    }
+
+    private static String getStrin(String s) {
+        String[] ar = new String[]{"01", "02", "03", "04", "05", "06", "07", "08", "09", "0A", "0B", "0C", "0D", "0E", "0F",
+                "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "1A", "1B", "1C", "1D", "1E", "1F"};
+
+        String m = "";
+        for (int i = 0; i < ar.length; i++) {
+            if (s.charAt(i) == '1') {
+                m += ar[i];
+                if (i != ar.length - 1)
+                    m += ",";
+            }
+        }
+        return m;
+    }
+
+    private static String getStrin2(String s) {
+        String[] ar = new String[]{"21", "22", "23", "24", "25", "26", "27", "28", "29", "2A", "2B", "2C", "2D", "2E", "2F",
+                "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "3A", "3B", "3C", "3D", "3E", "3F"};
+
+        String m = "";
+        for (int i = 0; i < ar.length; i++) {
+            if (s.charAt(i) == '1') {
+                m += ar[i];
+                if (i != ar.length - 1)
+                    m += ",";
+            }
+        }
+        return m;
+    }
+
+    private static String getStrin3(String s) {
+        String[] ar = new String[]{"41", "42", "43", "44", "45", "46", "47", "48", "49", "4A", "4B", "4C", "4D", "4E", "4F",
+                "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "5A", "5B", "5C", "5D", "5E", "5F"};
+
+        String m = "";
+        for (int i = 0; i < ar.length; i++) {
+            if (s.charAt(i) == '1') {
+                m += ar[i];
+                if (i != ar.length - 1)
+                    m += ",";
+            }
+        }
+        return m;
+    }
+
+    private static String getStrin4(String s) {
+        String[] ar = new String[]{"61", "62", "63", "64", "65", "66", "67", "68", "69", "6A", "6B", "6C", "6D", "6E", "6F",
+                "70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "7A", "7B", "7C", "7D", "7E", "7F"};
+
+        String m = "";
+        for (int i = 0; i < ar.length; i++) {
+            if (s.charAt(i) == '1') {
+                m += ar[i];
+                if (i != ar.length - 1)
+                    m += ",";
+            }
+        }
+        return m;
+    }
+
+    private static String getStrin5(String s) {
+        String[] ar = new String[]{"81", "82", "83", "84", "85", "86", "87"};
+
+        String m = "";
+        for (int i = 0; i < ar.length; i++) {
+            if (s.charAt(i) == '1') {
+                m += ar[i];
+                if (i != ar.length - 1)
+                    m += ",";
+            }
+        }
+        return m;
+    }
+
+    private void showOBDData() {
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        final View dialoglayout = inflater.inflate(R.layout.custom_dialog_obd, null);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setCancelable(false);
+        builder.setView(dialoglayout);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        final TextView rpmm = (TextView) dialoglayout.findViewById(R.id.fullNameDetail);
+        rpmm.setTypeface(FontsManager.getRegularTypeface(getActivity()));
+
+        final TextView throttle = (TextView) dialoglayout.findViewById(R.id.skypeNameDetail);
+        throttle.setTypeface(FontsManager.getRegularTypeface(getActivity()));
+
+        final TextView temp = (TextView) dialoglayout.findViewById(R.id.companyNameDetail);
+        temp.setTypeface(FontsManager.getRegularTypeface(getActivity()));
+
+        final TextView airflow = (TextView) dialoglayout.findViewById(R.id.contactNameDetail);
+        airflow.setTypeface(FontsManager.getRegularTypeface(getActivity()));
+
+        final TextView speed = (TextView) dialoglayout.findViewById(R.id.locationNameDetail);
+        speed.setTypeface(FontsManager.getRegularTypeface(getActivity()));
+
+        final TextView speed2 = (TextView) dialoglayout.findViewById(R.id.set2NameDetail);
+        speed2.setTypeface(FontsManager.getRegularTypeface(getActivity()));
+
+        rpmm.setText(rpm);
+        throttle.setText(thr);
+        temp.setText(tem);
+        airflow.setText(air);
+        speed.setText(spee);
+        speed2.setText(spee2);
+        pDialog.dismiss();
+        setBluetooth(false);
+
+        final Button cancel = (Button) dialoglayout.findViewById(R.id.cancelButton);
+        cancel.setTypeface(FontsManager.getBoldTypeface(getActivity()));
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        final Button submit = (Button) dialoglayout.findViewById(R.id.submitButton);
+        submit.setTypeface(FontsManager.getBoldTypeface(getActivity()));
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                Toast.makeText(getActivity(), "Data will be saved to server", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public static boolean setBluetooth(boolean enable) {
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        boolean isEnabled = bluetoothAdapter.isEnabled();
+        if (enable && !isEnabled) {
+            return bluetoothAdapter.enable();
+        } else if (!enable && isEnabled) {
+            return bluetoothAdapter.disable();
+        }
+        // No need to change bluetooth state
+        return true;
+    }

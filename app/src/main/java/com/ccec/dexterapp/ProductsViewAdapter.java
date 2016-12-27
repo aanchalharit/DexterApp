@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.ccec.dexterapp.entities.Vehicle;
 import com.ccec.dexterapp.managers.AppData;
@@ -49,7 +50,7 @@ public class ProductsViewAdapter extends RecyclerView.Adapter<ProductsViewHolder
     }
 
     @Override
-    public void onBindViewHolder(ProductsViewHolder holder, final int position) {
+    public void onBindViewHolder(final ProductsViewHolder holder, final int position) {
         // holder.RVSinglerowProductImage.setImageResource(R.drawable.ic_directions_car_black_24dp);
         holder.RVSinglerowMake.setText(allproductsva.get(position).getMake());
         holder.RVSinglerowModel.setText(allproductsva.get(position).getModel());
@@ -70,6 +71,9 @@ public class ProductsViewAdapter extends RecyclerView.Adapter<ProductsViewHolder
 
                 context = view.getContext();
                 pos = position;
+
+                AppData.currentVeh = allproductsva.get(pos);
+                AppData.currentImagePath = carkeys.get(pos);
             }
         });
     }

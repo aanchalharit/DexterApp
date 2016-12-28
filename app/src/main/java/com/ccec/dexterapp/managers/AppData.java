@@ -4,6 +4,8 @@ import android.location.Location;
 
 import com.ccec.dexterapp.entities.Vehicle;
 
+import java.util.List;
+
 /**
  * Created by manish on 11/11/16.
  */
@@ -20,6 +22,8 @@ public class AppData {
 
     public static Vehicle currentVeh = null;
     public static String currentImagePath = null;
+
+    public static List<Boolean> queries;
 
     public static int selectedItem = 0;
 

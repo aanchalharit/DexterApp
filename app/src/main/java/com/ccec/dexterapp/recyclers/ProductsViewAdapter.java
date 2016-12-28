@@ -1,4 +1,4 @@
-package com.ccec.dexterapp;
+package com.ccec.dexterapp.recyclers;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,8 +8,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import com.ccec.dexterapp.ProductsFragment;
+import com.ccec.dexterapp.R;
+import com.ccec.dexterapp.VehicleDetail;
 import com.ccec.dexterapp.entities.Vehicle;
 import com.ccec.dexterapp.managers.AppData;
 import com.ccec.dexterapp.managers.FontsManager;

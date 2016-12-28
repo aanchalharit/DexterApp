@@ -1,10 +1,11 @@
-package com.ccec.dexterapp;
+package com.ccec.dexterapp.recyclers;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.ccec.dexterapp.R;
 import com.pkmmte.view.CircularImageView;
 
 public class ProductsViewHolder extends RecyclerView.ViewHolder {

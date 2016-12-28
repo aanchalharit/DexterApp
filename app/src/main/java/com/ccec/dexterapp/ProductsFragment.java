@@ -13,14 +13,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ccec.dexterapp.entities.Vehicle;
 import com.ccec.dexterapp.managers.AppData;
 import com.ccec.dexterapp.managers.FontsManager;
 import com.ccec.dexterapp.managers.UserSessionManager;
 import com.ccec.dexterapp.maps.ShowCentresNearMe;
+import com.ccec.dexterapp.recyclers.ProductsViewAdapter;
+import com.ccec.dexterapp.recyclers.QueryViewAdapter;
 import com.google.android.gms.maps.MapView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,15 +37,16 @@ import java.util.Map;
 
 public class ProductsFragment extends Fragment {
     private FloatingActionButton productFab, viewF, edit, raise, delete;
-    private RecyclerView ProductsRV;
+    private RecyclerView ProductsRV, QueriesRV;
     private DatabaseReference firebasedbrefproducts;
     private List<Vehicle> allproducts;
     private UserSessionManager session;
     private String id, name;
     public List<String> carkeysarray;
+    public List<String> queriesArr;
     private ProductsViewAdapter adapter;
-    private SwitchCompat switchCompat, switchCompat2, switchCompat3, switchCompat4;
-    private boolean sw1 = false, sw2 = false, sw3 = false, sw4 = false;
+    private QueryViewAdapter adapterQ;
+    private ProgressBar prBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,6 +56,7 @@ public class ProductsFragment extends Fragment {
         id = user.get(UserSessionManager.TAG_id);
         name = user.get(UserSessionManager.TAG_fullname);
         carkeysarray = new ArrayList<>();
+        queriesArr = new ArrayList<>();
     }
 
     @Override
@@ -188,50 +192,10 @@ public class ProductsFragment extends Fragment {
         final AlertDialog dialog = builder.create();
         dialog.show();
 
-        final TextView rpmm = (TextView) dialoglayout.findViewById(R.id.fullNameTitle);
-        rpmm.setTypeface(FontsManager.getRegularTypeface(getActivity()));
+        prBar = (ProgressBar) dialoglayout.findViewById(R.id.progBar);
 
-        final TextView throttle = (TextView) dialoglayout.findViewById(R.id.skypeNameTitle);
-        throttle.setTypeface(FontsManager.getRegularTypeface(getActivity()));
-
-        final TextView temp = (TextView) dialoglayout.findViewById(R.id.companyNameTitle);
-        temp.setTypeface(FontsManager.getRegularTypeface(getActivity()));
-
-        final TextView airflow = (TextView) dialoglayout.findViewById(R.id.contactNameTitle);
-        airflow.setTypeface(FontsManager.getRegularTypeface(getActivity()));
-
-        switchCompat = (SwitchCompat) dialoglayout.findViewById(R.id.switchButton1);
-        switchCompat2 = (SwitchCompat) dialoglayout.findViewById(R.id.switchButton2);
-        switchCompat3 = (SwitchCompat) dialoglayout.findViewById(R.id.switchButton3);
-        switchCompat4 = (SwitchCompat) dialoglayout.findViewById(R.id.switchButton4);
-
-        switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                sw1 = isChecked;
-            }
-        });
-
-        switchCompat2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                sw2 = isChecked;
-            }
-        });
-
-        switchCompat3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                sw3 = isChecked;
-            }
-        });
-
-        switchCompat4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                sw4 = isChecked;
-            }
-        });
+        QueriesRV = (RecyclerView) dialoglayout.findViewById(R.id.allQueries);
+        QueriesRV.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
         final Button cancel = (Button) dialoglayout.findViewById(R.id.cancelButton);
         cancel.setTypeface(FontsManager.getBoldTypeface(getActivity()));
@@ -252,5 +216,26 @@ public class ProductsFragment extends Fragment {
                 getActivity().startActivity(in);
             }
         });
+
+        DatabaseReference firebasedbrefproducts3 = FirebaseDatabase.getInstance().getReference().child("queries");
+        firebasedbrefproducts3.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() > 0) {
+                    queriesArr = (ArrayList) dataSnapshot.getValue();
+                    prBar.setVisibility(View.GONE);
+                    QueriesRV.setVisibility(View.VISIBLE);
+
+                    adapterQ = new QueryViewAdapter(getActivity(), queriesArr, ProductsFragment.this);
+                    QueriesRV.setAdapter(adapterQ);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                return;
+            }
+        });
+        firebasedbrefproducts3.keepSynced(true);
     }
 }

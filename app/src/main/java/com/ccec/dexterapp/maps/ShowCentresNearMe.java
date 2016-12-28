@@ -1,6 +1,7 @@
 package com.ccec.dexterapp.maps;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,6 +21,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,7 +31,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ccec.dexterapp.Login;
 import com.ccec.dexterapp.R;
+import com.ccec.dexterapp.entities.Notif;
+import com.ccec.dexterapp.entities.Requests;
 import com.ccec.dexterapp.entities.Vehicle;
 import com.ccec.dexterapp.managers.AppData;
 import com.ccec.dexterapp.managers.FontsManager;
@@ -53,6 +58,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -60,6 +67,8 @@ import com.google.maps.android.ui.IconGenerator;
 import com.pkmmte.view.CircularImageView;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,6 +92,9 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
     private CircularImageView circularImageView;
     private Location myLOC;
     private float dis;
+    private String selectedCenter;
+    private ProgressDialog pDialog;
+    private int p = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -378,6 +390,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                         @Override
                         public void onClick(View view) {
                             dialog.dismiss();
+                            selectedCenter = (String) marker.getTag();
                             raiseRequest();
                         }
                     });
@@ -389,7 +402,126 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
     }
 
     private void raiseRequest() {
+        pDialog = new ProgressDialog(ShowCentresNearMe.this);
+        pDialog.setMessage("Processing..");
+        pDialog.setIndeterminate(false);
+        pDialog.setCancelable(false);
+        pDialog.show();
 
+        String queryArr = "";
+        for (int i = 0; i < AppData.queries.size(); i++) {
+            if (AppData.queries.get(i) == false)
+                queryArr += 0;
+            else
+                queryArr += 1;
+        }
+
+        SimpleDateFormat format = new SimpleDateFormat("d");
+        String date = format.format(new Date());
+        if (date.endsWith("1") && !date.endsWith("11"))
+            format = new SimpleDateFormat("EE MMM d'st', yyyy");
+        else if (date.endsWith("2") && !date.endsWith("12"))
+            format = new SimpleDateFormat("EE MMM d'nd', yyyy");
+        else if (date.endsWith("3") && !date.endsWith("13"))
+            format = new SimpleDateFormat("EE MMM d'rd', yyyy");
+        else
+            format = new SimpleDateFormat("EE MMM d'th', yyyy");
+        final String yourDate = format.format(new Date());
+
+        final String finalQueryArr = queryArr;
+        final DatabaseReference databaseReference3 = FirebaseDatabase.getInstance().getReference("/variables/serviceNumber");
+        databaseReference3.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final int serviceNumber = dataSnapshot.getValue(Integer.class);
+
+                final Requests requests = new Requests();
+                requests.setIssuedBy(id);
+                requests.setIssuedTo(selectedCenter);
+                requests.setItem(path);
+//                final int sKey = onStarClicked();
+                requests.setKey("DexterSR" + serviceNumber);
+                requests.setOpenTime(yourDate);
+                requests.setScheduleTime("");
+                requests.setStatus("Open");
+                requests.setQueries(finalQueryArr);
+
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("requests/Car");
+                databaseReference.child("DexterSR" + serviceNumber).setValue(requests, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference("users/Customer/" + id + "/requests/Car");
+                        databaseReference2.push().setValue("DexterSR" + serviceNumber, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                sendNotification();
+                            }
+                        });
+                    }
+                });
+
+                databaseReference3.setValue(serviceNumber + 1);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(getApplicationContext(), "Something went wrong.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        });
+        databaseReference3.keepSynced(true);
+    }
+
+//    private int onStarClicked() {
+//        DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference("/variables");
+//        databaseReference2.runTransaction(new Transaction.Handler() {
+//            @Override
+//            public Transaction.Result doTransaction(MutableData mutableData) {
+//                try {
+//                    p = mutableData.getValue(Integer.class);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    return Transaction.success(mutableData);
+//                }
+//
+//                p += 1;
+//
+//                mutableData.setValue(p);
+//                return Transaction.success(mutableData);
+//            }
+//
+//            @Override
+//            public void onComplete(DatabaseError databaseError, boolean b,
+//                                   DataSnapshot dataSnapshot) {
+//                Log.d("TRRRRRRR", "postTransaction:onComplete:" + databaseError);
+//            }
+//        });
+//
+//        return p;
+//    }
+
+    private void sendNotification() {
+        DatabaseReference firebasedbrefproduct = FirebaseDatabase.getInstance().getReference("users/ServiceCenter/" + selectedCenter);
+        firebasedbrefproduct.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                DatabaseReference firebasedbrefproduc = FirebaseDatabase.getInstance().getReference();
+                Notif notif = new Notif();
+//                  notif.setTit("New order received");
+                notif.setUsername((String) ((HashMap) dataSnapshot.getValue()).get("fcm"));
+                notif.setMessage("New order received");
+                firebasedbrefproduc.child("notifs").push().setValue(notif);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        pDialog.dismiss();
+        Toast.makeText(this, "Request raised", Toast.LENGTH_SHORT).show();
+        onBackPressed();
     }
 
     @Override

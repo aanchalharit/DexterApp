@@ -21,6 +21,7 @@ import com.ccec.dexterapp.managers.AppData;
 import com.ccec.dexterapp.managers.FontsManager;
 import com.ccec.dexterapp.managers.UserSessionManager;
 import com.ccec.dexterapp.maps.ShowCentresNearMe;
+import com.google.android.gms.maps.MapView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -94,6 +95,20 @@ public class ProductsFragment extends Fragment {
                 showRequestData();
                 hideLinFab();
                 showAddFab();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            MapView mv = new MapView(getActivity());
+                            mv.onCreate(null);
+                            mv.onPause();
+                            mv.onDestroy();
+                        } catch (Exception ignored) {
+
+                        }
+                    }
+                }).start();
             }
         });
 

@@ -69,6 +69,11 @@ public class UserSessionManager {
         editor.commit();
     }
 
+    public void clearData() {
+        editor.clear();
+        editor.commit();
+    }
+
     //updated from products fragment
     public void createUserLoginSession(String uName, String pic, String contact, String location, String set5) {
         editor.putBoolean(IS_USER_LOGIN, true);

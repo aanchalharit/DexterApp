@@ -47,6 +47,7 @@ public class Login extends AppCompatActivity {
     private String Login_Email, Login_Password;
     private ProgressDialog pDialog;
     private FirebaseAuth mAuth;
+    private DatabaseReference databaseReference2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,26 +186,36 @@ public class Login extends AppCompatActivity {
                             pDialog.dismiss();
                         } else {
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                            String uid = user.getUid();
+                            final String uid = user.getUid();
                             session.createUserLoginSession(uid, Login_Email, Login_Password);
 
                             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("/users/Customer/" + uid);
                             databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                    Map<String, Object> itemMap = (HashMap<String, Object>) dataSnapshot.getValue();
-                                    session.createUserLoginSession((String) itemMap.get("name"), "",
-                                            (String) itemMap.get("contact"),
-                                            (String) itemMap.get("location"));
+                                    if (dataSnapshot.getChildrenCount() > 0) {
+                                        Map<String, Object> itemMap = (HashMap<String, Object>) dataSnapshot.getValue();
+                                        session.createUserLoginSession((String) itemMap.get("name"), "",
+                                                (String) itemMap.get("contact"),
+                                                (String) itemMap.get("location"));
 
-                                    Toast.makeText(getApplicationContext(), "Welcome",
-                                            Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), "Welcome",
+                                                Toast.LENGTH_LONG).show();
 
-                                    Intent in = new Intent(Login.this, HomePage.class);
-                                    startActivity(in);
+                                        Intent in = new Intent(Login.this, HomePage.class);
+                                        startActivity(in);
 
-                                    pDialog.dismiss();
-                                    Login.this.finish();
+                                        pDialog.dismiss();
+                                        Login.this.finish();
+
+                                        String token = FirebaseInstanceId.getInstance().getToken();
+                                        databaseReference2 = FirebaseDatabase.getInstance().getReference("/users/Customer/" + uid);
+                                        databaseReference2.child("fcm").setValue(token);
+                                    } else {
+                                        pDialog.dismiss();
+                                        Toast.makeText(Login.this, "User doesn't exist", Toast.LENGTH_SHORT).show();
+                                        session.clearData();
+                                    }
                                 }
 
                                 @Override
@@ -214,9 +225,6 @@ public class Login extends AppCompatActivity {
                                 }
                             });
 
-                            String token = FirebaseInstanceId.getInstance().getToken();
-                            databaseReference = FirebaseDatabase.getInstance().getReference("/users/Customer/" + uid);
-                            databaseReference.child("fcm").setValue(token);
                         }
                     }
                 });

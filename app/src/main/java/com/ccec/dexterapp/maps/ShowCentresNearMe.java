@@ -5,10 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.location.Address;
+import android.graphics.Bitmap;
 import android.location.Criteria;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -17,26 +15,20 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ccec.dexterapp.HomePage;
 import com.ccec.dexterapp.R;
 import com.ccec.dexterapp.entities.Vehicle;
 import com.ccec.dexterapp.managers.AppData;
@@ -46,20 +38,12 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocomplete;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -72,13 +56,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.maps.android.ui.IconGenerator;
 import com.pkmmte.view.CircularImageView;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCallback {
@@ -99,6 +81,8 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
     private String name, path, makes;
     private Vehicle veh;
     private CircularImageView circularImageView;
+    private Location myLOC;
+    private float dis;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -245,16 +229,18 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
     private void updateMyLocation(final GoogleMap googleMap, Location location) {
         this.location = location;
 
-        LatLng myLoc = new LatLng(location.getLatitude(), location.getLongitude());
+        final LatLng myLoc = new LatLng(location.getLatitude(), location.getLongitude());
 
-        if (myMarker == null)
+        if (myMarker == null) {
+            IconGenerator bubbleIconFactory = new IconGenerator(getApplicationContext());
+            bubbleIconFactory.setStyle(IconGenerator.STYLE_BLUE);
+            Bitmap bit = bubbleIconFactory.makeIcon("My location");
             myMarker = mMap.addMarker(new MarkerOptions().position(myLoc).
-                    title("My location")
-//                    .snippet("address:588 , sector 45 , gurgaon")
-                    .icon(getMarkerIcon("#8b3e58")));
-        else {
+                    icon(BitmapDescriptorFactory.fromBitmap(bit)).title("My location"));
+            myLOC = location;
+        } else {
             myMarker.setPosition(myLoc);
-            myMarker.showInfoWindow();
+            myLOC = location;
         }
 
         mFirebaseDatabase = FirebaseDatabase.getInstance().getReference().child("geofire");
@@ -271,12 +257,19 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                             Map<String, Object> itemMap = (HashMap<String, Object>) dataSnapshot.getValue();
                             name = (String) itemMap.get("name");
                             makes = (String) itemMap.get("makes");
+                            Location targetLocation = new Location("");
+                            targetLocation.setLatitude(location.latitude);
+                            targetLocation.setLongitude(location.longitude);
+                            dis = myLOC.distanceTo(targetLocation);
+                            dis /= 1000;
+                            dis = (float) Math.round(dis * 100f) / 100f;
 
                             if (makes.toLowerCase().contains(make.toLowerCase())) {
-                                Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude, location.longitude)).
-                                        title(name));
-                                marker.setTag((String) key);
-                                marker.showInfoWindow();
+                                IconGenerator bubbleIconFactory = new IconGenerator(getApplicationContext());
+                                bubbleIconFactory.setStyle(IconGenerator.STYLE_GREEN);
+                                Bitmap bit = bubbleIconFactory.makeIcon(name + "\n" + dis + " KM");
+                                Marker marker = mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(bit)).position(new LatLng(location.latitude, location.longitude)).title(""));
+                                marker.setTag(key);
                             }
                         }
                     }
@@ -385,6 +378,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                         @Override
                         public void onClick(View view) {
                             dialog.dismiss();
+                            raiseRequest();
                         }
                     });
                 }
@@ -394,10 +388,8 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
-    public BitmapDescriptor getMarkerIcon(String color) {
-        float[] hsv = new float[3];
-        Color.colorToHSV(Color.parseColor(color), hsv);
-        return BitmapDescriptorFactory.defaultMarker(hsv[0]);
+    private void raiseRequest() {
+
     }
 
     @Override
@@ -405,6 +397,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
         int id = item.getItemId();
         if (id == android.R.id.home) {
             onBackPressed();
+            ShowCentresNearMe.this.finish();
             return true;
         }
         return super.onOptionsItemSelected(item);

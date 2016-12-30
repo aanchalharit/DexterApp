@@ -16,9 +16,6 @@ public class WhatsNewFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_whats_new, container, false);
 
-        TextView whatsnewfragmenttext = (TextView) view.findViewById(R.id.thirdfragment_tv);
-        whatsnewfragmenttext.setText("whats new will be listed here");
-
         return view;
     }
 

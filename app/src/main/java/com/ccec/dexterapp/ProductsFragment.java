@@ -1,5 +1,6 @@
 package com.ccec.dexterapp;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ccec.dexterapp.entities.Vehicle;
@@ -47,6 +49,9 @@ public class ProductsFragment extends Fragment {
     private ProductsViewAdapter adapter;
     private QueryViewAdapter adapterQ;
     private ProgressBar prBar;
+    private RelativeLayout rel;
+    private ProgressDialog pDialog;
+    private HashMap<String, Object> itemMap;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,6 +79,8 @@ public class ProductsFragment extends Fragment {
         edit = (FloatingActionButton) view.findViewById(R.id.productEdit);
         raise = (FloatingActionButton) view.findViewById(R.id.productRaise);
         hideLinFab();
+
+        rel = (RelativeLayout) view.findViewById(R.id.noOrders);
 
         productFab = (FloatingActionButton) view.findViewById(R.id.productAddFab);
         productFab.setOnClickListener(new View.OnClickListener() {
@@ -120,34 +127,30 @@ public class ProductsFragment extends Fragment {
     }
 
     public void getProducts() {
-        allproducts = new ArrayList<Vehicle>();
+        pDialog = new ProgressDialog(getActivity());
+        pDialog.setMessage("Loading..");
+        pDialog.setIndeterminate(false);
+        pDialog.setCancelable(false);
+        pDialog.show();
 
         firebasedbrefproducts = FirebaseDatabase.getInstance().getReference().child("users/Customer/" + id + "/items/Car");
-        firebasedbrefproducts.addListenerForSingleValueEvent(new ValueEventListener() {
+        firebasedbrefproducts.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String, Object> itemMap = (HashMap<String, Object>) dataSnapshot.getValue();
-                for (Object value : itemMap.values()) {
-                    carkeysarray.add(value.toString());
-                }
+                if (dataSnapshot.getChildrenCount() > 0) {
+                    ProductsRV.setVisibility(View.VISIBLE);
+                    rel.setVisibility(View.GONE);
 
-                for (int carkey = 0; carkey < carkeysarray.size(); carkey++) {
-                    String dbcarkey = carkeysarray.get(carkey);
-                    firebasedbrefproducts = FirebaseDatabase.getInstance().getReference().child("items/Car/" + dbcarkey);
-                    firebasedbrefproducts.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot1) {
-                            Vehicle vehicle = dataSnapshot1.getValue(Vehicle.class);
-                            allproducts.add(vehicle);
-                            adapter = new ProductsViewAdapter(getActivity(), allproducts, carkeysarray, ProductsFragment.this);
-                            ProductsRV.setAdapter(adapter);
-                        }
+                    itemMap = (HashMap<String, Object>) dataSnapshot.getValue();
+                    for (Object value : itemMap.values()) {
+                        carkeysarray.add(value.toString());
+                    }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
+                    getProdDetails();
+                } else {
+                    ProductsRV.setVisibility(View.GONE);
+                    rel.setVisibility(View.VISIBLE);
+                    pDialog.dismiss();
                 }
             }
 
@@ -157,6 +160,44 @@ public class ProductsFragment extends Fragment {
             }
         });
         firebasedbrefproducts.keepSynced(true);
+    }
+
+    private void getProdDetails() {
+        allproducts = new ArrayList<Vehicle>();
+
+        for (int carkey = 0; carkey <= carkeysarray.size(); carkey++) {
+            String dbcarkey = "";
+            if (carkey != carkeysarray.size())
+                dbcarkey = carkeysarray.get(carkey);
+
+            firebasedbrefproducts = FirebaseDatabase.getInstance().getReference().child("items/Car/" + dbcarkey);
+            final int finalCarkey = carkey;
+            firebasedbrefproducts.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot1) {
+                    if (finalCarkey == carkeysarray.size())
+                        setRecycler();
+
+                    if (finalCarkey != carkeysarray.size()) {
+                        Vehicle vehicle = dataSnapshot1.getValue(Vehicle.class);
+                        allproducts.add(vehicle);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    pDialog.dismiss();
+                    return;
+                }
+            });
+        }
+    }
+
+    private void setRecycler() {
+        adapter = new ProductsViewAdapter(getActivity(), allproducts, carkeysarray, ProductsFragment.this);
+        ProductsRV.setAdapter(adapter);
+
+        pDialog.dismiss();
     }
 
     public void showAddFab() {

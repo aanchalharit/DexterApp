@@ -4,19 +4,40 @@
     android:layout_height="match_parent"
     tools:context="com.ccec.dexterapp.ProductsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/secondfragment_tv"
+    <RelativeLayout
+        android:id="@+id/errorSec"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="second fragment" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/header"
+        android:visibility="invisible">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/serviceAddFab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/icon_edit" />
+        <ImageView
+            android:id="@+id/errorImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="150dp"
+            android:src="@drawable/icon_bin_empty" />
+
+        <TextView
+            android:id="@+id/errorHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/errorImage"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="25dp"
+            android:text="No Service Requests Found"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/task_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical"
+        android:scrollbars="none"
+        android:visibility="visible" />
 
 </FrameLayout>

@@ -31,6 +31,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ccec.dexterapp.HomeFragment;
+import com.ccec.dexterapp.HomePage;
 import com.ccec.dexterapp.Login;
 import com.ccec.dexterapp.R;
 import com.ccec.dexterapp.entities.Notif;
@@ -241,18 +243,21 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
     private void updateMyLocation(final GoogleMap googleMap, Location location) {
         this.location = location;
 
-        final LatLng myLoc = new LatLng(location.getLatitude(), location.getLongitude());
+        LatLng myLoc = null;
+        if (location != null) {
+            myLoc = new LatLng(location.getLatitude(), location.getLongitude());
 
-        if (myMarker == null) {
-            IconGenerator bubbleIconFactory = new IconGenerator(getApplicationContext());
-            bubbleIconFactory.setStyle(IconGenerator.STYLE_BLUE);
-            Bitmap bit = bubbleIconFactory.makeIcon("My location");
-            myMarker = mMap.addMarker(new MarkerOptions().position(myLoc).
-                    icon(BitmapDescriptorFactory.fromBitmap(bit)).title("My location"));
-            myLOC = location;
-        } else {
-            myMarker.setPosition(myLoc);
-            myLOC = location;
+            if (myMarker == null) {
+                IconGenerator bubbleIconFactory = new IconGenerator(getApplicationContext());
+                bubbleIconFactory.setStyle(IconGenerator.STYLE_BLUE);
+                Bitmap bit = bubbleIconFactory.makeIcon("My location");
+                myMarker = mMap.addMarker(new MarkerOptions().position(myLoc).
+                        icon(BitmapDescriptorFactory.fromBitmap(bit)).title("My location"));
+                myLOC = location;
+            } else {
+                myMarker.setPosition(myLoc);
+                myLOC = location;
+            }
         }
 
         mFirebaseDatabase = FirebaseDatabase.getInstance().getReference().child("geofire");
@@ -455,6 +460,25 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                             @Override
                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                 sendNotification();
+                                pDialog.dismiss();
+
+                                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ShowCentresNearMe.this);
+                                builder.setTitle("Service request raised.");
+                                builder.setMessage("Your service request ID is DexterSR " + serviceNumber);
+                                builder.setCancelable(true);
+
+                                builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(final DialogInterface dialog, int which) {
+                                        Intent in = new Intent(ShowCentresNearMe.this, HomePage.class);
+                                        startActivity(in);
+                                        finish();
+                                        dialog.dismiss();
+                                    }
+                                });
+
+                                android.app.AlertDialog alertDialog = builder.create();
+                                alertDialog.show();
                             }
                         });
                     }
@@ -518,10 +542,6 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
 
             }
         });
-
-        pDialog.dismiss();
-        Toast.makeText(this, "Request raised", Toast.LENGTH_SHORT).show();
-        onBackPressed();
     }
 
     @Override

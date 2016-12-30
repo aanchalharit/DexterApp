@@ -58,7 +58,7 @@ public class HelperFragment extends Fragment {
         } else if (helper.equals("not_verified")) {
             btn.setText("Visit Profile");
             header.setText("Profile not updated");
-            content.setText("Please update your profile to start receiving service requests.");
+            content.setText("Please update your profile to start adding products.");
             img.setImageResource(R.drawable.icon_not_verified);
         }
 

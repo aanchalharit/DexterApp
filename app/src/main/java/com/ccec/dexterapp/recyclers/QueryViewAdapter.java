@@ -10,6 +10,7 @@ import android.widget.CompoundButton;
 import com.ccec.dexterapp.ProductsFragment;
 import com.ccec.dexterapp.R;
 import com.ccec.dexterapp.managers.AppData;
+import com.ccec.dexterapp.managers.FontsManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,7 @@ public class QueryViewAdapter extends RecyclerView.Adapter<QueryViewHolder> {
     @Override
     public void onBindViewHolder(final QueryViewHolder holder, final int position) {
         holder.QueryTitle.setText(allproductsva.get(position).toString());
+        holder.QueryTitle.setTypeface(FontsManager.getRegularTypeface(mContext));
 
         holder.switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

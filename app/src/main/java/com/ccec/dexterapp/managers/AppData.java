@@ -18,6 +18,8 @@ public class AppData {
     public static Location selectedCordLoc = null;
     public static boolean fabVisible = false;
 
+    public static Object currentMap = null;
+
     public static int selectedIndex = 0;
 
     public static Vehicle currentVeh = null;

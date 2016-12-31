@@ -283,6 +283,20 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
                 new PostData().execute();
             }
         });
+
+        img.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                img.performClick();
+            }
+        }, 4000);
+
+        img.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                img.performClick();
+            }
+        }, 8000);
     }
 
     class PostData extends AsyncTask<String, String, String> {

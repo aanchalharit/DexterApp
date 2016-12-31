@@ -74,7 +74,7 @@ public class ProductsViewAdapter extends RecyclerView.Adapter<ProductsViewHolder
                 context = view.getContext();
                 pos = position;
 
-                AppData.currentVeh = allproductsva.get(pos);
+                AppData.currentVehi = allproductsva.get(pos);
                 AppData.currentImagePath = carkeys.get(pos);
             }
         });
@@ -99,7 +99,7 @@ public class ProductsViewAdapter extends RecyclerView.Adapter<ProductsViewHolder
     public void getProductDetails() {
         Intent intent = new Intent(context, VehicleDetail.class);
 
-        AppData.currentVeh = allproductsva.get(pos);
+        AppData.currentVehi = allproductsva.get(pos);
         AppData.currentImagePath = carkeys.get(pos);
 
         context.startActivity(intent);

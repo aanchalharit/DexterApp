@@ -127,33 +127,13 @@ public class ServicesFragment extends Fragment {
                 firebasedbrefproducts.push().setValue("Schedule date accepted by customer", new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        DatabaseReference firebasedbref2 = FirebaseDatabase.getInstance().getReference().child("requests/" + AppData.serviceType + "/" + (String) ((HashMap) AppData.currentMap).get("key"));
-                        firebasedbref2.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                Requests requests = dataSnapshot.getValue(Requests.class);
-                                requests.setScheduleTime("");
+                        pDialog2.dismiss();
+                        dialog.dismiss();
 
-                                DatabaseReference firebasedbref2 = FirebaseDatabase.getInstance().getReference().child("requests/" + AppData.serviceType + "/" + (String) ((HashMap) AppData.currentMap).get("key"));
-                                firebasedbref2.setValue(requests, new DatabaseReference.CompletionListener() {
-                                    @Override
-                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                        pDialog2.dismiss();
-                                        dialog.dismiss();
-
-                                        Toast.makeText(getActivity(), "Date Accepted", Toast.LENGTH_SHORT).show();
-                                        HomeFragment profileFragment = new HomeFragment();
-                                        getActivity().getSupportFragmentManager().beginTransaction()
-                                                .replace(R.id.fragment_container, profileFragment).commit();
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
+                        Toast.makeText(getActivity(), "Date Accepted", Toast.LENGTH_SHORT).show();
+                        HomeFragment profileFragment = new HomeFragment();
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, profileFragment).commit();
                     }
                 });
                 dialog.dismiss();

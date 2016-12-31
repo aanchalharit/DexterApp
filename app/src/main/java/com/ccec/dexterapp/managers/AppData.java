@@ -22,8 +22,10 @@ public class AppData {
 
     public static int selectedIndex = 0;
 
-    public static Vehicle currentVeh = null;
+    public static Vehicle currentVehi = null;
     public static String currentImagePath = null;
+
+    public static Object currentVeh = null;
 
     public static List<Boolean> queries;
 

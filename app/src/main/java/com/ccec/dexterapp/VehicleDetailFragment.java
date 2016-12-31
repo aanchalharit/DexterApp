@@ -29,7 +29,7 @@ public class VehicleDetailFragment extends Fragment {
         Activity activity = this.getActivity();
         CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
         if (appBarLayout != null) {
-            veh = AppData.currentVeh;
+            veh = AppData.currentVehi;
 
             appBarLayout.setTitle(FontsManager.actionBarTypeface(activity, veh.getMake() + " " + veh.getModel()));
         }

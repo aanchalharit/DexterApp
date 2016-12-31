@@ -1,6 +1,7 @@
 package com.ccec.dexterapp.recyclers;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.ccec.dexterapp.NewOrderDetail;
 import com.ccec.dexterapp.R;
 import com.ccec.dexterapp.ServicesFragment;
 import com.ccec.dexterapp.managers.AppData;
@@ -77,14 +79,15 @@ public class ServicesViewAdapter extends RecyclerView.Adapter<ServicesViewHolder
         });
         databaseReference.keepSynced(true);
 
-        if (((String) ((HashMap) obj).get("scheduleTime")).equals("")) {
+        if (((String) ((HashMap) obj).get("status")).equals("Open")) {
             holder.buttons.setVisibility(View.GONE);
             String dateText = "Placed On: " + (String) ((HashMap) obj).get("openTime");
             Spannable spannable3 = new SpannableString(dateText);
             spannable3.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.colorBlack)), 0, ("Placed On:").length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             spannable3.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, ("Placed On:").length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             holder.RVDate.setText(spannable3, TextView.BufferType.SPANNABLE);
-        } else {
+        } else if (((String) ((HashMap) obj).get("status")).equals("Accepted") ||
+                ((String) ((HashMap) obj).get("status")).equals("Completed")) {
             String datee = (String) ((HashMap) obj).get("scheduleTime");
             String[] splitStr = datee.split("\\s+");
 
@@ -143,7 +146,11 @@ public class ServicesViewAdapter extends RecyclerView.Adapter<ServicesViewHolder
                 format = new SimpleDateFormat("EE MMM d'th', yyyy");
             String yourDate = format.format(d);
 
-            String dateText = "Scheduled On: " + yourDate;
+            String dateText = "";
+            if (((String) ((HashMap) obj).get("status")).equals("Completed"))
+                dateText = "Processed On: " + yourDate;
+            else
+                dateText = "Scheduled On: " + yourDate;
             Spannable spannable3 = new SpannableString(dateText);
             spannable3.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.colorBlack)), 0, ("Scheduled On:").length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             spannable3.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, ("Scheduled On:").length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -180,7 +187,7 @@ public class ServicesViewAdapter extends RecyclerView.Adapter<ServicesViewHolder
             @Override
             public void onClick(View view) {
                 pos = position;
-//                getProductDetails();
+                getProductDetails();
             }
         });
     }
@@ -208,16 +215,14 @@ public class ServicesViewAdapter extends RecyclerView.Adapter<ServicesViewHolder
         });
     }
 
-//    public void getProductDetails() {
-//        Intent intent = new Intent(mContext, NewOrderDetail.class);
-//
-//        AppData.currentImagePath = keys.get(pos);
-//        AppData.currentVeh = itemMap.get(AppData.currentImagePath);
-//        AppData.currentVehCust = custMap.get(AppData.currentImagePath);
-//        AppData.currentImagePath = ((String) ((HashMap) AppData.currentVeh).get("forDesign"));
-//
-//        mContext.startActivity(intent);
-//    }
+    public void getProductDetails() {
+        Intent intent = new Intent(mContext, NewOrderDetail.class);
+
+        AppData.currentImagePath = keys.get(pos);
+        AppData.currentVeh = itemMap.get(AppData.currentImagePath);
+
+        mContext.startActivity(intent);
+    }
 
     @Override
     public int getItemCount() {

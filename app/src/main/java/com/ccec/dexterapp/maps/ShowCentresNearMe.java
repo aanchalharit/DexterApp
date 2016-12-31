@@ -21,7 +21,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,9 +30,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ccec.dexterapp.HomeFragment;
 import com.ccec.dexterapp.HomePage;
-import com.ccec.dexterapp.Login;
 import com.ccec.dexterapp.R;
 import com.ccec.dexterapp.entities.Notif;
 import com.ccec.dexterapp.entities.Requests;
@@ -96,7 +93,6 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
     private float dis;
     private String selectedCenter;
     private ProgressDialog pDialog;
-    private int p = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +109,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
-        veh = AppData.currentVeh;
+        veh = AppData.currentVehi;
         make = veh.getMake();
         path = AppData.currentImagePath;
 
@@ -238,6 +234,13 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                 updateMyLocation(googleMap, location);
             }
         });
+
+//        img.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                img.performClick();
+//            }
+//        }, 10000);
     }
 
     private void updateMyLocation(final GoogleMap googleMap, Location location) {
@@ -396,7 +399,9 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                         public void onClick(View view) {
                             dialog.dismiss();
                             selectedCenter = (String) marker.getTag();
-                            raiseRequest();
+                            if (isNetwork()) {
+                                raiseRequest();
+                            }
                         }
                     });
                 }
@@ -433,12 +438,15 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
             format = new SimpleDateFormat("EE MMM d'th', yyyy");
         final String yourDate = format.format(new Date());
 
+        DatabaseReference countRef = FirebaseDatabase.getInstance().getReference().child("variables/serviceNumber");
         final String finalQueryArr = queryArr;
-        final DatabaseReference databaseReference3 = FirebaseDatabase.getInstance().getReference("/variables/serviceNumber");
-        databaseReference3.addListenerForSingleValueEvent(new ValueEventListener() {
+        countRef.runTransaction(new Transaction.Handler() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                final int serviceNumber = dataSnapshot.getValue(Integer.class);
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                Integer serviceNumber = mutableData.getValue(Integer.class);
+                if (serviceNumber == null) {
+                    return Transaction.success(mutableData);
+                }
 
                 final Requests requests = new Requests();
                 requests.setIssuedBy(id);
@@ -452,11 +460,12 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                 requests.setQueries(finalQueryArr);
 
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("requests/Car");
+                final Integer finalServiceNumber = serviceNumber;
                 databaseReference.child("DexterSR" + serviceNumber).setValue(requests, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                         DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference("users/Customer/" + id + "/requests/Car");
-                        databaseReference2.push().setValue("DexterSR" + serviceNumber, new DatabaseReference.CompletionListener() {
+                        databaseReference2.push().setValue("DexterSR" + finalServiceNumber, new DatabaseReference.CompletionListener() {
                             @Override
                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                 sendNotification();
@@ -464,7 +473,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
 
                                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ShowCentresNearMe.this);
                                 builder.setTitle("Service request raised.");
-                                builder.setMessage("Your service request ID is DexterSR " + serviceNumber);
+                                builder.setMessage("Your service request ID is DexterSR " + finalServiceNumber);
                                 builder.setCancelable(true);
 
                                 builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
@@ -484,45 +493,17 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                     }
                 });
 
-                databaseReference3.setValue(serviceNumber + 1);
+                serviceNumber += 1;
+                mutableData.setValue(serviceNumber);
+                return Transaction.success(mutableData);
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(getApplicationContext(), "Something went wrong.", Toast.LENGTH_SHORT).show();
-                return;
+            public void onComplete(DatabaseError databaseError, boolean b,
+                                   DataSnapshot dataSnapshot) {
             }
         });
-        databaseReference3.keepSynced(true);
     }
-
-//    private int onStarClicked() {
-//        DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference("/variables");
-//        databaseReference2.runTransaction(new Transaction.Handler() {
-//            @Override
-//            public Transaction.Result doTransaction(MutableData mutableData) {
-//                try {
-//                    p = mutableData.getValue(Integer.class);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    return Transaction.success(mutableData);
-//                }
-//
-//                p += 1;
-//
-//                mutableData.setValue(p);
-//                return Transaction.success(mutableData);
-//            }
-//
-//            @Override
-//            public void onComplete(DatabaseError databaseError, boolean b,
-//                                   DataSnapshot dataSnapshot) {
-//                Log.d("TRRRRRRR", "postTransaction:onComplete:" + databaseError);
-//            }
-//        });
-//
-//        return p;
-//    }
 
     private void sendNotification() {
         DatabaseReference firebasedbrefproduct = FirebaseDatabase.getInstance().getReference("users/ServiceCenter/" + selectedCenter);

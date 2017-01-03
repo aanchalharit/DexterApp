@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ccec.dexterapp.entities.FlowRecord;
 import com.ccec.dexterapp.entities.Notif;
 import com.ccec.dexterapp.entities.Requests;
 import com.ccec.dexterapp.managers.AppData;
@@ -29,7 +30,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -123,20 +126,33 @@ public class ServicesFragment extends Fragment {
                 pDialog2.setCancelable(false);
                 pDialog2.show();
 
-                DatabaseReference firebasedbrefproducts = FirebaseDatabase.getInstance().getReference().child("processFlow/" + (String) ((HashMap) AppData.currentMap).get("key"));
-                firebasedbrefproducts.push().setValue("Schedule date accepted by customer", new DatabaseReference.CompletionListener() {
+                final DatabaseReference firebasedbrefproducts = FirebaseDatabase.getInstance().getReference().child("processFlow/" + (String) ((HashMap) AppData.currentMap).get("key"));
+                firebasedbrefproducts.child("status").setValue("Accepted", new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        pDialog2.dismiss();
-                        dialog.dismiss();
+                        FlowRecord flowRecord = new FlowRecord();
+                        flowRecord.setTitle("Schedule date accepted by customer");
 
-                        Toast.makeText(getActivity(), "Date Accepted", Toast.LENGTH_SHORT).show();
-                        HomeFragment profileFragment = new HomeFragment();
-                        getActivity().getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fragment_container, profileFragment).commit();
+                        Calendar c = Calendar.getInstance();
+                        SimpleDateFormat df = new SimpleDateFormat("EEE, d MMM hh:mm a");
+                        String formattedDate = df.format(c.getTime());
+                        flowRecord.setTimestamp(formattedDate);
+
+                        firebasedbrefproducts.push().setValue(flowRecord, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                pDialog2.dismiss();
+                                dialog.dismiss();
+
+                                Toast.makeText(getActivity(), "Date Accepted", Toast.LENGTH_SHORT).show();
+                                HomeFragment profileFragment = new HomeFragment();
+                                getActivity().getSupportFragmentManager().beginTransaction()
+                                        .replace(R.id.fragment_container, profileFragment).commit();
+                            }
+                        });
+                        dialog.dismiss();
                     }
                 });
-                dialog.dismiss();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -165,7 +181,15 @@ public class ServicesFragment extends Fragment {
                 pDialog2.show();
 
                 DatabaseReference firebasedbrefproducts = FirebaseDatabase.getInstance().getReference().child("processFlow/" + (String) ((HashMap) AppData.currentMap).get("key"));
-                firebasedbrefproducts.push().setValue("Schedule date rejected by customer", new DatabaseReference.CompletionListener() {
+                FlowRecord flowRecord = new FlowRecord();
+                flowRecord.setTitle("Schedule date rejected by customer");
+
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat df = new SimpleDateFormat("EEE, d MMM hh:mm a");
+                String formattedDate = df.format(c.getTime());
+                flowRecord.setTimestamp(formattedDate);
+
+                firebasedbrefproducts.push().setValue(flowRecord, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                         DatabaseReference firebasedbref2 = FirebaseDatabase.getInstance().getReference().child("requests/" + AppData.serviceType + "/" + (String) ((HashMap) AppData.currentMap).get("key"));

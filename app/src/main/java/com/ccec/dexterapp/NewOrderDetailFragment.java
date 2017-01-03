@@ -109,7 +109,6 @@ public class NewOrderDetailFragment extends Fragment implements OnMapReadyCallba
             }
         });
 
-
         name = (TextView) view.findViewById(R.id.fullNameTitle);
         location = (TextView) view.findViewById(R.id.skypeNameTitle);
         company = (TextView) view.findViewById(R.id.companyNameTitle);

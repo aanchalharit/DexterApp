@@ -88,6 +88,30 @@ public class ServicesViewAdapter extends RecyclerView.Adapter<ServicesViewHolder
             holder.RVDate.setText(spannable3, TextView.BufferType.SPANNABLE);
         } else if (((String) ((HashMap) obj).get("status")).equals("Accepted") ||
                 ((String) ((HashMap) obj).get("status")).equals("Completed")) {
+
+            DatabaseReference firebasedbrefproducts = FirebaseDatabase.getInstance().getReference().child("processFlow/" + (String) ((HashMap) obj).get("key") + "/status");
+            firebasedbrefproducts.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    try {
+                        if (!dataSnapshot.getValue(String.class).equals("")) {
+                            holder.imgAcc.setVisibility(View.INVISIBLE);
+                            holder.imgRej.setVisibility(View.INVISIBLE);
+                        } else {
+                            holder.imgAcc.setVisibility(View.VISIBLE);
+                            holder.imgRej.setVisibility(View.VISIBLE);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
             String datee = (String) ((HashMap) obj).get("scheduleTime");
             String[] splitStr = datee.split("\\s+");
 
@@ -206,7 +230,6 @@ public class ServicesViewAdapter extends RecyclerView.Adapter<ServicesViewHolder
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

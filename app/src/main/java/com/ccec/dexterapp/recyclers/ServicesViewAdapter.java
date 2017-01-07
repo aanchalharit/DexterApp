@@ -125,68 +125,11 @@ public class ServicesViewAdapter extends RecyclerView.Adapter<ServicesViewHolder
             });
 
             String datee = (String) ((HashMap) obj).get("scheduleTime");
-            String[] splitStr = datee.split("\\s+");
-
-            Date d = new Date();
-            d.setDate(Integer.parseInt(splitStr[0]));
-            int mon = 0;
-            switch (splitStr[1]) {
-                case "Jan":
-                    mon = 0;
-                    break;
-                case "Feb":
-                    mon = 1;
-                    break;
-                case "Mar":
-                    mon = 2;
-                    break;
-                case "Apr":
-                    mon = 3;
-                    break;
-                case "May":
-                    mon = 4;
-                    break;
-                case "Jun":
-                    mon = 5;
-                    break;
-                case "Jul":
-                    mon = 6;
-                    break;
-                case "Aug":
-                    mon = 7;
-                    break;
-                case "Sep":
-                    mon = 8;
-                    break;
-                case "Oct":
-                    mon = 9;
-                    break;
-                case "Nov":
-                    mon = 10;
-                    break;
-                case "Dec":
-                    mon = 11;
-                    break;
-            }
-            d.setMonth(mon);
-
-            SimpleDateFormat format = new SimpleDateFormat("d");
-            String date = format.format(d);
-            if (date.endsWith("1") && !date.endsWith("11"))
-                format = new SimpleDateFormat("EE MMM d'st', yyyy");
-            else if (date.endsWith("2") && !date.endsWith("12"))
-                format = new SimpleDateFormat("EE MMM d'nd', yyyy");
-            else if (date.endsWith("3") && !date.endsWith("13"))
-                format = new SimpleDateFormat("EE MMM d'rd', yyyy");
-            else
-                format = new SimpleDateFormat("EE MMM d'th', yyyy");
-            String yourDate = format.format(d);
-
-            String dateText = "";
+            String dateText;
             if (((String) ((HashMap) obj).get("status")).equals("Completed"))
-                dateText = "Processed On: " + yourDate;
+                dateText = "Processed On: " + datee;
             else
-                dateText = "Scheduled On: " + yourDate;
+                dateText = "Scheduled On: " + datee;
             Spannable spannable3 = new SpannableString(dateText);
             spannable3.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.colorBlack)), 0, ("Scheduled On:").length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             spannable3.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, ("Scheduled On:").length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

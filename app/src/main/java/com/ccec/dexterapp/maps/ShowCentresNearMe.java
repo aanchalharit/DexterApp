@@ -457,13 +457,13 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
         SimpleDateFormat format = new SimpleDateFormat("d");
         String date = format.format(new Date());
         if (date.endsWith("1") && !date.endsWith("11"))
-            format = new SimpleDateFormat("EE MMM d'st', yyyy");
+            format = new SimpleDateFormat("EE, MMM d'st'");
         else if (date.endsWith("2") && !date.endsWith("12"))
-            format = new SimpleDateFormat("EE MMM d'nd', yyyy");
+            format = new SimpleDateFormat("EE, MM d'nd'");
         else if (date.endsWith("3") && !date.endsWith("13"))
-            format = new SimpleDateFormat("EE MMM d'rd', yyyy");
+            format = new SimpleDateFormat("EE, MMM d'rd'");
         else
-            format = new SimpleDateFormat("EE MMM d'th', yyyy");
+            format = new SimpleDateFormat("EE, MMM d'th'");
         final String yourDate = format.format(new Date());
 
         DatabaseReference countRef = FirebaseDatabase.getInstance().getReference().child("variables/serviceNumber");

@@ -29,7 +29,7 @@
                 android:layout_marginTop="2dp"
                 android:layout_weight="50"
                 android:alpha="0.92"
-                android:text="Placed by :"
+                android:text="Placed to :"
                 android:textSize="15dp" />
 
             <TextView

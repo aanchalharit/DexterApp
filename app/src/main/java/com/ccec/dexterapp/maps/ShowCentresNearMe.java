@@ -93,6 +93,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
     private float dis;
     private String selectedCenter;
     private ProgressDialog pDialog;
+    private Integer serviceNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -215,7 +216,20 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
         if (gps_enabled != false) {
             location = mLocationManager
                     .getLastKnownLocation(provider);
-            if (location != null) {
+
+            if (location == null) {
+                location = mLocationManager
+                        .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                if (location == null) {
+                    location = mLocationManager
+                            .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    if (location != null) {
+                        updateMyLocation(googleMap, location);
+                    }
+                } else {
+                    updateMyLocation(googleMap, location);
+                }
+            } else {
                 updateMyLocation(googleMap, location);
             }
         }
@@ -231,7 +245,21 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                 location = mLocationManager
                         .getLastKnownLocation(provider);
 
-                updateMyLocation(googleMap, location);
+                if (location == null) {
+                    location = mLocationManager
+                            .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    if (location == null) {
+                        location = mLocationManager
+                                .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        if (location != null) {
+                            updateMyLocation(googleMap, location);
+                        }
+                    } else {
+                        updateMyLocation(googleMap, location);
+                    }
+                } else {
+                    updateMyLocation(googleMap, location);
+                }
             }
         });
 
@@ -443,7 +471,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
         countRef.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
-                Integer serviceNumber = mutableData.getValue(Integer.class);
+                serviceNumber = mutableData.getValue(Integer.class);
                 if (serviceNumber == null) {
                     return Transaction.success(mutableData);
                 }
@@ -452,7 +480,6 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                 requests.setIssuedBy(id);
                 requests.setIssuedTo(selectedCenter);
                 requests.setItem(path);
-//                final int sKey = onStarClicked();
                 requests.setKey("DexterSR" + serviceNumber);
                 requests.setOpenTime(yourDate);
                 requests.setScheduleTime("");

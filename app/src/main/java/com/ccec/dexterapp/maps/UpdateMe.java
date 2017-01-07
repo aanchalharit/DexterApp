@@ -262,7 +262,21 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
         if (gps_enabled != false) {
             location = mLocationManager
                     .getLastKnownLocation(provider);
-            if (location != null) {
+            if (location == null) {
+                location = mLocationManager
+                        .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                if (location == null) {
+                    location = mLocationManager
+                            .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    if (location != null) {
+                        updateMyLocation(googleMap, location);
+                        new PostData().execute();
+                    }
+                } else {
+                    updateMyLocation(googleMap, location);
+                    new PostData().execute();
+                }
+            } else {
                 updateMyLocation(googleMap, location);
                 new PostData().execute();
             }
@@ -279,8 +293,24 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
                 location = mLocationManager
                         .getLastKnownLocation(provider);
 
-                updateMyLocation(googleMap, location);
-                new PostData().execute();
+                if (location == null) {
+                    location = mLocationManager
+                            .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    if (location == null) {
+                        location = mLocationManager
+                                .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        if (location != null) {
+                            updateMyLocation(googleMap, location);
+                            new PostData().execute();
+                        }
+                    } else {
+                        updateMyLocation(googleMap, location);
+                        new PostData().execute();
+                    }
+                } else {
+                    updateMyLocation(googleMap, location);
+                    new PostData().execute();
+                }
             }
         });
 
@@ -345,7 +375,7 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
                             latitude, longitude, 1);
             } catch (IOException e) {
                 Log.e("errrrrrrrrr", e.getMessage());
-                getName(addressList,geocoder,latitude,longitude);
+                getName(addressList, geocoder, latitude, longitude);
             }
         }
 
@@ -365,8 +395,7 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
     }
 
     private List<Address> getName(List<Address> addressList, Geocoder geocoder, double latitude, double longitude) {
-        try
-        {
+        try {
             addressList = geocoder.getFromLocation(
                     latitude, longitude, 1);
         } catch (IOException e) {
@@ -393,8 +422,13 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }
-        else
-            myMarker.setPosition(myLoc);
+        else {
+            try {
+                myMarker.setPosition(myLoc);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         try {
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLoc, 16));

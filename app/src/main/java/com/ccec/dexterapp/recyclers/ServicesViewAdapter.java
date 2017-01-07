@@ -64,6 +64,12 @@ public class ServicesViewAdapter extends RecyclerView.Adapter<ServicesViewHolder
 
         holder.RVtitle.setText("Service ID: " + (String) ((HashMap) obj).get("key"));
 
+        String desText = "Status: " + (String) ((HashMap) obj).get("status");
+        Spannable spannable = new SpannableString(desText);
+        spannable.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.colorBlack)), 0, ("Status:").length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, ("Status:").length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        holder.RVStatus.setText(spannable, TextView.BufferType.SPANNABLE);
+
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("items/Car/" + (String) ((HashMap) obj).get("item"));
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -97,6 +103,12 @@ public class ServicesViewAdapter extends RecyclerView.Adapter<ServicesViewHolder
                         if (!dataSnapshot.getValue(String.class).equals("")) {
                             holder.imgAcc.setVisibility(View.INVISIBLE);
                             holder.imgRej.setVisibility(View.INVISIBLE);
+
+                            String desText = "Status: " + dataSnapshot.getValue(String.class);
+                            Spannable spannable = new SpannableString(desText);
+                            spannable.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.colorBlack)), 0, ("Status:").length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            spannable.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, ("Status:").length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            holder.RVStatus.setText(spannable, TextView.BufferType.SPANNABLE);
                         } else {
                             holder.imgAcc.setVisibility(View.VISIBLE);
                             holder.imgRej.setVisibility(View.VISIBLE);
@@ -180,12 +192,6 @@ public class ServicesViewAdapter extends RecyclerView.Adapter<ServicesViewHolder
             spannable3.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, ("Scheduled On:").length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             holder.RVDate.setText(spannable3, TextView.BufferType.SPANNABLE);
         }
-
-        String desText = "Status: " + (String) ((HashMap) obj).get("status");
-        Spannable spannable = new SpannableString(desText);
-        spannable.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.colorBlack)), 0, ("Status:").length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannable.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, ("Status:").length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        holder.RVStatus.setText(spannable, TextView.BufferType.SPANNABLE);
 
         holder.imgAcc.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.ccec.dexterapp.entities.FlowRecord;
 import com.ccec.dexterapp.managers.AppData;
 import com.ccec.dexterapp.recyclers.ProcessFlowViewAdapter;
 import com.ccec.dexterapp.recyclers.ServicesViewAdapter;
@@ -235,14 +236,20 @@ public class NewOrderDetailFragment extends Fragment implements OnMapReadyCallba
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getChildrenCount() > 0) {
-                    List<String> list = new ArrayList<>();
+                    List<FlowRecord> list = new ArrayList<>();
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                        list.add(postSnapshot.getValue(String.class));
+                        try {
+                            Map<String, Object> itemMap = (HashMap<String, Object>) postSnapshot.getValue();
+                            FlowRecord f = new FlowRecord();
+                            f.setTitle((String) itemMap.get("title"));
+                            f.setTimestamp((String) itemMap.get("timestamp"));
+                            list.add(f);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
 
-                    Map<String, Object> itemMap = (HashMap<String, Object>) dataSnapshot.getValue();
-
-                    ProcessFlowViewAdapter recyclerViewAdapter = new ProcessFlowViewAdapter(getActivity(), itemMap, list);
+                    ProcessFlowViewAdapter recyclerViewAdapter = new ProcessFlowViewAdapter(getActivity(), list);
                     recyclerView.setAdapter(recyclerViewAdapter);
                 }
             }

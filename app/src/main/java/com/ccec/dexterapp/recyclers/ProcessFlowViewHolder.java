@@ -25,6 +25,7 @@ public class ProcessFlowViewHolder extends RecyclerView.ViewHolder {
 //        RVSinglerowCard = (CardView) itemView.findViewById(R.id.singleitemCardView);
 
         RVtitle = (TextView) itemView.findViewById(R.id.product_cardviewMake);
+        RVDate = (TextView) itemView.findViewById(R.id.product_cardviewMake2);
 //        RVCar = (TextView) itemView.findViewById(R.id.product_cardviewModel);
 //        RVDate = (TextView) itemView.findViewById(R.id.product_cardviewRegNumber);
 //        RVStatus = (TextView) itemView.findViewById(R.id.product_cardviewReg1);

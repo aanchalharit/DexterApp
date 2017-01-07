@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.ccec.dexterapp.NewOrderDetail;
 import com.ccec.dexterapp.R;
 import com.ccec.dexterapp.ServicesFragment;
+import com.ccec.dexterapp.entities.FlowRecord;
 import com.ccec.dexterapp.managers.AppData;
 import com.google.android.gms.drive.realtime.internal.event.ObjectChangedDetails;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -41,12 +42,10 @@ public class ProcessFlowViewAdapter extends RecyclerView.Adapter<ProcessFlowView
     private CircularImageView userImg;
     private int pos;
     private ServicesFragment up;
-    private List<String> keys;
-    private Map<String, Object> itemMap;
+    private List<FlowRecord> keys;
 
-    public ProcessFlowViewAdapter(Context context, Map<String, Object> itemMap, List<String> keys) {
+    public ProcessFlowViewAdapter(Context context, List<FlowRecord> keys) {
         this.mContext = context;
-        this.itemMap = itemMap;
         this.keys = keys;
     }
 
@@ -59,15 +58,14 @@ public class ProcessFlowViewAdapter extends RecyclerView.Adapter<ProcessFlowView
 
     @Override
     public void onBindViewHolder(final ProcessFlowViewHolder holder, final int position) {
-        final String key = keys.get(position);
-        Object obj = itemMap.get(key);
+        final FlowRecord key = keys.get(position);
 
-//        holder.RVtitle.setText((String) ((HashMap) obj).get("key"));
-        holder.RVtitle.setText(key);
+        holder.RVtitle.setText(key.getTitle());
+        holder.RVDate.setText(key.getTimestamp());
     }
 
     @Override
     public int getItemCount() {
-        return itemMap.size();
+        return keys.size();
     }
 }

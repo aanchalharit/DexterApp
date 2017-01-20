@@ -21,6 +21,7 @@ public class AppData {
     public static Object currentMap = null;
 
     public static int selectedIndex = 0;
+    public static int selectedTab = 0;
 
     public static Vehicle currentVehi = null;
     public static String currentImagePath = null;

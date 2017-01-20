@@ -17,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ccec.dexterapp.entities.FlowRecord;
-import com.ccec.dexterapp.entities.Notif;
 import com.ccec.dexterapp.entities.Requests;
 import com.ccec.dexterapp.managers.AppData;
 import com.ccec.dexterapp.managers.FontsManager;
@@ -148,6 +147,7 @@ public class ServicesFragment extends Fragment {
                                 HomeFragment profileFragment = new HomeFragment();
                                 getActivity().getSupportFragmentManager().beginTransaction()
                                         .replace(R.id.fragment_container, profileFragment).commit();
+                                AppData.selectedTab = 1;
                             }
                         });
                         dialog.dismiss();
@@ -211,6 +211,7 @@ public class ServicesFragment extends Fragment {
                                         HomeFragment profileFragment = new HomeFragment();
                                         getActivity().getSupportFragmentManager().beginTransaction()
                                                 .replace(R.id.fragment_container, profileFragment).commit();
+                                        AppData.selectedTab = 1;
                                     }
                                 });
                             }

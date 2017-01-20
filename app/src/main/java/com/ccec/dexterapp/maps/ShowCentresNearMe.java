@@ -506,6 +506,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                                 builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(final DialogInterface dialog, int which) {
+                                        AppData.selectedTab = 1;
                                         Intent in = new Intent(ShowCentresNearMe.this, HomePage.class);
                                         startActivity(in);
                                         finish();
@@ -539,9 +540,9 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
             public void onDataChange(DataSnapshot dataSnapshot) {
                 DatabaseReference firebasedbrefproduc = FirebaseDatabase.getInstance().getReference();
                 Notif notif = new Notif();
-//                  notif.setTit("New order received");
+                notif.setTitle("New service request received");
                 notif.setUsername((String) ((HashMap) dataSnapshot.getValue()).get("fcm"));
-                notif.setMessage("New order received");
+                notif.setMessage("DexterSR" + serviceNumber);
                 firebasedbrefproduc.child("notifs").push().setValue(notif);
             }
 

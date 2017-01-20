@@ -64,9 +64,19 @@ public class HomeFragment extends Fragment {
         tabLayout.setVisibility(View.VISIBLE);
         tabLayout.setupWithViewPager(mViewPager);
 
+        if (AppData.selectedTab != 0) {
+            setTab(AppData.selectedTab);
+            AppData.selectedTab = 0;
+        }
+
         changeTabsFont();
 
         return view;
+    }
+
+    private void setTab(int pos) {
+        TabLayout.Tab tab = tabLayout.getTabAt(pos);
+        tab.select();
     }
 
     public void processFab() {

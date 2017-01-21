@@ -255,6 +255,7 @@ public class ProductsFragment extends Fragment {
                 dialog.dismiss();
                 Intent in = new Intent(getActivity(), ShowCentresNearMe.class);
                 getActivity().startActivity(in);
+                dialog.dismiss();
             }
         });
 

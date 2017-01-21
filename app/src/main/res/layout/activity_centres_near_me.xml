@@ -21,6 +21,12 @@
     </android.support.design.widget.AppBarLayout>
 
     <fragment
+        android:id="@+id/place_autocomplete_fragment"
+        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
@@ -39,4 +45,137 @@
         android:layout_marginRight="32dp"
         android:src="@drawable/icon_location" />
 
+    <RelativeLayout
+        android:id="@+id/slideView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:alpha="0.8"
+        android:background="@drawable/back_button_round_red">
+
+        <LinearLayout
+            android:id="@+id/lin1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:weightSum="100">
+
+            <ImageButton
+                android:id="@+id/im1"
+                android:layout_width="wrap_content"
+                android:layout_height="55dp"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="33"
+                android:background="@drawable/back_button_round_green"
+                android:src="@drawable/icon_cam" />
+
+            <ImageButton
+                android:id="@+id/im2"
+                android:layout_width="wrap_content"
+                android:layout_height="55dp"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="33"
+                android:background="@drawable/back_button_round_green"
+                android:src="@drawable/icon_audio" />
+
+            <ImageButton
+                android:id="@+id/im3"
+                android:layout_width="wrap_content"
+                android:layout_height="55dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="33"
+                android:background="@drawable/back_button_round_green"
+                android:src="@drawable/icon_loc" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lin2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lin1"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="25dp"
+            android:orientation="horizontal"
+            android:weightSum="100">
+
+            <TextView
+                android:id="@+id/txt2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_weight="33"
+                android:gravity="center"
+                android:text="Add picture"
+                android:textColor="#fff"
+                android:textSize="12dp" />
+
+            <TextView
+                android:id="@+id/txt3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_weight="33"
+                android:gravity="center"
+                android:text="Add audio clip"
+                android:textColor="#fff"
+                android:textSize="12dp" />
+
+            <TextView
+                android:id="@+id/txt4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_weight="33"
+                android:gravity="center"
+                android:text="Pick another location"
+                android:textColor="#fff"
+                android:textSize="12dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lin2"
+            android:layout_marginLeft="10dp"
+            android:gravity="left"
+            android:textSize="15dp"
+            android:text="Attachments"
+            android:textColor="#fff" />
+
+        <ListView
+            android:layout_marginTop="10dp"
+            android:id="@+id/mobile_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView2"></ListView>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="16dp"
+            android:alpha="1.0"
+            android:gravity="center_horizontal"
+            android:text="Slide it down"
+            android:textColor="#fff" />
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/imageView"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="bottom|end"
+        android:layout_marginTop="18dp"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/icon_up" />
 </RelativeLayout>

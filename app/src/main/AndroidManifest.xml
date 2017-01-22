@@ -112,6 +112,7 @@
         <activity
             android:name=".VehicleDetail"
             android:label="Details"
+            android:screenOrientation="portrait"
             android:parentActivityName=".HomePage"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data

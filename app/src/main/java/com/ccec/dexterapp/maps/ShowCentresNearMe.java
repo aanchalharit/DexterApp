@@ -1056,7 +1056,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
         if (date.endsWith("1") && !date.endsWith("11"))
             format = new SimpleDateFormat("EE, MMM d'st'");
         else if (date.endsWith("2") && !date.endsWith("12"))
-            format = new SimpleDateFormat("EE, MM d'nd'");
+            format = new SimpleDateFormat("EE, MMM d'nd'");
         else if (date.endsWith("3") && !date.endsWith("13"))
             format = new SimpleDateFormat("EE, MMM d'rd'");
         else

@@ -2,6 +2,7 @@ package com.ccec.dexterapp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TextInputLayout;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -30,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ccec.dexterapp.entities.Vehicle;
+import com.ccec.dexterapp.managers.AppData;
 import com.ccec.dexterapp.managers.FontsManager;
 import com.ccec.dexterapp.managers.UserSessionManager;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -53,8 +56,8 @@ import java.util.HashMap;
 
 public class AddVehicle extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
-    private EditText etmake, etmodel, etmanufacturedin, etregnumber, etchessisnumber, etkilometer;
-    private TextInputLayout tilmake, tilmodel, tilmanufacturedin, tilregnumber, tilchessisnumber, tilkilometer;
+    private EditText etmake, etmodel, etmanufacturedin, etregnumber, etchessisnumber, etkilometer, etAvgkilometer;
+    private TextInputLayout tilmake, tilmodel, tilmanufacturedin, tilregnumber, tilchessisnumber, tilkilometer, tilAvgkilometer;
     private Button btnpollutionchkdate, btnnextpollutionchkdate, btninsurancepurchasedate, btninsuranceduedate, btnaddvehicle;
     private DatabaseReference firebasedbref;
     private int year, month, day;
@@ -63,7 +66,7 @@ public class AddVehicle extends AppCompatActivity implements DatePickerDialog.On
     private UserSessionManager session;
     private String id;
     private RelativeLayout r1, r2;
-    private String carMake, carModel, carManufacturedIn, carchessisnumber, carRegnumber, carKilometer, carPollutionchkdate, carInsurancePurchasedate;
+    private String carMake, carModel, carManufacturedIn, carchessisnumber, carRegnumber, carKilometer, carAvgKilometer, carPollutionchkdate, carInsurancePurchasedate;
     private CircularImageView circularImageView, circularImageView2;
 
     private static int REQUEST_CAMERA = 0;
@@ -93,8 +96,8 @@ public class AddVehicle extends AppCompatActivity implements DatePickerDialog.On
 
         firebasedbref = FirebaseDatabase.getInstance().getReference().child("items/Car");
 
-        r1 = (RelativeLayout) findViewById(R.id.rel1);
-        r2 = (RelativeLayout) findViewById(R.id.rel2);
+//        r1 = (RelativeLayout) findViewById(R.id.rel1);
+//        r2 = (RelativeLayout) findViewById(R.id.rel2);
 
         etmake = (EditText) findViewById(R.id.editcarMake);
         etmodel = (EditText) findViewById(R.id.editTextcarModel);
@@ -102,6 +105,7 @@ public class AddVehicle extends AppCompatActivity implements DatePickerDialog.On
         etregnumber = (EditText) findViewById(R.id.editTextcarRegNo);
         etchessisnumber = (EditText) findViewById(R.id.editTextcarChessisNo);
         etkilometer = (EditText) findViewById(R.id.editTextcarKilometer);
+        etAvgkilometer = (EditText) findViewById(R.id.editTextcarAvgKilometer);
 
         etmake.setTypeface(FontsManager.getRegularTypeface(getApplicationContext()));
         etmodel.setTypeface(FontsManager.getRegularTypeface(getApplicationContext()));
@@ -109,6 +113,7 @@ public class AddVehicle extends AppCompatActivity implements DatePickerDialog.On
         etregnumber.setTypeface(FontsManager.getRegularTypeface(getApplicationContext()));
         etchessisnumber.setTypeface(FontsManager.getRegularTypeface(getApplicationContext()));
         etkilometer.setTypeface(FontsManager.getRegularTypeface(getApplicationContext()));
+        etAvgkilometer.setTypeface(FontsManager.getRegularTypeface(getApplicationContext()));
 
         tilmake = (TextInputLayout) findViewById(R.id.TILcarmake);
         tilmodel = (TextInputLayout) findViewById(R.id.TILcarmodel);
@@ -116,6 +121,7 @@ public class AddVehicle extends AppCompatActivity implements DatePickerDialog.On
         tilregnumber = (TextInputLayout) findViewById(R.id.TILcarRegNo);
         tilchessisnumber = (TextInputLayout) findViewById(R.id.TILcarChessisNo);
         tilkilometer = (TextInputLayout) findViewById(R.id.TILcarKilometer);
+        tilAvgkilometer = (TextInputLayout) findViewById(R.id.TILcarAvgKilometer);
 
         tilmake.setTypeface(FontsManager.getRegularTypeface(getApplicationContext()));
         tilmodel.setTypeface(FontsManager.getRegularTypeface(getApplicationContext()));
@@ -123,17 +129,18 @@ public class AddVehicle extends AppCompatActivity implements DatePickerDialog.On
         tilregnumber.setTypeface(FontsManager.getRegularTypeface(getApplicationContext()));
         tilchessisnumber.setTypeface(FontsManager.getRegularTypeface(getApplicationContext()));
         tilkilometer.setTypeface(FontsManager.getRegularTypeface(getApplicationContext()));
+        tilAvgkilometer.setTypeface(FontsManager.getRegularTypeface(getApplicationContext()));
 
         btnpollutionchkdate = (Button) findViewById(R.id.btn_pollutioncheckdate);
-        btnnextpollutionchkdate = (Button) findViewById(R.id.btn_nextpollutioncheckdate);
+//        btnnextpollutionchkdate = (Button) findViewById(R.id.btn_nextpollutioncheckdate);
         btninsurancepurchasedate = (Button) findViewById(R.id.btn_insurancepurchasedate);
-        btninsuranceduedate = (Button) findViewById(R.id.btn_insuranceduedate);
+//        btninsuranceduedate = (Button) findViewById(R.id.btn_insuranceduedate);
         btnaddvehicle = (Button) findViewById(R.id.btn_carSave);
 
         btnpollutionchkdate.setTypeface(FontsManager.getBoldTypeface(getApplicationContext()));
-        btnnextpollutionchkdate.setTypeface(FontsManager.getBoldTypeface(getApplicationContext()));
+//        btnnextpollutionchkdate.setTypeface(FontsManager.getBoldTypeface(getApplicationContext()));
         btninsurancepurchasedate.setTypeface(FontsManager.getBoldTypeface(getApplicationContext()));
-        btninsuranceduedate.setTypeface(FontsManager.getBoldTypeface(getApplicationContext()));
+//        btninsuranceduedate.setTypeface(FontsManager.getBoldTypeface(getApplicationContext()));
         btnaddvehicle.setTypeface(FontsManager.getBoldTypeface(getApplicationContext()));
 
         circularImageView = (CircularImageView) findViewById(R.id.circularProduct);
@@ -189,11 +196,12 @@ public class AddVehicle extends AppCompatActivity implements DatePickerDialog.On
                 carRegnumber = etregnumber.getText().toString().trim();
                 carchessisnumber = etchessisnumber.getText().toString().trim();
                 carKilometer = etkilometer.getText().toString().trim();
+                carAvgKilometer = etAvgkilometer.getText().toString().trim();
 
                 carPollutionchkdate = btnpollutionchkdate.getText().toString().trim();
-                String carNextPollutionchkdate = btnnextpollutionchkdate.getText().toString().trim();
+//                String carNextPollutionchkdate = btnnextpollutionchkdate.getText().toString().trim();
                 carInsurancePurchasedate = btninsurancepurchasedate.getText().toString().trim();
-                String carInsuranceDuedate = btninsuranceduedate.getText().toString().trim();
+//                String carInsuranceDuedate = btninsuranceduedate.getText().toString().trim();
 
                 if (isNetwork() && validate()) {
                     Vehicle vehicle = new Vehicle();
@@ -204,11 +212,12 @@ public class AddVehicle extends AppCompatActivity implements DatePickerDialog.On
                     vehicle.setRegistrationnumber(carRegnumber);
                     vehicle.setChessisnumber(carchessisnumber);
                     vehicle.setKilometer(carKilometer);
+                    vehicle.setAvgrunning(carAvgKilometer);
 
                     vehicle.setPolluctionchkdate(carPollutionchkdate);
-                    vehicle.setNextpolluctionchkdate(carNextPollutionchkdate);
+                    vehicle.setNextpolluctionchkdate("");
                     vehicle.setInsurancepurchasedate(carInsurancePurchasedate);
-                    vehicle.setInsuranceduedate(carInsuranceDuedate);
+                    vehicle.setInsuranceduedate("");
 
                     if (gotReference == false)
                         key = firebasedbref.push().getKey();
@@ -220,6 +229,7 @@ public class AddVehicle extends AppCompatActivity implements DatePickerDialog.On
 
                     Intent intent = new Intent(AddVehicle.this, HomePage.class);
                     startActivity(intent);
+                    finish();
                 }
             }
         });
@@ -450,6 +460,13 @@ public class AddVehicle extends AppCompatActivity implements DatePickerDialog.On
             etkilometer.setError(null);
         }
 
+        if (carAvgKilometer.isEmpty()) {
+            etAvgkilometer.setError("Enter this field");
+            valid = false;
+        } else {
+            etAvgkilometer.setError(null);
+        }
+
         if (carPollutionchkdate.equals("Pollution Check Date")) {
             Toast.makeText(this, "Please select pollution check date", Toast.LENGTH_SHORT).show();
             valid = false;
@@ -496,8 +513,8 @@ public class AddVehicle extends AppCompatActivity implements DatePickerDialog.On
             String shownextdate = dateformat.format(nextdate);
 
             btnpollutionchkdate.setText(date1);
-            r1.setVisibility(View.VISIBLE);
-            btnnextpollutionchkdate.setText(shownextdate);
+//            r1.setVisibility(View.VISIBLE);
+//            btnnextpollutionchkdate.setText(shownextdate);
         }
 
         if (clickedbuttonid == R.id.btn_insurancepurchasedate) {
@@ -517,14 +534,35 @@ public class AddVehicle extends AppCompatActivity implements DatePickerDialog.On
             Date insurancenextdate = calender.getTime();
             String shownextduedate = dateformat.format(insurancenextdate);
             btninsurancepurchasedate.setText(date2);
-            r2.setVisibility(View.VISIBLE);
-            btninsuranceduedate.setText(shownextduedate);
+//            r2.setVisibility(View.VISIBLE);
+//            btninsuranceduedate.setText(shownextduedate);
         }
     }
 
     @Override
     public void onBackPressed() {
-        NavUtils.navigateUpFromSameTask(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(AddVehicle.this);
+        builder.setTitle("Cancel");
+        builder.setMessage("Are you sure you want to cancel adding product?");
+        builder.setCancelable(false);
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                NavUtils.navigateUpFromSameTask(AddVehicle.this);
+                AddVehicle.this.finish();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     @Override

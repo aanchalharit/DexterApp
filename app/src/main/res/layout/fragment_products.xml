@@ -5,10 +5,10 @@
     tools:context="com.ccec.dexterapp.ProductsFragment">
 
     <android.support.v7.widget.RecyclerView
-    android:id="@+id/allproducts"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginBottom="2dp"/>
+        android:id="@+id/allproducts"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="2dp" />
 
     <RelativeLayout
         android:id="@+id/noOrders"
@@ -31,7 +31,8 @@
             android:layout_below="@+id/errorImage"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="25dp"
-            android:text="No orders available"
+            android:gravity="center"
+            android:text="No products found\nAdd one by tapping + button below"
             android:textSize="14dp"
             android:textStyle="bold" />
     </RelativeLayout>
@@ -56,7 +57,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="30dp"
-        android:background="@color/transparentgrey"
         android:orientation="horizontal">
 
         <android.support.design.widget.FloatingActionButton
@@ -67,30 +67,28 @@
             android:layout_margin="@dimen/fab_margin"
             android:src="@drawable/icon_view" />
 
+        <FrameLayout
+            android:id="@+id/productRaiseFL"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_below="@+id/chronometer"
+            android:layout_centerHorizontal="true">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/productRaise"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/fab_margin"
+                android:src="@drawable/icon_raise" />
+        </FrameLayout>
+
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/productEdit"
+            android:id="@+id/productHistory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/fab_margin"
-            android:src="@drawable/icon_edit" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/productRaise"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            android:src="@drawable/icon_raise" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/productDelete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            android:src="@drawable/icon_delete" />
-
+            android:src="@drawable/icon_history" />
     </LinearLayout>
-
 </RelativeLayout>

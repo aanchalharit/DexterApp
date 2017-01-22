@@ -59,5 +59,4 @@
         app:layout_anchorGravity="top|end"
         app:srcCompat="@drawable/icon_raise" />
 
-
 </android.support.design.widget.CoordinatorLayout>

@@ -8,15 +8,12 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.ccec.dexterapp.entities.Vehicle;
 import com.ccec.dexterapp.managers.AppData;
@@ -35,10 +32,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ProductsFragment extends Fragment {
-    private FloatingActionButton productFab, viewF, edit, raise, delete;
+    private FloatingActionButton productFab, viewF, raise, history;
     private RecyclerView ProductsRV, QueriesRV;
     private DatabaseReference firebasedbrefproducts;
     private List<Vehicle> allproducts;
@@ -70,13 +66,13 @@ public class ProductsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_products, container, false);
 
         ProductsRV = (RecyclerView) view.findViewById(R.id.allproducts);
+        ProductsRV.setHasFixedSize(true);
         ProductsRV.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
         getProducts();
 
         viewF = (FloatingActionButton) view.findViewById(R.id.productView);
-        delete = (FloatingActionButton) view.findViewById(R.id.productDelete);
-        edit = (FloatingActionButton) view.findViewById(R.id.productEdit);
+        history = (FloatingActionButton) view.findViewById(R.id.productHistory);
         raise = (FloatingActionButton) view.findViewById(R.id.productRaise);
         hideLinFab();
 
@@ -211,16 +207,14 @@ public class ProductsFragment extends Fragment {
     public void showLinFab() {
         AppData.fabVisible = true;
         viewF.show();
-        edit.show();
-        delete.show();
+        history.show();
         raise.show();
     }
 
     public void hideLinFab() {
         AppData.fabVisible = false;
         viewF.hide();
-        edit.hide();
-        delete.hide();
+        history.hide();
         raise.hide();
     }
 

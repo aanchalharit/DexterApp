@@ -9,10 +9,12 @@
     card_view:cardCornerRadius="4dp">
 
     <LinearLayout
+        android:id="@+id/singleitemLin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="6dp"
         android:layout_marginRight="6dp"
+        android:background="@drawable/selectror_row"
         android:orientation="horizontal"
         android:weightSum="100">
 

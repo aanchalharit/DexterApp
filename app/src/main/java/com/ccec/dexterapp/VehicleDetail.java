@@ -60,8 +60,6 @@ public class VehicleDetail extends AppCompatActivity {
                 public void onFailure(@NonNull Exception e) {
                 }
             });
-
-            AppData.currentImagePath = null;
         }
 
         if (savedInstanceState == null) {

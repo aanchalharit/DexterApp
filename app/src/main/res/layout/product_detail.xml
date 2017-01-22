@@ -3,384 +3,604 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/linProf"
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal"
-        android:weightSum="100">
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="10dp"
+        card_view:cardCornerRadius="4dp">
 
-        <TextView
-            android:id="@+id/fullNameTitle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:text="Make :"
-            android:textSize="15dp" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/fullNameDetail"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:singleLine="false"
-            android:text="Not Mentioned"
-            android:textColor="@color/colorPrimary"
-            android:textSize="15dp" />
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linProf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal"
+                android:weightSum="100">
 
-    <LinearLayout
-        android:id="@+id/linProf11"
+                <TextView
+                    android:id="@+id/fullNameTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="60"
+                    android:alpha="0.92"
+                    android:text="Make :"
+                    android:textSize="15dp" />
+
+                <TextView
+                    android:id="@+id/fullNameDetail"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="35"
+                    android:alpha="0.92"
+                    android:singleLine="false"
+                    android:text="Not Mentioned"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15dp" />
+
+                <ImageView
+                    android:visibility="invisible"
+                    android:id="@+id/edit1"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_weight="5"
+                    android:src="@drawable/icon_edit_red" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/linProf"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="42dp"
+                android:layout_marginTop="5dp"
+                android:alpha="0.5"
+                android:background="@color/colorPrimary" />
+
+            <LinearLayout
+                android:id="@+id/linProf11"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linProf"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal"
+                android:weightSum="100">
+
+                <TextView
+                    android:id="@+id/skypeNameTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="60"
+                    android:alpha="0.92"
+                    android:text="Model :"
+                    android:textSize="15dp" />
+
+                <TextView
+                    android:id="@+id/skypeNameDetail"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="35"
+                    android:alpha="0.92"
+                    android:singleLine="false"
+                    android:text="Not Mentioned"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15dp" />
+
+                <ImageView
+                    android:visibility="invisible"
+                    android:id="@+id/edit2"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_weight="5"
+                    android:src="@drawable/icon_edit_red" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/linProf11"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="42dp"
+                android:layout_marginTop="5dp"
+                android:alpha="0.5"
+                android:background="@color/colorPrimary" />
+
+            <LinearLayout
+                android:id="@+id/linProf1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linProf11"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal"
+                android:weightSum="100">
+
+                <TextView
+                    android:id="@+id/companyNameTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="60"
+                    android:alpha="0.92"
+                    android:text="Manufactured In :"
+                    android:textSize="15dp" />
+
+                <TextView
+                    android:id="@+id/companyNameDetail"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="35"
+                    android:alpha="0.92"
+                    android:singleLine="false"
+                    android:text="Not Mentioned"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15dp" />
+
+                <ImageView
+                    android:id="@+id/edit3"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_weight="5"
+                    android:src="@drawable/icon_edit_red" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/linProf1"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="42dp"
+                android:layout_marginTop="5dp"
+                android:alpha="0.5"
+                android:background="@color/colorPrimary" />
+
+            <LinearLayout
+                android:id="@+id/linProf3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linProf1"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal"
+                android:weightSum="100">
+
+                <TextView
+                    android:id="@+id/contactNameTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="60"
+                    android:alpha="0.92"
+                    android:text="Registration Number :"
+                    android:textSize="15dp" />
+
+                <TextView
+                    android:id="@+id/contactNameDetail"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="35"
+                    android:alpha="0.92"
+                    android:singleLine="false"
+                    android:text="Not Mentioned"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15dp" />
+
+                <ImageView
+                    android:id="@+id/edit4"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_weight="5"
+                    android:src="@drawable/icon_edit_red" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/linProf3"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="42dp"
+                android:layout_marginTop="5dp"
+                android:alpha="0.5"
+                android:background="@color/colorPrimary" />
+
+            <LinearLayout
+                android:id="@+id/linProf4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linProf3"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal"
+                android:weightSum="100">
+
+                <TextView
+                    android:id="@+id/locationNameTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="60"
+                    android:alpha="0.92"
+                    android:text="Chassis Number :"
+                    android:textSize="15dp" />
+
+                <TextView
+                    android:id="@+id/locationNameDetail"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="35"
+                    android:alpha="0.92"
+                    android:singleLine="false"
+                    android:text="Not Mentioned"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15dp" />
+
+                <ImageView
+                    android:id="@+id/edit5"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_weight="5"
+                    android:src="@drawable/icon_edit_red" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/linProf4"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="42dp"
+                android:layout_marginTop="5dp"
+                android:alpha="0.5"
+                android:background="@color/colorPrimary" />
+
+            <LinearLayout
+                android:id="@+id/linProf5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linProf4"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal"
+                android:weightSum="100">
+
+                <TextView
+                    android:id="@+id/KilometerNameTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="60"
+                    android:alpha="0.92"
+                    android:text="Kilometer :"
+                    android:textSize="15dp" />
+
+                <TextView
+                    android:id="@+id/KilometerNameDetail"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="35"
+                    android:alpha="0.92"
+                    android:singleLine="false"
+                    android:text="Not Mentioned"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15dp" />
+
+                <ImageView
+                    android:id="@+id/edit6"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_weight="5"
+                    android:src="@drawable/icon_edit_red" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/linProf5"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="42dp"
+                android:layout_marginTop="5dp"
+                android:alpha="0.5"
+                android:background="@color/colorPrimary" />
+
+            <LinearLayout
+                android:id="@+id/linProf51"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linProf5"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal"
+                android:weightSum="100">
+
+                <TextView
+                    android:id="@+id/AvgKilometerNameTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="60"
+                    android:alpha="0.92"
+                    android:text="Avg kilometer / month :"
+                    android:textSize="15dp" />
+
+                <TextView
+                    android:id="@+id/AvgKilometerNameDetail"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="35"
+                    android:alpha="0.92"
+                    android:singleLine="false"
+                    android:text="Not Mentioned"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15dp" />
+
+                <ImageView
+                    android:id="@+id/edit7"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_weight="5"
+                    android:src="@drawable/icon_edit_red" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/linProf51"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="42dp"
+                android:layout_marginTop="5dp"
+                android:alpha="0.5"
+                android:background="@color/colorPrimary" />
+
+            <LinearLayout
+                android:id="@+id/linProf6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linProf51"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal"
+                android:weightSum="100">
+
+                <TextView
+                    android:id="@+id/PollutionNameTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="60"
+                    android:alpha="0.92"
+                    android:text="Pollution Check Date :"
+                    android:textSize="15dp" />
+
+                <TextView
+                    android:id="@+id/PollutionNameDetail"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="35"
+                    android:alpha="0.92"
+                    android:singleLine="false"
+                    android:text="Not Mentioned"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15dp" />
+
+                <ImageView
+                    android:id="@+id/edit8"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_weight="5"
+                    android:src="@drawable/icon_edit_red" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/linProf6"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="42dp"
+                android:layout_marginTop="5dp"
+                android:alpha="0.5"
+                android:background="@color/colorPrimary" />
+            <!--<LinearLayout-->
+            <!--android:id="@+id/linProf7"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/linProf6"-->
+            <!--android:layout_marginLeft="20dp"-->
+            <!--android:layout_marginRight="20dp"-->
+            <!--android:layout_marginTop="20dp"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:weightSum="100">-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/nxtPollutionNameTitle"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_gravity="left"-->
+            <!--android:layout_marginLeft="2dp"-->
+            <!--android:layout_marginTop="2dp"-->
+            <!--android:layout_weight="50"-->
+            <!--android:alpha="0.92"-->
+            <!--android:text="Next Pollution Check Date :"-->
+            <!--android:textSize="15dp" />-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/nxtPollutionNameDetail"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_gravity="left"-->
+            <!--android:layout_marginLeft="2dp"-->
+            <!--android:layout_marginTop="2dp"-->
+            <!--android:layout_weight="50"-->
+            <!--android:alpha="0.92"-->
+            <!--android:singleLine="false"-->
+            <!--android:text="Not Mentioned"-->
+            <!--android:textColor="@color/colorPrimary"-->
+            <!--android:textSize="15dp" />-->
+            <!--</LinearLayout>-->
+
+            <LinearLayout
+                android:id="@+id/linProf8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linProf6"
+                android:layout_marginBottom="15dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal"
+                android:weightSum="100">
+
+                <TextView
+                    android:id="@+id/InsuranceNameTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="60"
+                    android:alpha="0.92"
+                    android:text="Insurance Purchase Date :"
+                    android:textSize="15dp" />
+
+                <TextView
+                    android:id="@+id/InsuranceNameDetail"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="35"
+                    android:alpha="0.92"
+                    android:singleLine="false"
+                    android:text="Not Mentioned"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15dp" />
+
+                <ImageView
+                    android:id="@+id/edit9"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_weight="5"
+                    android:src="@drawable/icon_edit_red" />
+            </LinearLayout>
+
+            <!--<LinearLayout-->
+            <!--android:id="@+id/linProf9"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/linProf8"-->
+            <!--android:layout_marginLeft="20dp"-->
+            <!--android:layout_marginRight="20dp"-->
+            <!--android:layout_marginTop="20dp"-->
+            <!--android:layout_marginBottom="20dp"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:weightSum="100">-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/dueInsuranceNameTitle"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_gravity="left"-->
+            <!--android:layout_marginLeft="2dp"-->
+            <!--android:layout_marginTop="2dp"-->
+            <!--android:layout_weight="50"-->
+            <!--android:alpha="0.92"-->
+            <!--android:text="Insurance Due Date :"-->
+            <!--android:textSize="15dp" />-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/dueInsuranceNameDetail"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_gravity="left"-->
+            <!--android:layout_marginLeft="2dp"-->
+            <!--android:layout_marginTop="2dp"-->
+            <!--android:layout_weight="50"-->
+            <!--android:alpha="0.92"-->
+            <!--android:singleLine="false"-->
+            <!--android:text="Not Mentioned"-->
+            <!--android:textColor="@color/colorPrimary"-->
+            <!--android:textSize="15dp" />-->
+            <!--</LinearLayout>-->
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <Button
+        android:id="@+id/delButton"
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linProf"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal"
-        android:weightSum="100">
-
-        <TextView
-            android:id="@+id/skypeNameTitle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:text="Model :"
-            android:textSize="15dp" />
-
-        <TextView
-            android:id="@+id/skypeNameDetail"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:singleLine="false"
-            android:text="Not Mentioned"
-            android:textColor="@color/colorPrimary"
-            android:textSize="15dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linProf1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linProf11"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal"
-        android:weightSum="100">
-
-        <TextView
-            android:id="@+id/companyNameTitle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:text="Manufactured In :"
-            android:textSize="15dp" />
-
-        <TextView
-            android:id="@+id/companyNameDetail"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:singleLine="false"
-            android:text="Not Mentioned"
-            android:textColor="@color/colorPrimary"
-            android:textSize="15dp" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/linProf3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linProf1"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal"
-        android:weightSum="100">
-
-        <TextView
-            android:id="@+id/contactNameTitle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:text="Registration Number :"
-            android:textSize="15dp" />
-
-        <TextView
-            android:id="@+id/contactNameDetail"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:singleLine="false"
-            android:text="Not Mentioned"
-            android:textColor="@color/colorPrimary"
-            android:textSize="15dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linProf4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linProf3"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal"
-        android:weightSum="100">
-
-        <TextView
-            android:id="@+id/locationNameTitle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:text="Chassis Number :"
-            android:textSize="15dp" />
-
-        <TextView
-            android:id="@+id/locationNameDetail"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:singleLine="false"
-            android:text="Not Mentioned"
-            android:textColor="@color/colorPrimary"
-            android:textSize="15dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linProf5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linProf4"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal"
-        android:weightSum="100">
-
-        <TextView
-            android:id="@+id/KilometerNameTitle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:text="Kilometer :"
-            android:textSize="15dp" />
-
-        <TextView
-            android:id="@+id/KilometerNameDetail"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:singleLine="false"
-            android:text="Not Mentioned"
-            android:textColor="@color/colorPrimary"
-            android:textSize="15dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linProf6"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linProf5"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal"
-        android:weightSum="100">
-
-        <TextView
-            android:id="@+id/PollutionNameTitle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:text="Pollution Check Date :"
-            android:textSize="15dp" />
-
-        <TextView
-            android:id="@+id/PollutionNameDetail"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:singleLine="false"
-            android:text="Not Mentioned"
-            android:textColor="@color/colorPrimary"
-            android:textSize="15dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linProf7"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linProf6"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal"
-        android:weightSum="100">
-
-        <TextView
-            android:id="@+id/nxtPollutionNameTitle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:text="Next Pollution Check Date :"
-            android:textSize="15dp" />
-
-        <TextView
-            android:id="@+id/nxtPollutionNameDetail"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:singleLine="false"
-            android:text="Not Mentioned"
-            android:textColor="@color/colorPrimary"
-            android:textSize="15dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linProf8"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linProf7"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal"
-        android:weightSum="100">
-
-        <TextView
-            android:id="@+id/InsuranceNameTitle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:text="Insurance Purchase Date :"
-            android:textSize="15dp" />
-
-        <TextView
-            android:id="@+id/InsuranceNameDetail"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:singleLine="false"
-            android:text="Not Mentioned"
-            android:textColor="@color/colorPrimary"
-            android:textSize="15dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linProf9"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linProf8"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="20dp"
-        android:orientation="horizontal"
-        android:weightSum="100">
-
-        <TextView
-            android:id="@+id/dueInsuranceNameTitle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:text="Insurance Due Date :"
-            android:textSize="15dp" />
-
-        <TextView
-            android:id="@+id/dueInsuranceNameDetail"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="50"
-            android:alpha="0.92"
-            android:singleLine="false"
-            android:text="Not Mentioned"
-            android:textColor="@color/colorPrimary"
-            android:textSize="15dp" />
-    </LinearLayout>
+        android:layout_height="50dp"
+        android:layout_below="@+id/card_view"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="35dp"
+        android:layout_marginRight="35dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/back_button_round_red"
+        android:text="Delete Product"
+        android:textColor="#ffff" />
 </RelativeLayout>

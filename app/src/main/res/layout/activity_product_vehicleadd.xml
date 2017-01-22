@@ -125,6 +125,19 @@
                     android:inputType="number" />
             </android.support.design.widget.TextInputLayout>
 
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/TILcarAvgKilometer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/editTextcarAvgKilometer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Average kilometers per month"
+                    android:inputType="number" />
+            </android.support.design.widget.TextInputLayout>
+
             <TextView
                 android:id="@+id/tv_pollutioncheckdate"
                 android:layout_width="wrap_content"
@@ -143,31 +156,31 @@
                 android:text="Pollution Check Date"
                 android:textColor="#fff" />
 
-            <RelativeLayout
-                android:id="@+id/rel1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone">
+            <!--<RelativeLayout-->
+                <!--android:id="@+id/rel1"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:visibility="gone">-->
 
-                <TextView
-                    android:id="@+id/tv_nextpollutioncheckdate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="Next Pollution Check Date" />
+                <!--<TextView-->
+                    <!--android:id="@+id/tv_nextpollutioncheckdate"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginTop="10dp"-->
+                    <!--android:text="Next Pollution Check Date" />-->
 
-                <Button
-                    android:id="@+id/btn_nextpollutioncheckdate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_nextpollutioncheckdate"
-                    android:layout_marginTop="4dp"
-                    android:background="@color/colorPrimary"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:text="Next Pollution Check Date"
-                    android:textColor="#fff" />
-            </RelativeLayout>
+                <!--<Button-->
+                    <!--android:id="@+id/btn_nextpollutioncheckdate"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_below="@+id/tv_nextpollutioncheckdate"-->
+                    <!--android:layout_marginTop="4dp"-->
+                    <!--android:background="@color/colorPrimary"-->
+                    <!--android:paddingLeft="10dp"-->
+                    <!--android:paddingRight="10dp"-->
+                    <!--android:text="Next Pollution Check Date"-->
+                    <!--android:textColor="#fff" />-->
+            <!--</RelativeLayout>-->
 
             <TextView
                 android:id="@+id/tv_insurencepurchasedate"
@@ -187,31 +200,31 @@
                 android:text="Insurance Purchase Date"
                 android:textColor="#fff" />
 
-            <RelativeLayout
-                android:id="@+id/rel2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone">
+            <!--<RelativeLayout-->
+                <!--android:id="@+id/rel2"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:visibility="gone">-->
 
-                <TextView
-                    android:id="@+id/tv_insurenceduedate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="Insurance Due Date" />
+                <!--<TextView-->
+                    <!--android:id="@+id/tv_insurenceduedate"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginTop="10dp"-->
+                    <!--android:text="Insurance Due Date" />-->
 
-                <Button
-                    android:id="@+id/btn_insuranceduedate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_insurenceduedate"
-                    android:layout_marginTop="4dp"
-                    android:background="@color/colorPrimary"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:text="Insurance Due Date"
-                    android:textColor="#fff" />
-            </RelativeLayout>
+                <!--<Button-->
+                    <!--android:id="@+id/btn_insuranceduedate"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_below="@+id/tv_insurenceduedate"-->
+                    <!--android:layout_marginTop="4dp"-->
+                    <!--android:background="@color/colorPrimary"-->
+                    <!--android:paddingLeft="10dp"-->
+                    <!--android:paddingRight="10dp"-->
+                    <!--android:text="Insurance Due Date"-->
+                    <!--android:textColor="#fff" />-->
+            <!--</RelativeLayout>-->
 
             <Button
                 android:id="@+id/btn_carSave"

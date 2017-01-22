@@ -6,12 +6,20 @@ import android.widget.Button;
  * Created by aanchalharit on 01/10/16.
  */
 
-public class Vehicle
-{
-    private String make , model , registrationnumber , chessisnumber ,manufacturedin , kilometer,
-            polluctionchkdate , nextpolluctionchkdate , insurancepurchasedate , insuranceduedate , addvehicle;
+public class Vehicle {
+    private String make, model, registrationnumber, chessisnumber, manufacturedin, kilometer,
+            polluctionchkdate, nextpolluctionchkdate, insurancepurchasedate, insuranceduedate, avgrunning, addvehicle;
 
-    public Vehicle(){}
+    public Vehicle() {
+    }
+
+    public String getAvgrunning() {
+        return avgrunning;
+    }
+
+    public void setAvgrunning(String avgrunning) {
+        this.avgrunning = avgrunning;
+    }
 
     public String getMake() {
         return make;

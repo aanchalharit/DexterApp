@@ -17,6 +17,7 @@ public class AppData {
     public static String selectedLoc = "";
     public static Location selectedCordLoc = null;
     public static boolean fabVisible = false;
+    public static boolean raiseRequest = false;
 
     public static Object currentMap = null;
 

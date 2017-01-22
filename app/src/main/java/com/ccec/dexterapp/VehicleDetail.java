@@ -33,8 +33,12 @@ public class VehicleDetail extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                AppData.raiseRequest = true;
+
+                Intent in = new Intent(VehicleDetail.this, HomePage.class);
+                in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(in);
+                finish();
             }
         });
 

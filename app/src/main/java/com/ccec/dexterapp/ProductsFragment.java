@@ -119,6 +119,25 @@ public class ProductsFragment extends Fragment {
             }
         });
 
+        if (AppData.raiseRequest == true) {
+            AppData.raiseRequest = false;
+            showRequestData();
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        MapView mv = new MapView(getActivity());
+                        mv.onCreate(null);
+                        mv.onPause();
+                        mv.onDestroy();
+                    } catch (Exception ignored) {
+
+                    }
+                }
+            }).start();
+        }
+
         return view;
     }
 

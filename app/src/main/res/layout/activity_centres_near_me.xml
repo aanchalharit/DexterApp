@@ -54,7 +54,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:alpha="0.8"
-        android:background="@drawable/back_button_round_red">
+        android:background="@drawable/back_button_round_primary">
 
         <LinearLayout
             android:id="@+id/lin1"

@@ -19,6 +19,7 @@ import com.ccec.dexterapp.R;
 import com.ccec.dexterapp.ServicesFragment;
 import com.ccec.dexterapp.entities.FlowRecord;
 import com.ccec.dexterapp.managers.AppData;
+import com.ccec.dexterapp.managers.FontsManager;
 import com.google.android.gms.drive.realtime.internal.event.ObjectChangedDetails;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -62,6 +63,9 @@ public class ProcessFlowViewAdapter extends RecyclerView.Adapter<ProcessFlowView
 
         holder.RVtitle.setText(key.getTitle());
         holder.RVDate.setText(key.getTimestamp());
+
+        holder.RVtitle.setTypeface(FontsManager.getBoldTypeface(mContext));
+        holder.RVDate.setTypeface(FontsManager.getRegularTypeface(mContext));
     }
 
     @Override

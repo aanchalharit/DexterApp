@@ -205,7 +205,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
 
         listView = (ListView) findViewById(R.id.mobile_list);
 
-        DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference(id);
+        DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference("attachments/" + id);
         databaseReference2.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -254,11 +254,12 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
             }
         };
 
+        fab.hide();
         slideUp = SlideUp.Builder.forView(slideView)
                 .withListeners(slideUpListener)
                 .withDownToUpVector(true)
                 .withLoggingEnabled(true)
-                .withStartState(SlideUp.State.HIDDEN)
+                .withStartState(SlideUp.State.SHOWED)
                 .build();
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -431,7 +432,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                             Toast.makeText(ShowCentresNearMe.this, "File attached", Toast.LENGTH_SHORT).show();
                             pDialog.dismiss();
 
-                            DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference(id);
+                            DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference("attachments/" + id);
                             databaseReference2.push().setValue(finalFileName);
                         }
                     });
@@ -527,7 +528,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference(id);
+                        DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference("attachments/" + id);
                         databaseReference2.push().setValue(finalFileName);
                         Toast.makeText(getApplicationContext(), "Image attached", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
@@ -623,7 +624,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                                         Toast.makeText(ShowCentresNearMe.this, "File attached", Toast.LENGTH_SHORT).show();
                                         pDialog.dismiss();
 
-                                        DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference(id);
+                                        DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference("attachments/" + id);
                                         databaseReference2.push().setValue(file.getName());
                                     }
                                 });
@@ -1092,8 +1093,25 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                         databaseReference2.push().setValue("DexterSR" + finalServiceNumber, new DatabaseReference.CompletionListener() {
                             @Override
                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                sendNotification();
+                                sendNotification(finalServiceNumber);
                                 pDialog.dismiss();
+
+                                final DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference("attachments/" + id);
+                                databaseReference2.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.getChildrenCount() > 0){
+                                            DatabaseReference databaseReference3 = FirebaseDatabase.getInstance().getReference("attachments/");
+                                            databaseReference3.child("DexterSR" + finalServiceNumber).setValue(dataSnapshot.getValue());
+                                            databaseReference2.removeValue();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
 
                                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ShowCentresNearMe.this);
                                 builder.setTitle("Service request raised.");
@@ -1130,7 +1148,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
-    private void sendNotification() {
+    private void sendNotification(final int num) {
         DatabaseReference firebasedbrefproduct = FirebaseDatabase.getInstance().getReference("users/ServiceCenter/" + selectedCenter);
         firebasedbrefproduct.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -1139,7 +1157,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                 Notif notif = new Notif();
                 notif.setTitle("New service request received");
                 notif.setUsername((String) ((HashMap) dataSnapshot.getValue()).get("fcm"));
-                notif.setMessage("DexterSR" + serviceNumber);
+                notif.setMessage("DexterSR" + num);
                 firebasedbrefproduc.child("notifs").push().setValue(notif);
             }
 
@@ -1176,7 +1194,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                 pDialog.setCancelable(false);
                 pDialog.show();
 
-                final DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference(id);
+                final DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference("attachments/" + id);
                 databaseReference2.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {

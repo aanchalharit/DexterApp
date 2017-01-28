@@ -6,55 +6,52 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ccec.dexterapp.entities.FlowRecord;
 import com.ccec.dexterapp.managers.AppData;
+import com.ccec.dexterapp.managers.AttachmentHoriViewAdapter;
+import com.ccec.dexterapp.managers.FontsManager;
 import com.ccec.dexterapp.recyclers.ProcessFlowViewAdapter;
-import com.ccec.dexterapp.recyclers.ServicesViewAdapter;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.LocationCallback;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class NewOrderDetailFragment extends Fragment implements OnMapReadyCallback {
+public class NewOrderDetailFragment extends Fragment {
     public static final String ARG_ITEM_ID = "item_id";
     private TextView location, contact, name, company;
-    private TextView locationD, contactD, nameD, companyD;
+    private TextView locationD, contactD, nameD, companyD, locMoreD;
     private Object obj;
-    private LinearLayout lin;
     private Map<String, Object> itemMap;
-    private GoogleMap mMap;
     private LatLng sydney;
-    private ImageView navImg;
     private LinearLayout scheduledLayout;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
+    private String currentStatus = "";
+    private RecyclerView recyclerView2;
+    private LinearLayout lrecyclerView2;
+    private CardView cardAttachList, cardProcessList;
+    private View view1;
 
     public NewOrderDetailFragment() {
     }
@@ -70,6 +67,8 @@ public class NewOrderDetailFragment extends Fragment implements OnMapReadyCallba
 
             appBarLayout.setTitle((String) ((HashMap) obj).get("key"));
         }
+
+        currentStatus = (String) ((HashMap) obj).get("status");
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("geofire");
         GeoFire geoFire = new GeoFire(ref);
@@ -96,12 +95,36 @@ public class NewOrderDetailFragment extends Fragment implements OnMapReadyCallba
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.neworder_detail, container, false);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().
-                findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        name = (TextView) view.findViewById(R.id.fullNameTitle);
+        location = (TextView) view.findViewById(R.id.skypeNameTitle);
+        company = (TextView) view.findViewById(R.id.companyNameTitle);
+        contact = (TextView) view.findViewById(R.id.companyNameTitle1);
 
-        navImg = (ImageView) view.findViewById(R.id.navigate);
-        navImg.setOnClickListener(new View.OnClickListener() {
+        nameD = (TextView) view.findViewById(R.id.fullNameDetail);
+        locationD = (TextView) view.findViewById(R.id.skypeNameDetail);
+        companyD = (TextView) view.findViewById(R.id.companyNameDetail);
+        contactD = (TextView) view.findViewById(R.id.companyNameDetail1);
+
+        TextView aFlowtv = (TextView) view.findViewById(R.id.aFlow);
+        aFlowtv.setTypeface(FontsManager.getBoldTypeface(getActivity()));
+
+        name.setTypeface(FontsManager.getBoldTypeface(getActivity()));
+        location.setTypeface(FontsManager.getBoldTypeface(getActivity()));
+        company.setTypeface(FontsManager.getBoldTypeface(getActivity()));
+        contact.setTypeface(FontsManager.getBoldTypeface(getActivity()));
+
+        nameD.setTypeface(FontsManager.getRegularTypeface(getActivity()));
+        locationD.setTypeface(FontsManager.getRegularTypeface(getActivity()));
+        companyD.setTypeface(FontsManager.getRegularTypeface(getActivity()));
+        contactD.setTypeface(FontsManager.getRegularTypeface(getActivity()));
+
+        locMoreD = (TextView) view.findViewById(R.id.fullNameMore);
+        SpannableString content = new SpannableString(locMoreD.getText());
+        content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+        locMoreD.setText(content);
+        locMoreD.setTypeface(FontsManager.getRegularTypeface(getActivity()));
+
+        locMoreD.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_VIEW,
@@ -110,32 +133,28 @@ public class NewOrderDetailFragment extends Fragment implements OnMapReadyCallba
             }
         });
 
-        name = (TextView) view.findViewById(R.id.fullNameTitle);
-        location = (TextView) view.findViewById(R.id.skypeNameTitle);
-        company = (TextView) view.findViewById(R.id.companyNameTitle);
-        contact = (TextView) view.findViewById(R.id.contactNameTitle);
-
-        nameD = (TextView) view.findViewById(R.id.fullNameDetail);
-        locationD = (TextView) view.findViewById(R.id.skypeNameDetail);
-        companyD = (TextView) view.findViewById(R.id.companyNameDetail);
-        contactD = (TextView) view.findViewById(R.id.contactNameDetail);
-
-        scheduledLayout = (LinearLayout) view.findViewById(R.id.linProf111);
-        if (((String) ((HashMap) obj).get("status")).equals("Open"))
+        scheduledLayout = (LinearLayout) view.findViewById(R.id.linProf11111);
+        if (currentStatus.equals("Open"))
             scheduledLayout.setVisibility(View.GONE);
-        else if (((String) ((HashMap) obj).get("status")).equals("Accepted") ||
-                ((String) ((HashMap) obj).get("status")).equals("Completed")) {
+        else if (currentStatus.equals("Accepted") ||
+                currentStatus.equals("Completed")) {
             scheduledLayout.setVisibility(View.VISIBLE);
-            if (((String) ((HashMap) obj).get("status")).equals("Completed"))
+            if (currentStatus.equals("Completed"))
                 contact.setText("Processed on :");
             else
                 contact.setText("Scheduled on :");
+
+            view1 = view.findViewById(R.id.viewne);
+            view1.setVisibility(View.VISIBLE);
 
             String datee = (String) ((HashMap) obj).get("scheduleTime");
             contactD.setText(datee);
         }
 
-        lin = (LinearLayout) view.findViewById(R.id.linProf11);
+        if (currentStatus.equals("Completed")) {
+            CardView cardView = (CardView) view.findViewById(R.id.card_view5);
+            cardView.setVisibility(View.GONE);
+        }
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users/ServiceCenter/" + (String) ((HashMap) AppData.currentVeh).get("issuedTo"));
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -170,49 +189,89 @@ public class NewOrderDetailFragment extends Fragment implements OnMapReadyCallba
 
         companyD.setText((String) ((HashMap) obj).get("openTime"));
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.task_list);
-        linearLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(linearLayoutManager);
+        if (!currentStatus.equals("Open")) {
+            recyclerView = (RecyclerView) view.findViewById(R.id.processList);
+            linearLayoutManager = new LinearLayoutManager(getActivity());
+            recyclerView.setLayoutManager(linearLayoutManager);
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("/processFlow/" + (String) ((HashMap) obj).get("key"));
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getChildrenCount() > 0) {
-                    List<FlowRecord> list = new ArrayList<>();
-                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                        try {
-                            Map<String, Object> itemMap = (HashMap<String, Object>) postSnapshot.getValue();
-                            FlowRecord f = new FlowRecord();
-                            f.setTitle((String) itemMap.get("title"));
-                            f.setTimestamp((String) itemMap.get("timestamp"));
-                            list.add(f);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+            databaseReference = FirebaseDatabase.getInstance().getReference("/processFlow/" + (String) ((HashMap) obj).get("key"));
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getChildrenCount() > 0) {
+                        List<FlowRecord> list = new ArrayList<>();
+                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                            try {
+                                Map<String, Object> itemMap = (HashMap<String, Object>) postSnapshot.getValue();
+                                FlowRecord f = new FlowRecord();
+                                f.setTitle((String) itemMap.get("title"));
+                                f.setTimestamp((String) itemMap.get("timestamp"));
+                                list.add(f);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
+
+                        ProcessFlowViewAdapter recyclerViewAdapter = new ProcessFlowViewAdapter(getActivity(), list);
+                        recyclerView.setAdapter(recyclerViewAdapter);
+                    } else {
+
                     }
-
-                    ProcessFlowViewAdapter recyclerViewAdapter = new ProcessFlowViewAdapter(getActivity(), list);
-                    recyclerView.setAdapter(recyclerViewAdapter);
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-        databaseReference.keepSynced(true);
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+            databaseReference.keepSynced(true);
+        } else {
+            cardProcessList = (CardView) view.findViewById(R.id.card_view4);
+            cardProcessList.setVisibility(View.GONE);
+        }
+
+        if (!currentStatus.equals("Completed")) {
+            recyclerView2 = (RecyclerView) view.findViewById(R.id.attachList);
+            lrecyclerView2 = (LinearLayout) view.findViewById(R.id.attach_steps);
+            cardAttachList = (CardView) view.findViewById(R.id.card_view5);
+            showAttachmentsCard();
+        }
 
         return view;
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+    private void showAttachmentsCard() {
+        recyclerView2.setHasFixedSize(true);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerView2.setLayoutManager(layoutManager);
 
-        if (sydney != null) {
-            mMap.addMarker(new MarkerOptions().position(sydney).title(("Service Center's location"))).showInfoWindow();
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 14));
-        }
+        DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference("attachments/" + (String) ((HashMap) AppData.currentVeh).get("key"));
+        databaseReference2.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() > 0) {
+                    try {
+                        Map<String, String> itemMap = (HashMap<String, String>) dataSnapshot.getValue();
+                        ArrayList<String> itemMap2 = new ArrayList<String>(itemMap.values());
+
+                        if (itemMap2.size() > 0) {
+                            AttachmentHoriViewAdapter adapter = new AttachmentHoriViewAdapter(itemMap2, getActivity());
+                            recyclerView2.setAdapter(adapter);
+                        } else {
+                            lrecyclerView2.setVisibility(View.GONE);
+                        }
+                    } catch (Exception e) {
+                        lrecyclerView2.setVisibility(View.GONE);
+                        e.printStackTrace();
+                    }
+                } else
+                    cardAttachList.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        databaseReference2.keepSynced(true);
     }
 }

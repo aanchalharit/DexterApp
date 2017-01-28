@@ -18,6 +18,7 @@ import com.ccec.dexterapp.NewOrderDetail;
 import com.ccec.dexterapp.R;
 import com.ccec.dexterapp.ServicesFragment;
 import com.ccec.dexterapp.managers.AppData;
+import com.ccec.dexterapp.managers.FontsManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -135,6 +136,11 @@ public class ServicesViewAdapter extends RecyclerView.Adapter<ServicesViewHolder
             spannable3.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, ("Scheduled On:").length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             holder.RVDate.setText(spannable3, TextView.BufferType.SPANNABLE);
         }
+
+        holder.RVtitle.setTypeface(FontsManager.getBoldTypeface(mContext));
+        holder.RVCar.setTypeface(FontsManager.getRegularTypeface(mContext));
+        holder.RVStatus.setTypeface(FontsManager.getRegularTypeface(mContext));
+        holder.RVDate.setTypeface(FontsManager.getRegularTypeface(mContext));
 
         holder.imgAcc.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -114,16 +114,13 @@ public class HomeFragment extends Fragment {
                 case 1:
                     ServicesFragment fragment2 = new ServicesFragment();
                     return fragment2;
-                case 2:
-                    WhatsNewFragment fragment3 = new WhatsNewFragment();
-                    return fragment3;
             }
             return null;
         }
 
         @Override
         public int getCount() {
-            return 3;
+            return 2;
         }
 
         @Override
@@ -133,8 +130,6 @@ public class HomeFragment extends Fragment {
                     return "Products";
                 case 1:
                     return "Services";
-                case 2:
-                    return "Offers";
             }
             return null;
         }

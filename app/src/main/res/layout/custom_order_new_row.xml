@@ -19,7 +19,7 @@
         <com.pkmmte.view.CircularImageView
             android:id="@+id/product_circle"
             android:layout_width="0dp"
-            android:layout_height="70dp"
+            android:layout_height="65dp"
             android:layout_gravity="center"
             android:layout_margin="2dp"
             android:layout_weight="20"
@@ -34,7 +34,7 @@
         <LinearLayout
             android:id="@+id/clickRowService"
             android:layout_width="0dp"
-            android:layout_height="85dp"
+            android:layout_height="80dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="2dp"
             android:layout_weight="65"
@@ -55,7 +55,7 @@
                 android:id="@+id/product_cardviewModel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="1dp"
+                android:layout_marginBottom="3dp"
                 android:layout_marginLeft="5dp"
                 android:text="Loading car details.."
                 android:textColor="@color/colorPrimary"
@@ -65,28 +65,27 @@
                 android:id="@+id/product_cardviewRegNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="1dp"
+                android:layout_marginBottom="3dp"
                 android:layout_marginLeft="5dp"
                 android:singleLine="true"
                 android:text="Placed on"
                 android:textColor="@color/colorPrimary"
-                android:textSize="13dp" />
+                android:textSize="12dp" />
 
             <TextView
                 android:id="@+id/product_cardviewReg1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="1dp"
                 android:layout_marginLeft="5dp"
                 android:text="Status"
                 android:textColor="@color/colorPrimary"
-                android:textSize="13dp" />
+                android:textSize="12dp" />
         </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/buttons"
             android:layout_width="0dp"
-            android:layout_height="85dp"
+            android:layout_height="80dp"
             android:layout_gravity="center"
             android:layout_margin="3dp"
             android:layout_weight="15"

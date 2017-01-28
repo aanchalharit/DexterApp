@@ -1,19 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_main"
-        android:icon="@android:drawable/ic_btn_speak_now"
-        android:title="Main Activity"/>
-    <item
-        android:id="@+id/action_other"
-        android:icon="@android:drawable/ic_btn_speak_now"
-        android:title="Other Activity"/>
-    <item
-        android:id="@+id/action_noHamburger"
-        android:icon="@android:drawable/ic_btn_speak_now"
-        android:title="No Sandwitch"/>
-    <item
-        android:id="@+id/action_noToolbar"
-        android:icon="@android:drawable/ic_btn_speak_now"
-        android:title="No Toolbar"/>
+        android:title="Notifications"
+        android:id="@+id/action_noti"
+        android:icon="@drawable/icon_bell"
+        app:showAsAction="always" />
 </menu>

@@ -27,6 +27,8 @@ public class AppData {
     public static Vehicle currentVehi = null;
     public static String currentImagePath = null;
 
+    public static boolean isProductDeleted = false;
+
     public static Object currentVeh = null;
 
     public static List<Boolean> queries;

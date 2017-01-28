@@ -30,17 +30,20 @@ public class VehicleDetail extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AppData.raiseRequest = true;
+        if (AppData.isProductDeleted == false) {
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AppData.raiseRequest = true;
 
-                Intent in = new Intent(VehicleDetail.this, HomePage.class);
-                in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(in);
-                finish();
-            }
-        });
+                    Intent in = new Intent(VehicleDetail.this, HomePage.class);
+                    in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(in);
+                    finish();
+                }
+            });
+        } else
+            fab.setVisibility(View.GONE);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

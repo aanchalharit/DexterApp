@@ -149,6 +149,14 @@
         <activity
             android:name=".Notifications"
             android:label="@string/title_activity_notifications"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Legal"
+            android:label="@string/title_activity_legal"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".PastServices"
+            android:label="@string/title_activity_past_services"
             android:theme="@style/AppTheme"></activity>
     </application>
 

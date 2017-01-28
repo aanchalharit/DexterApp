@@ -39,6 +39,11 @@ import com.ccec.dexterapp.managers.HelperFragment;
 import com.ccec.dexterapp.managers.UserSessionManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.pkmmte.view.CircularImageView;
@@ -118,15 +123,22 @@ public class HomePage extends AppCompatActivity
         });
 
         if (!location.equals("na")) {
-            if (isNetwork()) {
+            if (AppData.isProductDeleted) {
+                DeletedProductsFragment homeFragment = new DeletedProductsFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, homeFragment).commit();
+                getSupportActionBar().setTitle(FontsManager.actionBarTypeface(getApplicationContext(), "Deleted Products"));
+                tabLayout.setVisibility(View.GONE);
+                AppData.setSelectedItem(2);
+                navigationView.getMenu().getItem(2).setChecked(true);
+                AppData.isProductDeleted = false;
+            } else {
                 HomeFragment homeFragment = new HomeFragment();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, homeFragment).commit();
                 getSupportActionBar().setTitle(FontsManager.actionBarTypeface(getApplicationContext(), "Home"));
                 tabLayout.setVisibility(View.VISIBLE);
                 AppData.setSelectedItem(0);
-            } else {
-                showHelperNoConnection();
             }
         } else {
             Bundle bundle = new Bundle();
@@ -139,6 +151,22 @@ public class HomePage extends AppCompatActivity
             getSupportActionBar().setTitle(FontsManager.actionBarTypeface(getApplicationContext(), "Home"));
             tabLayout.setVisibility(View.GONE);
         }
+
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("/users/Customer/" + id + "/items/deletedCars");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() > 0)
+                    navigationView.getMenu().findItem(R.id.delProducts).setVisible(true);
+                else
+                    navigationView.getMenu().findItem(R.id.delProducts).setVisible(false);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void showHelperNoConnection() {
@@ -259,12 +287,20 @@ public class HomePage extends AppCompatActivity
             getSupportActionBar().setTitle(FontsManager.actionBarTypeface(getApplicationContext(), "Profile"));
             AppData.setSelectedItem(1);
             tabLayout.setVisibility(View.GONE);
-        } else if (id == R.id.bla) {
-            tabLayout.setVisibility(View.GONE);
+        } else if (id == R.id.delProducts) {
+            DeletedProductsFragment deletedFragment = new DeletedProductsFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, deletedFragment).commit();
+            getSupportActionBar().setTitle(FontsManager.actionBarTypeface(getApplicationContext(), "Deleted Products"));
             AppData.setSelectedItem(2);
-        } else if (id == R.id.blabla) {
             tabLayout.setVisibility(View.GONE);
+        } else if (id == R.id.about) {
+            HelpFragment ordersFragment = new HelpFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, ordersFragment).commit();
             AppData.setSelectedItem(3);
+            getSupportActionBar().setTitle(FontsManager.actionBarTypeface(getApplicationContext(), "Help"));
+            tabLayout.setVisibility(View.GONE);
         } else if (id == R.id.logout) {
             builder = new AlertDialog.Builder(HomePage.this);
             builder.setTitle("Logout");

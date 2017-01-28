@@ -96,6 +96,16 @@ public class ProductsFragment extends Fragment {
             }
         });
 
+        history.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), PastServices.class);
+                startActivity(intent);
+                hideLinFab();
+                showAddFab();
+            }
+        });
+
         raise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

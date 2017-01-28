@@ -2,20 +2,16 @@ package com.ccec.dexterapp.recyclers;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.ccec.dexterapp.ProductsFragment;
 import com.ccec.dexterapp.R;
 import com.ccec.dexterapp.VehicleDetail;
 import com.ccec.dexterapp.entities.Vehicle;
@@ -28,38 +24,31 @@ import com.google.firebase.storage.StorageReference;
 import com.pkmmte.view.CircularImageView;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by aanchalharit on 22/09/16.
- */
-
-public class ProductsViewAdapter extends RecyclerView.Adapter<ProductsViewAdapter.ProductsViewHolder> {
+public class DeletedProductsViewAdapter extends RecyclerView.Adapter<DeletedProductsViewAdapter.ProductsViewHolder> {
     private List<Vehicle> allproductsva;
     private Context mContext;
-    private ProductsFragment fragm;
     private Context context;
     private int pos;
     private CircularImageView img;
     public List<String> carkeys;
 
-    public ProductsViewAdapter(Context context, List<Vehicle> productslist, List<String> carkeys, ProductsFragment frag) {
+    public DeletedProductsViewAdapter(Context context, List<Vehicle> productslist, List<String> carkeys) {
         this.mContext = context;
         this.allproductsva = productslist;
-        this.fragm = frag;
         this.carkeys = carkeys;
     }
 
     @Override
-    public ProductsViewAdapter.ProductsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public DeletedProductsViewAdapter.ProductsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View layoutview = LayoutInflater.from(parent.getContext()).inflate(R.layout.custom_product_row, parent, false);
-        ProductsViewAdapter.ProductsViewHolder productsvh = new ProductsViewAdapter.ProductsViewHolder(layoutview);
+        DeletedProductsViewAdapter.ProductsViewHolder productsvh = new DeletedProductsViewAdapter.ProductsViewHolder(layoutview);
         return productsvh;
     }
 
     @Override
-    public void onBindViewHolder(final ProductsViewAdapter.ProductsViewHolder holder, final int position) {
+    public void onBindViewHolder(final DeletedProductsViewAdapter.ProductsViewHolder holder, final int position) {
         // holder.RVSinglerowProductImage.setImageResource(R.drawable.ic_directions_car_black_24dp);
         holder.RVSinglerowMake.setText(allproductsva.get(position).getMake());
         holder.RVSinglerowModel.setText(allproductsva.get(position).getModel());
@@ -75,15 +64,13 @@ public class ProductsViewAdapter extends RecyclerView.Adapter<ProductsViewAdapte
         holder.RVSinglerowCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fragm.hideAddFab();
-                fragm.showLinFab();
-
                 context = view.getContext();
                 pos = position;
 
                 AppData.currentVehi = allproductsva.get(pos);
                 AppData.currentImagePath = carkeys.get(pos);
-                AppData.isProductDeleted = false;
+
+                getProductDetails();
             }
         });
     }
@@ -109,6 +96,7 @@ public class ProductsViewAdapter extends RecyclerView.Adapter<ProductsViewAdapte
 
         AppData.currentVehi = allproductsva.get(pos);
         AppData.currentImagePath = carkeys.get(pos);
+        AppData.isProductDeleted = true;
 
         context.startActivity(intent);
     }

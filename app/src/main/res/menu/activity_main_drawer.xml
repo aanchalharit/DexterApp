@@ -5,6 +5,8 @@
               android:title="Home" />
         <item android:id="@+id/profile" android:icon="@drawable/icon_user"
               android:title="Profile" />
+        <item android:id="@+id/completedServices" android:icon="@drawable/icon_completed"
+            android:title="Completed Services" />
         <item android:id="@+id/delProducts" android:icon="@drawable/icon_deleted"
               android:title="Deleted Products" />
         <item android:id="@+id/about" android:icon="@drawable/icon_about"

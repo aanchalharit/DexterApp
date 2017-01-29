@@ -1,23 +1,24 @@
 package com.ccec.dexterapp;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.ccec.dexterapp.entities.FlowRecord;
+import com.ccec.dexterapp.entities.Requests;
 import com.ccec.dexterapp.managers.AppData;
-import com.ccec.dexterapp.managers.FontsManager;
 import com.ccec.dexterapp.managers.UserSessionManager;
 import com.ccec.dexterapp.recyclers.PastServicesViewAdapter;
 import com.ccec.dexterapp.recyclers.ServicesViewAdapter;
@@ -28,20 +29,22 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PastServices extends AppCompatActivity {
+public class CompletedServicesFragment extends Fragment {
+    public static final String ARG_PAGE = "ARG_PAGE";
     private UserSessionManager session;
     private String id;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
     private DatabaseReference databaseReference;
-
     private RelativeLayout errorSec;
     private ImageView erImg;
     private TextView erTxt;
@@ -49,31 +52,24 @@ public class PastServices extends AppCompatActivity {
     private PastServicesViewAdapter recyclerViewAdapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_past_services);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_services, container, false);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
-        getSupportActionBar().setTitle(FontsManager.actionBarTypeface(getApplicationContext(), "Completed Services"));
-
-        session = new UserSessionManager(getApplicationContext());
+        session = new UserSessionManager(getActivity());
         HashMap<String, String> user = session.getUserDetails();
         id = user.get(UserSessionManager.TAG_id);
 
-        recyclerView = (RecyclerView) findViewById(R.id.task_list);
-        linearLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView = (RecyclerView) view.findViewById(R.id.task_list);
+        linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        errorSec = (RelativeLayout) findViewById(R.id.errorSec);
+        errorSec = (RelativeLayout) view.findViewById(R.id.errorSec);
 
-        erTxt = (TextView) findViewById(R.id.errorHeader);
-        erTxt.setTypeface(FontsManager.getRegularTypeface(getApplicationContext()));
+        erTxt = (TextView) view.findViewById(R.id.errorHeader);
+        erImg = (ImageView) view.findViewById(R.id.errorImage);
 
-        pDialog = new ProgressDialog(PastServices.this);
+        pDialog = new ProgressDialog(getActivity());
         pDialog.setMessage("Updating...");
         pDialog.setIndeterminate(false);
         pDialog.setCancelable(true);
@@ -89,15 +85,10 @@ public class PastServices extends AppCompatActivity {
                     recyclerView.setVisibility(View.VISIBLE);
 
                     Map<String, Object> itemMap = (HashMap<String, Object>) dataSnapshot.getValue();
-                    Map<String, Object> copyMap = new HashMap<String, Object>(itemMap);
                     List<String> list = new ArrayList<String>();
                     for (int i = 0; i < itemMap.keySet().size(); i++) {
                         String temp = (String) itemMap.keySet().toArray()[i];
-                        Map<String, Object> requestMap = (HashMap<String, Object>) itemMap.get(temp);
-                        if (((String) requestMap.get("item")).equals(AppData.currentImagePath))
-                            list.add(temp);
-                        else
-                            copyMap.remove(temp);
+                        list.add(temp);
                     }
 
                     Collections.sort(list, new Comparator<String>() {
@@ -110,7 +101,7 @@ public class PastServices extends AppCompatActivity {
                     Collections.reverse(list);
 
                     if (list.size() > 0) {
-                        recyclerViewAdapter = new PastServicesViewAdapter(PastServices.this, copyMap, list);
+                        recyclerViewAdapter = new PastServicesViewAdapter(getActivity(), itemMap, list);
                         recyclerView.setAdapter(recyclerViewAdapter);
                     } else
                         errorSec.setVisibility(View.VISIBLE);
@@ -127,15 +118,7 @@ public class PastServices extends AppCompatActivity {
             }
         });
         databaseReference.keepSynced(true);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return view;
     }
 }

@@ -43,6 +43,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -129,8 +130,8 @@ public class HomePage extends AppCompatActivity
                         .replace(R.id.fragment_container, homeFragment).commit();
                 getSupportActionBar().setTitle(FontsManager.actionBarTypeface(getApplicationContext(), "Deleted Products"));
                 tabLayout.setVisibility(View.GONE);
-                AppData.setSelectedItem(2);
-                navigationView.getMenu().getItem(2).setChecked(true);
+                AppData.setSelectedItem(AppData.deletedPos);
+                navigationView.getMenu().getItem(AppData.deletedPos).setChecked(true);
                 AppData.isProductDeleted = false;
             } else {
                 HomeFragment homeFragment = new HomeFragment();
@@ -156,10 +157,34 @@ public class HomePage extends AppCompatActivity
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getChildrenCount() > 0)
+                if (dataSnapshot.getChildrenCount() > 0) {
+                    if (AppData.completedPos == 0)
+                        AppData.deletedPos = 2;
+                    else
+                        AppData.deletedPos = 3;
                     navigationView.getMenu().findItem(R.id.delProducts).setVisible(true);
-                else
+                } else
                     navigationView.getMenu().findItem(R.id.delProducts).setVisible(false);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference("/requests/CompletedCar");
+        Query query = databaseReference2.orderByChild("issuedBy").equalTo(id);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() > 0) {
+                    AppData.completedPos = 2;
+                    navigationView.getMenu().findItem(R.id.completedServices).setVisible(true);
+                } else {
+                    AppData.completedPos = 0;
+                    navigationView.getMenu().findItem(R.id.completedServices).setVisible(false);
+                }
             }
 
             @Override
@@ -287,18 +312,25 @@ public class HomePage extends AppCompatActivity
             getSupportActionBar().setTitle(FontsManager.actionBarTypeface(getApplicationContext(), "Profile"));
             AppData.setSelectedItem(1);
             tabLayout.setVisibility(View.GONE);
+        } else if (id == R.id.completedServices) {
+            CompletedServicesFragment completedFragment = new CompletedServicesFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, completedFragment).commit();
+            getSupportActionBar().setTitle(FontsManager.actionBarTypeface(getApplicationContext(), "Completed Services"));
+            AppData.setSelectedItem(2);
+            tabLayout.setVisibility(View.GONE);
         } else if (id == R.id.delProducts) {
             DeletedProductsFragment deletedFragment = new DeletedProductsFragment();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, deletedFragment).commit();
             getSupportActionBar().setTitle(FontsManager.actionBarTypeface(getApplicationContext(), "Deleted Products"));
-            AppData.setSelectedItem(2);
+            AppData.setSelectedItem(3);
             tabLayout.setVisibility(View.GONE);
         } else if (id == R.id.about) {
             HelpFragment ordersFragment = new HelpFragment();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, ordersFragment).commit();
-            AppData.setSelectedItem(3);
+            AppData.setSelectedItem(4);
             getSupportActionBar().setTitle(FontsManager.actionBarTypeface(getApplicationContext(), "Help"));
             tabLayout.setVisibility(View.GONE);
         } else if (id == R.id.logout) {

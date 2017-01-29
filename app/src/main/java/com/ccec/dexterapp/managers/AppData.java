@@ -35,6 +35,9 @@ public class AppData {
 
     public static int selectedItem = 0;
 
+    public static int deletedPos = 0;
+    public static int completedPos = 0;
+
     public static int getSelectedItem() {
         return selectedItem;
     }

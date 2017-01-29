@@ -32,6 +32,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,6 +92,15 @@ public class ServicesFragment extends Fragment {
 
                         Map<String, Object> itemMap = (HashMap<String, Object>) dataSnapshot.getValue();
                         List<String> list = new ArrayList<>(itemMap.keySet());
+
+                        Collections.sort(list, new Comparator<String>() {
+                            @Override
+                            public int compare(String s1, String s2) {
+                                return s1.compareToIgnoreCase(s2);
+                            }
+                        });
+
+                        Collections.reverse(list);
 
                         recyclerViewAdapter = new ServicesViewAdapter(getActivity(), itemMap, list, ServicesFragment.this);
                         recyclerView.setAdapter(recyclerViewAdapter);

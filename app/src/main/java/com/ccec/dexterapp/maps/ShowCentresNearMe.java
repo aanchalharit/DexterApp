@@ -1081,6 +1081,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                 requests.setKey("DexterSR" + serviceNumber);
                 requests.setOpenTime(yourDate);
                 requests.setScheduleTime("");
+                requests.setEstPrice("");
                 requests.setStatus("Open");
                 requests.setQueries(finalQueryArr);
 

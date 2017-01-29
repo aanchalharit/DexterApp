@@ -14,14 +14,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.ccec.dexterapp.entities.FlowRecord;
-import com.ccec.dexterapp.entities.Requests;
-import com.ccec.dexterapp.managers.AppData;
 import com.ccec.dexterapp.managers.UserSessionManager;
 import com.ccec.dexterapp.recyclers.PastServicesViewAdapter;
-import com.ccec.dexterapp.recyclers.ServicesViewAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,9 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;

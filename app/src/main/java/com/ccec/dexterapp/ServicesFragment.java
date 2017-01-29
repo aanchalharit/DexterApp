@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ccec.dexterapp.entities.FlowRecord;
+import com.ccec.dexterapp.entities.Notif;
 import com.ccec.dexterapp.entities.Requests;
 import com.ccec.dexterapp.managers.AppData;
 import com.ccec.dexterapp.managers.FontsManager;
@@ -153,6 +154,7 @@ public class ServicesFragment extends Fragment {
                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                 pDialog2.dismiss();
                                 dialog.dismiss();
+//                                sendNotification();
 
                                 Toast.makeText(getActivity(), "Date Accepted", Toast.LENGTH_SHORT).show();
                                 HomeFragment profileFragment = new HomeFragment();
@@ -176,6 +178,26 @@ public class ServicesFragment extends Fragment {
         android.app.AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
+
+//    private void sendNotification() {
+//        DatabaseReference firebasedbrefproduct = FirebaseDatabase.getInstance().getReference("users/Customer/" + AppData.currentSelectedUser);
+//        firebasedbrefproduct.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                DatabaseReference firebasedbrefproduc = FirebaseDatabase.getInstance().getReference();
+//                Notif notif = new Notif();
+//                notif.setUsername((String) ((HashMap) dataSnapshot.getValue()).get("fcm"));
+//                notif.setMessage(AppData.currentPath + " is scheduled on " + finalYourDate);
+//                notif.setTitle(AppData.currentPath + " Accepted");
+//                firebasedbrefproduc.child("notifs").push().setValue(notif);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
 
     public void rejectOrder() {
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());

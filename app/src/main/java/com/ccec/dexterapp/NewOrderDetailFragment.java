@@ -50,8 +50,10 @@ public class NewOrderDetailFragment extends Fragment {
     private String currentStatus = "";
     private RecyclerView recyclerView2;
     private LinearLayout lrecyclerView2;
-    private CardView cardAttachList, cardProcessList;
+    private CardView cardAttachList, cardProcessList,cardPrice;
     private View view1;
+    private TextView esPriceF, esPrice;
+    private String estPrice;
 
     public NewOrderDetailFragment() {
     }
@@ -68,6 +70,7 @@ public class NewOrderDetailFragment extends Fragment {
             appBarLayout.setTitle((String) ((HashMap) obj).get("key"));
         }
 
+        estPrice = ((String) ((HashMap) obj).get("estPrice"));
         currentStatus = (String) ((HashMap) obj).get("status");
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("geofire");
@@ -236,7 +239,22 @@ public class NewOrderDetailFragment extends Fragment {
             showAttachmentsCard();
         }
 
+        cardPrice = (CardView) view.findViewById(R.id.card_view6);
+        esPrice = (TextView) view.findViewById(R.id.estPrice);
+        esPriceF = (TextView) view.findViewById(R.id.estPriceFlow);
+        esPriceF.setTypeface(FontsManager.getRegularTypeface(getActivity()));
+        esPrice.setTypeface(FontsManager.getRegularTypeface(getActivity()));
+        if (!estPrice.equals("")) {
+            showPriceCard();
+        } else
+            cardPrice.setVisibility(View.GONE);
+
         return view;
+    }
+
+    private void showPriceCard() {
+        cardPrice.setVisibility(View.VISIBLE);
+        esPrice.setText("\u20B9 " + estPrice);
     }
 
     private void showAttachmentsCard() {

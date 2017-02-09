@@ -39,7 +39,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Login extends AppCompatActivity {
-
     private Button loginBtn;
     private TextView forgot, signUp;
     private UserSessionManager session;

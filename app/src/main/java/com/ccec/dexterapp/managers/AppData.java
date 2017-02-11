@@ -2,6 +2,7 @@ package com.ccec.dexterapp.managers;
 
 import android.location.Location;
 
+import com.ccec.dexterapp.entities.Requests;
 import com.ccec.dexterapp.entities.Vehicle;
 
 import java.util.List;
@@ -30,6 +31,8 @@ public class AppData {
     public static boolean isProductDeleted = false;
 
     public static Object currentVeh = null;
+
+    public static Requests currentReq = null;
 
     public static List<Boolean> queries;
 

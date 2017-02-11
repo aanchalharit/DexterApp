@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,10 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ccec.dexterapp.entities.FlowRecord;
-import com.ccec.dexterapp.entities.Notif;
 import com.ccec.dexterapp.entities.Requests;
 import com.ccec.dexterapp.managers.AppData;
-import com.ccec.dexterapp.managers.FontsManager;
 import com.ccec.dexterapp.managers.UserSessionManager;
 import com.ccec.dexterapp.recyclers.ServicesViewAdapter;
 import com.google.firebase.database.DataSnapshot;
@@ -46,7 +46,8 @@ public class ServicesFragment extends Fragment {
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
     private DatabaseReference databaseReference;
-
+    private boolean swiper = false;
+    private SwipeRefreshLayout mySwipeRefreshLayout;
     private RelativeLayout errorSec;
     private ImageView erImg;
     private TextView erTxt;
@@ -82,45 +83,73 @@ public class ServicesFragment extends Fragment {
             pDialog.setCancelable(true);
             pDialog.show();
 
-            databaseReference = FirebaseDatabase.getInstance().getReference("/requests/Car");
-            Query query = databaseReference.orderByChild("issuedBy").equalTo(id);
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.getChildrenCount() > 0) {
-                        errorSec.setVisibility(View.INVISIBLE);
-                        recyclerView.setVisibility(View.VISIBLE);
-
-                        Map<String, Object> itemMap = (HashMap<String, Object>) dataSnapshot.getValue();
-                        List<String> list = new ArrayList<>(itemMap.keySet());
-
-                        Collections.sort(list, new Comparator<String>() {
-                            @Override
-                            public int compare(String s1, String s2) {
-                                return s1.compareToIgnoreCase(s2);
-                            }
-                        });
-
-                        Collections.reverse(list);
-
-                        recyclerViewAdapter = new ServicesViewAdapter(getActivity(), itemMap, list, ServicesFragment.this);
-                        recyclerView.setAdapter(recyclerViewAdapter);
-                    } else {
-                        errorSec.setVisibility(View.VISIBLE);
-                        recyclerView.setVisibility(View.INVISIBLE);
-                    }
-                    pDialog.dismiss();
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    pDialog.dismiss();
-                }
-            });
-            databaseReference.keepSynced(true);
+            fetchData();
         }
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        mySwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshClouds);
+        mySwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        swiper = true;
+                        fetchData();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mySwipeRefreshLayout.setRefreshing(false);
+                            }
+                        }, 2000);
+                    }
+                }
+        );
+    }
+
+    private void fetchData() {
+        databaseReference = FirebaseDatabase.getInstance().getReference("/requests/Car");
+        Query query = databaseReference.orderByChild("issuedBy").equalTo(id);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() > 0) {
+                    errorSec.setVisibility(View.INVISIBLE);
+                    recyclerView.setVisibility(View.VISIBLE);
+
+                    Map<String, Object> itemMap = (HashMap<String, Object>) dataSnapshot.getValue();
+                    List<String> list = new ArrayList<>(itemMap.keySet());
+
+                    Collections.sort(list, new Comparator<String>() {
+                        @Override
+                        public int compare(String s1, String s2) {
+                            return s1.compareToIgnoreCase(s2);
+                        }
+                    });
+
+                    Collections.reverse(list);
+
+                    recyclerViewAdapter = new ServicesViewAdapter(getActivity(), itemMap, list, ServicesFragment.this);
+                    recyclerView.setAdapter(recyclerViewAdapter);
+                } else {
+                    errorSec.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.INVISIBLE);
+                }
+                if (swiper == false) {
+                    pDialog.dismiss();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                if (swiper == false) {
+                    pDialog.dismiss();
+                }
+            }
+        });
+        databaseReference.keepSynced(true);
     }
 
     public void showInfo() {

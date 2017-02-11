@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-
 import com.ccec.dexterapp.ProfileFragment;
 import com.ccec.dexterapp.R;
 import com.ccec.dexterapp.managers.FontsManager;

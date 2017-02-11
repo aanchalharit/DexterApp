@@ -1,52 +1,47 @@
 package com.ccec.dexterapp;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.ccec.dexterapp.entities.Requests;
 import com.ccec.dexterapp.managers.AppData;
 import com.ccec.dexterapp.managers.FontsManager;
+import com.ccec.dexterapp.managers.JSONArrayParser;
 import com.ccec.dexterapp.managers.UserSessionManager;
 import com.ccec.dexterapp.recyclers.PastServicesViewAdapter;
-import com.ccec.dexterapp.recyclers.ServicesViewAdapter;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class PastServices extends AppCompatActivity {
     private UserSessionManager session;
     private String id;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
-    private DatabaseReference databaseReference;
-
     private RelativeLayout errorSec;
-    private ImageView erImg;
     private TextView erTxt;
-    private ProgressDialog pDialog;
-    private PastServicesViewAdapter recyclerViewAdapter;
+    private List<Requests> items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,61 +67,93 @@ public class PastServices extends AppCompatActivity {
 
         erTxt = (TextView) findViewById(R.id.errorHeader);
         erTxt.setTypeface(FontsManager.getRegularTypeface(getApplicationContext()));
+        ImageView erImgTxt = (ImageView) findViewById(R.id.errorImage);
 
-        pDialog = new ProgressDialog(PastServices.this);
-        pDialog.setMessage("Updating...");
-        pDialog.setIndeterminate(false);
-        pDialog.setCancelable(true);
-        pDialog.show();
+        items = new ArrayList<>();
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("/requests/CompletedCar");
-        Query query = databaseReference.orderByChild("issuedBy").equalTo(id);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getChildrenCount() > 0) {
-                    errorSec.setVisibility(View.INVISIBLE);
-                    recyclerView.setVisibility(View.VISIBLE);
+        if (isNetwork())
+            new GetData().execute();
+        else {
+            erImgTxt.setImageDrawable(getResources().getDrawable(R.drawable.icon_no_connection));
+            errorSec.setVisibility(View.VISIBLE);
+            erTxt.setText("Please connect to internet");
+        }
+    }
 
-                    Map<String, Object> itemMap = (HashMap<String, Object>) dataSnapshot.getValue();
-                    Map<String, Object> copyMap = new HashMap<String, Object>(itemMap);
-                    List<String> list = new ArrayList<String>();
-                    for (int i = 0; i < itemMap.keySet().size(); i++) {
-                        String temp = (String) itemMap.keySet().toArray()[i];
-                        Map<String, Object> requestMap = (HashMap<String, Object>) itemMap.get(temp);
-                        if (((String) requestMap.get("item")).equals(AppData.currentImagePath))
-                            list.add(temp);
-                        else
-                            copyMap.remove(temp);
+    public boolean isNetwork() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
+    }
+
+    class GetData extends AsyncTask<String, String, String> {
+        private static final String url = "http://188.166.245.67/html/phpscript/getCompletedList.php";
+        private static final String TAG_DATA = "data";
+        private ProgressDialog pDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(PastServices.this);
+            pDialog.setMessage("Updating...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+        protected String doInBackground(String... args) {
+            JSONArrayParser jsonObjectParser = new JSONArrayParser();
+
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("id", id));
+
+            JSONArray response = jsonObjectParser.makeHttpRequest(url, "GET", params);
+
+            try {
+                for (int i = 0; i < response.length(); i++) {
+                    Requests item = new Requests();
+                    JSONObject noti = response.getJSONObject(i);
+
+                    if (noti.getString("item").toString().equals(AppData.currentImagePath)) {
+                        item.setEstPrice(noti.getString("estPrice").toString());
+                        item.setIssuedBy(noti.getString("issuedBy").toString());
+                        item.setIssuedTo(noti.getString("issuedTo").toString());
+                        item.setItem(noti.getString("item").toString());
+                        item.setKey(noti.getString("keyCar").toString());
+                        item.setOpenTime(noti.getString("openTime").toString());
+                        item.setQueries(noti.getString("queries").toString());
+                        item.setScheduleTime(noti.getString("scheduleTime").toString());
+                        item.setStatus(noti.getString("status").toString());
+
+                        items.add(item);
                     }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-                    Collections.sort(list, new Comparator<String>() {
-                        @Override
-                        public int compare(String s1, String s2) {
-                            return s1.compareToIgnoreCase(s2);
+            return null;
+        }
+
+        protected void onPostExecute(String file_url) {
+            try {
+                pDialog.dismiss();
+                if (items.size() > 0) {
+                    Collections.sort(items, new Comparator<Requests>() {
+                        public int compare(Requests emp1, Requests emp2) {
+                            return emp2.getKey().compareToIgnoreCase(emp1.getKey());
                         }
                     });
 
-                    Collections.reverse(list);
-
-                    if (list.size() > 0) {
-                        recyclerViewAdapter = new PastServicesViewAdapter(PastServices.this, copyMap, list);
-                        recyclerView.setAdapter(recyclerViewAdapter);
-                    } else
-                        errorSec.setVisibility(View.VISIBLE);
+                    PastServicesViewAdapter recyclerViewAdapter = new PastServicesViewAdapter(PastServices.this, items);
+                    recyclerView.setAdapter(recyclerViewAdapter);
                 } else {
                     errorSec.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.INVISIBLE);
+                    recyclerView.setVisibility(View.GONE);
                 }
-                pDialog.dismiss();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                pDialog.dismiss();
-            }
-        });
-        databaseReference.keepSynced(true);
+        }
     }
 
     @Override

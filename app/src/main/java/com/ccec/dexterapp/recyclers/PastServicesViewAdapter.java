@@ -14,9 +14,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.ccec.dexterapp.NewOrderDetail;
+import com.ccec.dexterapp.NewCompletedOrderDetail;
 import com.ccec.dexterapp.R;
-import com.ccec.dexterapp.ServicesFragment;
+import com.ccec.dexterapp.entities.Requests;
 import com.ccec.dexterapp.managers.AppData;
 import com.ccec.dexterapp.managers.FontsManager;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,15 +36,13 @@ import java.util.Map;
 
 public class PastServicesViewAdapter extends RecyclerView.Adapter<ServicesViewHolder> {
     private Context mContext;
-    private Map<String, Object> itemMap;
     private CircularImageView userImg;
     private int pos;
-    private List<String> keys;
+    private List<Requests> request;
 
-    public PastServicesViewAdapter(Context context, Map<String, Object> itemMap, List<String> keys) {
+    public PastServicesViewAdapter(Context context, List<Requests> request) {
         this.mContext = context;
-        this.itemMap = itemMap;
-        this.keys = keys;
+        this.request = request;
     }
 
     @Override
@@ -56,18 +54,17 @@ public class PastServicesViewAdapter extends RecyclerView.Adapter<ServicesViewHo
 
     @Override
     public void onBindViewHolder(final ServicesViewHolder holder, final int position) {
-        final String key = keys.get(position);
-        final Object obj = itemMap.get(key);
+        final Requests obj = request.get(position);
 
-        holder.RVtitle.setText("Service ID: " + (String) ((HashMap) obj).get("key"));
+        holder.RVtitle.setText("Service ID: " + obj.getKey());
 
-        String desText = "Status: " + (String) ((HashMap) obj).get("status");
+        String desText = "Status: " + obj.getStatus();
         Spannable spannable = new SpannableString(desText);
         spannable.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.colorBlack)), 0, ("Status:").length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannable.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, ("Status:").length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         holder.RVStatus.setText(spannable, TextView.BufferType.SPANNABLE);
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("items/Car/" + (String) ((HashMap) obj).get("item"));
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("items/Car/" + obj.getItem());
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -82,16 +79,9 @@ public class PastServicesViewAdapter extends RecyclerView.Adapter<ServicesViewHo
         });
         databaseReference.keepSynced(true);
 
-        if (((String) ((HashMap) obj).get("status")).equals("Open")) {
-            String dateText = "Placed On: " + (String) ((HashMap) obj).get("openTime");
-            Spannable spannable3 = new SpannableString(dateText);
-            spannable3.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.colorBlack)), 0, ("Placed On:").length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            spannable3.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, ("Placed On:").length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            holder.RVDate.setText(spannable3, TextView.BufferType.SPANNABLE);
-        } else if (((String) ((HashMap) obj).get("status")).equals("Accepted") ||
-                ((String) ((HashMap) obj).get("status")).equals("Completed")) {
+        if ((obj.getStatus()).equals("Completed")) {
 
-            DatabaseReference firebasedbrefproducts = FirebaseDatabase.getInstance().getReference().child("processFlow/" + (String) ((HashMap) obj).get("key") + "/status");
+            DatabaseReference firebasedbrefproducts = FirebaseDatabase.getInstance().getReference().child("processFlow/" + obj.getKey() + "/status");
             firebasedbrefproducts.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -114,9 +104,9 @@ public class PastServicesViewAdapter extends RecyclerView.Adapter<ServicesViewHo
                 }
             });
 
-            String datee = (String) ((HashMap) obj).get("scheduleTime");
+            String datee = obj.getScheduleTime();
             String dateText;
-            if (((String) ((HashMap) obj).get("status")).equals("Completed"))
+            if ((obj.getStatus()).equals("Completed"))
                 dateText = "Processed On: " + datee;
             else
                 dateText = "Scheduled On: " + datee;
@@ -133,7 +123,7 @@ public class PastServicesViewAdapter extends RecyclerView.Adapter<ServicesViewHo
 
         userImg = holder.user;
 
-        setPic((String) ((HashMap) obj).get("issuedTo"), userImg);
+        setPic(obj.getIssuedTo(), userImg);
 
         holder.RVSinglerowCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,16 +157,15 @@ public class PastServicesViewAdapter extends RecyclerView.Adapter<ServicesViewHo
     }
 
     public void getProductDetails() {
-        Intent intent = new Intent(mContext, NewOrderDetail.class);
+        Intent intent = new Intent(mContext, NewCompletedOrderDetail.class);
 
-        AppData.currentImagePath = keys.get(pos);
-        AppData.currentVeh = itemMap.get(AppData.currentImagePath);
+        AppData.currentReq = request.get(pos);
 
         mContext.startActivity(intent);
     }
 
     @Override
     public int getItemCount() {
-        return itemMap.size();
+        return request.size();
     }
 }

@@ -1,9 +1,9 @@
 package com.ccec.dexterapp.managers;
 
+import android.annotation.SuppressLint;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.text.TextPaint;
-import android.annotation.SuppressLint;
 import android.text.style.TypefaceSpan;
 
 /**

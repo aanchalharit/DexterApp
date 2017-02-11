@@ -1,29 +1,19 @@
 package com.ccec.dexterapp;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.ccec.dexterapp.entities.Vehicle;
-import com.ccec.dexterapp.managers.AppData;
-import com.ccec.dexterapp.managers.FontsManager;
 import com.ccec.dexterapp.managers.UserSessionManager;
-import com.ccec.dexterapp.maps.ShowCentresNearMe;
 import com.ccec.dexterapp.recyclers.DeletedProductsViewAdapter;
-import com.ccec.dexterapp.recyclers.ProductsViewAdapter;
-import com.ccec.dexterapp.recyclers.QueryViewAdapter;
-import com.google.android.gms.maps.MapView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

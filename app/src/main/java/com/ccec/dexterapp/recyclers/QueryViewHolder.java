@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.ccec.dexterapp.R;
-import com.pkmmte.view.CircularImageView;
 
 public class QueryViewHolder extends RecyclerView.ViewHolder {
     public TextView QueryTitle;

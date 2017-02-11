@@ -1,10 +1,8 @@
 package com.ccec.dexterapp.managers;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -20,7 +18,6 @@ import com.ccec.dexterapp.HomeFragment;
 import com.ccec.dexterapp.HomePage;
 import com.ccec.dexterapp.ProfileFragment;
 import com.ccec.dexterapp.R;
-import com.ccec.dexterapp.managers.FontsManager;
 
 public class HelperFragment extends Fragment {
     private TextView content, header;

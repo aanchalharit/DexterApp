@@ -3,8 +3,10 @@ package com.ccec.dexterapp;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -48,6 +50,8 @@ public class ProductsFragment extends Fragment {
     private RelativeLayout rel;
     private ProgressDialog pDialog;
     private HashMap<String, Object> itemMap;
+    private boolean swiper = false;
+    private SwipeRefreshLayout mySwipeRefreshLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,6 +72,12 @@ public class ProductsFragment extends Fragment {
         ProductsRV = (RecyclerView) view.findViewById(R.id.allproducts);
         ProductsRV.setHasFixedSize(true);
         ProductsRV.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+
+        pDialog = new ProgressDialog(getActivity());
+        pDialog.setMessage("Loading..");
+        pDialog.setIndeterminate(false);
+        pDialog.setCancelable(false);
+        pDialog.show();
 
         getProducts();
 
@@ -152,12 +162,7 @@ public class ProductsFragment extends Fragment {
     }
 
     public void getProducts() {
-        pDialog = new ProgressDialog(getActivity());
-        pDialog.setMessage("Loading..");
-        pDialog.setIndeterminate(false);
-        pDialog.setCancelable(false);
-        pDialog.show();
-
+        carkeysarray = new ArrayList<>();
         firebasedbrefproducts = FirebaseDatabase.getInstance().getReference().child("users/Customer/" + id + "/items/Car");
         firebasedbrefproducts.addValueEventListener(new ValueEventListener() {
             @Override
@@ -175,7 +180,9 @@ public class ProductsFragment extends Fragment {
                 } else {
                     ProductsRV.setVisibility(View.GONE);
                     rel.setVisibility(View.VISIBLE);
-                    pDialog.dismiss();
+                    if (swiper == false) {
+                        pDialog.dismiss();
+                    }
                 }
             }
 
@@ -185,6 +192,26 @@ public class ProductsFragment extends Fragment {
             }
         });
         firebasedbrefproducts.keepSynced(true);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        mySwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshClouds);
+        mySwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        swiper = true;
+                        getProducts();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mySwipeRefreshLayout.setRefreshing(false);
+                            }
+                        }, 2000);
+                    }
+                }
+        );
     }
 
     private void getProdDetails() {
@@ -211,7 +238,9 @@ public class ProductsFragment extends Fragment {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    pDialog.dismiss();
+                    if (swiper == false) {
+                        pDialog.dismiss();
+                    }
                     return;
                 }
             });
@@ -222,7 +251,9 @@ public class ProductsFragment extends Fragment {
         adapter = new ProductsViewAdapter(getActivity(), allproducts, carkeysarray, ProductsFragment.this);
         ProductsRV.setAdapter(adapter);
 
-        pDialog.dismiss();
+        if (swiper == false) {
+            pDialog.dismiss();
+        }
     }
 
     public void showAddFab() {

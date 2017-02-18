@@ -2,7 +2,9 @@ package com.ccec.dexterapp.maps;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,11 +38,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.ccec.dexterapp.HomePage;
@@ -93,6 +97,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -140,6 +145,12 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
     private static int SELECT_FILE = 1;
     private static int RESULT_LOAD_IMAGE = 1;
     private int count = 0;
+    private Button subButton, calButton, timeButton;
+    private Calendar myCalendar;
+    private DatePickerDialog.OnDateSetListener date;
+    private String dayFire, monthFire, yearFire;
+    private boolean setOne = false;
+    private String finalYourDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,6 +171,19 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
         HashMap<String, String> user = session.getUserDetails();
 
         id = user.get(UserSessionManager.TAG_id);
+
+        myCalendar = Calendar.getInstance();
+        date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                updateCal();
+            }
+        };
 
         View slideView = findViewById(R.id.slideView);
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -455,6 +479,186 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
             } else if (requestCode == REQUEST_CAMERA)
                 onCaptureImageResult(data);
         }
+    }
+
+    private void updateCal() {
+        SimpleDateFormat format = new SimpleDateFormat("d");
+        String date = format.format(myCalendar.getTime());
+        if (date.endsWith("1") && !date.endsWith("11"))
+            format = new SimpleDateFormat("EE MMM d'st', yyyy");
+        else if (date.endsWith("2") && !date.endsWith("12"))
+            format = new SimpleDateFormat("EE MMM d'nd', yyyy");
+        else if (date.endsWith("3") && !date.endsWith("13"))
+            format = new SimpleDateFormat("EE MMM d'rd', yyyy");
+        else
+            format = new SimpleDateFormat("EE MMM d'th', yyyy");
+        String yourDate = format.format(myCalendar.getTime());
+
+        format = new SimpleDateFormat("d");
+        dayFire = format.format(myCalendar.getTime());
+        format = new SimpleDateFormat("MMM");
+        monthFire = format.format(myCalendar.getTime());
+        format = new SimpleDateFormat("yyyy");
+        yearFire = format.format(myCalendar.getTime());
+
+        calButton.setText(yourDate);
+
+        if (setOne)
+            subButton.setVisibility(View.VISIBLE);
+        else
+            setOne = true;
+
+        myCalendar = Calendar.getInstance();
+    }
+
+    private void updateTime(int hours, int mins) {
+        String timeSet = "";
+        if (hours > 12) {
+            hours -= 12;
+            timeSet = "PM";
+        } else if (hours == 0) {
+            hours += 12;
+            timeSet = "AM";
+        } else if (hours == 12)
+            timeSet = "PM";
+        else
+            timeSet = "AM";
+
+        String minutes = "";
+        if (mins < 10)
+            minutes = "0" + mins;
+        else
+            minutes = String.valueOf(mins);
+
+        String aTime = new StringBuilder().append(hours).append(':')
+                .append(minutes).append(" ").append(timeSet).toString();
+
+        timeButton.setText(aTime);
+
+        if (setOne)
+            subButton.setVisibility(View.VISIBLE);
+        else
+            setOne = true;
+    }
+
+    public void showDateDialog() {
+        LayoutInflater inflater = getLayoutInflater();
+        final View dialoglayout = inflater.inflate(R.layout.dialog_accept_order, null);
+        final android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(ShowCentresNearMe.this);
+        builder.setCancelable(true);
+        builder.setView(dialoglayout);
+        final android.support.v7.app.AlertDialog dialog = builder.create();
+        dialog.show();
+
+        TextView txtButton = (TextView) dialoglayout.findViewById(R.id.headerTextCloudCreated);
+        txtButton.setTypeface(FontsManager.getRegularTypeface(ShowCentresNearMe.this));
+
+        calButton = (Button) dialoglayout.findViewById(R.id.btn_pollutioncheckdate);
+        subButton = (Button) dialoglayout.findViewById(R.id.btn_pollutioncheckdate2);
+        timeButton = (Button) dialoglayout.findViewById(R.id.btn_pollutionchecktime);
+        calButton.setTypeface(FontsManager.getRegularTypeface(ShowCentresNearMe.this));
+        subButton.setTypeface(FontsManager.getBoldTypeface(ShowCentresNearMe.this));
+        timeButton.setTypeface(FontsManager.getRegularTypeface(ShowCentresNearMe.this));
+        calButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePickerDialog dialog = new DatePickerDialog(ShowCentresNearMe.this, date, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH));
+
+                long now = System.currentTimeMillis() - 1000;
+                dialog.getDatePicker().setMinDate(now);
+                dialog.show();
+            }
+        });
+
+        timeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TimePickerDialog dialog = new TimePickerDialog(ShowCentresNearMe.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        updateTime(selectedHour, selectedMinute);
+                    }
+                }, 10, 0, false);
+                dialog.setTitle("Approx Time");
+                dialog.show();
+            }
+        });
+
+        subButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final ProgressDialog pDialog = new ProgressDialog(ShowCentresNearMe.this);
+                pDialog.setMessage("Processing..");
+                pDialog.setIndeterminate(false);
+                pDialog.setCancelable(true);
+                pDialog.show();
+
+                SimpleDateFormat format = new SimpleDateFormat("d");
+                Date da = new Date();
+                da.setDate(Integer.parseInt(dayFire));
+                int mon = 0;
+                switch (monthFire) {
+                    case "Jan":
+                        mon = 0;
+                        break;
+                    case "Feb":
+                        mon = 1;
+                        break;
+                    case "Mar":
+                        mon = 2;
+                        break;
+                    case "Apr":
+                        mon = 3;
+                        break;
+                    case "May":
+                        mon = 4;
+                        break;
+                    case "Jun":
+                        mon = 5;
+                        break;
+                    case "Jul":
+                        mon = 6;
+                        break;
+                    case "Aug":
+                        mon = 7;
+                        break;
+                    case "Sep":
+                        mon = 8;
+                        break;
+                    case "Oct":
+                        mon = 9;
+                        break;
+                    case "Nov":
+                        mon = 10;
+                        break;
+                    case "Dec":
+                        mon = 11;
+                        break;
+                }
+                da.setMonth(mon);
+                String date = format.format(da);
+                if (date.endsWith("1") && !date.endsWith("11"))
+                    format = new SimpleDateFormat("EE, MMM d'st'");
+                else if (date.endsWith("2") && !date.endsWith("12"))
+                    format = new SimpleDateFormat("EE, MMM d'nd'");
+                else if (date.endsWith("3") && !date.endsWith("13"))
+                    format = new SimpleDateFormat("EE, MMM d'rd'");
+                else
+                    format = new SimpleDateFormat("EE, MMM d'th'");
+                String yourDate = format.format(da);
+                yourDate += ", " + timeButton.getText().toString();
+
+                finalYourDate = yourDate;
+                dialog.dismiss();
+                if (isNetwork()) {
+                    raiseRequest();
+                } else {
+                    Toast.makeText(ShowCentresNearMe.this, "Please connect to internet", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void onCaptureImageResult(Intent data) {
@@ -1011,9 +1215,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                         public void onClick(View view) {
                             dialog.dismiss();
                             selectedCenter = (String) marker.getTag();
-                            if (isNetwork()) {
-                                raiseRequest();
-                            }
+                            showDateDialog();
                         }
                     });
                 }
@@ -1066,7 +1268,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                 requests.setItem(path);
                 requests.setKey("DexterSR" + serviceNumber);
                 requests.setOpenTime(yourDate);
-                requests.setScheduleTime("");
+                requests.setScheduleTime(finalYourDate);
                 requests.setEstPrice("");
                 requests.setStatus("Open");
                 requests.setQueries(finalQueryArr);
@@ -1087,7 +1289,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                                 databaseReference2.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
-                                        if (dataSnapshot.getChildrenCount() > 0){
+                                        if (dataSnapshot.getChildrenCount() > 0) {
                                             DatabaseReference databaseReference3 = FirebaseDatabase.getInstance().getReference("attachments/");
                                             databaseReference3.child("DexterSR" + finalServiceNumber).setValue(dataSnapshot.getValue());
                                             databaseReference2.removeValue();

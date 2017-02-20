@@ -52,6 +52,7 @@ dependencies {
     compile 'com.pkmmte.view:circularimageview:1.1'
     compile 'com.github.pires:obd-java-api:1.0'
     compile 'com.github.mancj:SlideUp-Android:1.2-beta'
+    compile 'com.github.deano2390:MaterialShowcaseView:1.1.0'
     testCompile 'junit:junit:4.12'
 }
 

@@ -60,7 +60,7 @@
             android:id="@+id/lin1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textView"
+            android:layout_below="@+id/rgroup"
             android:layout_marginTop="20dp"
             android:orientation="horizontal"
             android:weightSum="100">
@@ -99,8 +99,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/lin1"
-            android:layout_marginTop="10dp"
             android:layout_marginBottom="25dp"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal"
             android:weightSum="100">
 
@@ -145,16 +145,16 @@
             android:layout_below="@+id/lin2"
             android:layout_marginLeft="10dp"
             android:gravity="left"
-            android:textSize="15dp"
             android:text="Attachments"
-            android:textColor="#fff" />
+            android:textColor="#fff"
+            android:textSize="15dp" />
 
         <ListView
-            android:layout_marginTop="10dp"
             android:id="@+id/mobile_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textView2"></ListView>
+            android:layout_below="@+id/textView2"
+            android:layout_marginTop="10dp"></ListView>
 
         <TextView
             android:id="@+id/textView"
@@ -166,6 +166,55 @@
             android:gravity="center_horizontal"
             android:text="Slide it down"
             android:textColor="#fff" />
+
+        <LinearLayout
+            android:id="@+id/rgroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView"
+            android:layout_marginTop="15dp"
+            android:weightSum="100">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|center_vertical"
+                android:layout_weight="25"
+                android:alpha="1.0"
+                android:paddingLeft="10dp"
+                android:text="Search within: "
+                android:textColor="#fff" />
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="75"
+                android:orientation="horizontal">
+
+                <android.support.v7.widget.AppCompatRadioButton
+                    android:id="@+id/radio_pirates"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:checked="true"
+                    android:onClick="onRadioButtonClicked"
+                    android:text="5KM"
+                    android:textColor="#fff"
+                    app:buttonTint="@color/colorAccent" />
+
+                <android.support.v7.widget.AppCompatRadioButton
+                    android:id="@+id/radio_driver"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="18dp"
+                    android:background="@color/colorPrimary"
+                    android:onClick="onRadioButtonClicked"
+                    android:text="10KM"
+                    android:textColor="#fff"
+                    app:buttonTint="@color/colorAccent" />
+            </RadioGroup>
+        </LinearLayout>
     </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton

@@ -1,5 +1,6 @@
 package com.ccec.dexterapp.maps;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,7 +21,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,7 +51,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
-
     private GoogleMap mMap;
     UserSessionManager session;
     private LocationManager mLocationManager;
@@ -59,11 +58,10 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
     private Location location;
     private ImageView img;
     private TextView searchLoc;
-    private EditText enterLoc;
+    private TextView enterLoc;
     int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     private String result = null, id;
     private FloatingActionButton fab;
-    private String source = "normal";
     private Place place;
 
     @Override
@@ -83,7 +81,7 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
         id = user.get(UserSessionManager.TAG_id);
 
         img = (ImageView) findViewById(R.id.imageView);
-        enterLoc = (EditText) findViewById(R.id.input_location);
+        enterLoc = (TextView) findViewById(R.id.input_location);
         searchLoc = (TextView) findViewById(R.id.textSearch);
 
         mapFragment.getMapAsync(this);
@@ -95,7 +93,6 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onPlaceSelected(Place place) {
                 Log.i("PLace", "Placeeeeeeeeeee: " + place.getName());
-                source = "auto";
             }
 
             @Override
@@ -123,10 +120,7 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!enterLoc.getText().toString().equals("") || !enterLoc.getText().toString().equals("My location")) {
-                    AppData.selectedLoc = enterLoc.getText().toString();
-                }
-                if (enterLoc.getText().toString().equals("My location")) {
+                if (enterLoc.getText().toString().equals("Myy location")) {
                     android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(UpdateMe.this);
                     builder.setTitle("Location not found!");
                     builder.setMessage("Please input your location in the box above.");
@@ -142,6 +136,7 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
                     android.app.AlertDialog alertDialog = builder.create();
                     alertDialog.show();
                 } else if (!enterLoc.getText().toString().equals("")) {
+                    AppData.selectedLoc = enterLoc.getText().toString();
                     AppData.selectedCordLoc = location;
                     UpdateMe.this.finish();
                 }
@@ -154,6 +149,7 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
         if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 place = PlaceAutocomplete.getPlace(this, data);
+                enterLoc.setText("My location");
 
                 LatLng latLong;
                 latLong = place.getLatLng();
@@ -164,7 +160,7 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
                 updateMyLocation(mMap, loc);
                 getCurrentName();
 
-//                enterLoc.setText(place.getName());
+                enterLoc.setText(result);
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
                 // TODO: Handle the error.
@@ -219,7 +215,7 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
 
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(UpdateMe.this, "Make sure location is on.", Toast.LENGTH_LONG).show();
 
             return;
@@ -274,8 +270,8 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                source = "normal";
-                if (ActivityCompat.checkSelfPermission(UpdateMe.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(UpdateMe.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                place = null;
+                if (ActivityCompat.checkSelfPermission(UpdateMe.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(UpdateMe.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
                 String provider = mLocationManager.getBestProvider(new Criteria(), true);
@@ -332,16 +328,6 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
         protected void onPostExecute(String file_url) {
             if (result != null)
                 enterLoc.setText(result);
-//            else if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                return;
-//            }
-//
-//            String provider = mLocationManager.getBestProvider(new Criteria(), true);
-//            location = mLocationManager
-//                    .getLastKnownLocation(provider);
-//            if (location != null) {
-//                new PostData().execute();
-//            }
         }
     }
 
@@ -349,7 +335,7 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
         List<Address> addressList = null;
         StringBuilder sb = new StringBuilder();
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         List<String> providerList = mLocationManager.getAllProviders();
@@ -373,14 +359,13 @@ public class UpdateMe extends FragmentActivity implements OnMapReadyCallback {
 
         if (addressList != null && addressList.size() > 0) {
             Address address = addressList.get(0);
-            if (source.equals("auto"))
-                sb.append(place.getName()).append("\n");
             for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
                 sb.append(address.getAddressLine(i)).append("\n");
             }
             sb.append(address.getLocality()).append("");
             result = sb.toString();
-        }
+        } else
+            result = "My location";
     }
 
     private List<Address> getName(List<Address> addressList, Geocoder geocoder, double latitude, double longitude) {

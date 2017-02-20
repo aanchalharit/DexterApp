@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ccec.dexterapp.ProfileFragment;
@@ -30,13 +31,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 
 public class ProfileTwo extends Fragment {
-    private EditText fName, contact, location;
+    private EditText fName, contact;
     private Button btn;
     private UserSessionManager session;
     private String fNameE, contactE, locationE, uid;
     private String fNameS, contactS, locationS;
     private DatabaseReference databaseReference;
     private ProgressDialog pDialog;
+    private TextView location;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,7 +55,7 @@ public class ProfileTwo extends Fragment {
         contactS = user.get(UserSessionManager.TAG_contact);
 
         fName = (EditText) view.findViewById(R.id.profile_full_name);
-        location = (EditText) view.findViewById(R.id.profile_location);
+        location = (TextView) view.findViewById(R.id.profile_location);
         contact = (EditText) view.findViewById(R.id.profile_contact);
 
         fName.setTypeface(FontsManager.getRegularTypeface(getContext()));

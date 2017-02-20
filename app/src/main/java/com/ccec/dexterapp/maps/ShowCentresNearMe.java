@@ -27,9 +27,11 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -67,12 +69,14 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -103,6 +107,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
+
 import static com.ccec.dexterapp.R.id.map;
 
 public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCallback {
@@ -131,7 +139,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
     private ProgressDialog pDialog;
     private Integer serviceNumber;
     private SlideUp slideUp;
-    private TextView txt1, txt2, txt3, txt4, txt11;
+    private TextView txt1, txt2, txt3, txt4, txt11, txt111;
     private MediaRecorder recorder = null;
     private String AudioSavePathInDevice = null;
     private String RandomAudioFileName = "ABCDEFGHIJKLMNOP";
@@ -151,6 +159,10 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
     private String dayFire, monthFire, yearFire;
     private boolean setOne = false;
     private String finalYourDate;
+    private static final String SHOWCASE_ID = "sequence example";
+    private int count2 = 0;
+    private int count3 = 0;
+    private double searchWithin = 5.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -202,6 +214,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
 
         txt1 = (TextView) findViewById(R.id.textView);
         txt11 = (TextView) findViewById(R.id.textView2);
+        txt111 = (TextView) findViewById(R.id.textView3);
         txt11.setVisibility(View.GONE);
         txt2 = (TextView) findViewById(R.id.txt2);
         txt3 = (TextView) findViewById(R.id.txt3);
@@ -209,6 +222,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
 
         txt1.setTypeface(FontsManager.getRegularTypeface(getApplicationContext()));
         txt11.setTypeface(FontsManager.getBoldTypeface(getApplicationContext()));
+        txt111.setTypeface(FontsManager.getRegularTypeface(getApplicationContext()));
         txt2.setTypeface(FontsManager.getRegularTypeface(getApplicationContext()));
         txt3.setTypeface(FontsManager.getRegularTypeface(getApplicationContext()));
         txt4.setTypeface(FontsManager.getRegularTypeface(getApplicationContext()));
@@ -264,12 +278,12 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
             }
         };
 
-        fab.hide();
+//        fab.hide();
         slideUp = SlideUp.Builder.forView(slideView)
                 .withListeners(slideUpListener)
                 .withDownToUpVector(true)
                 .withLoggingEnabled(true)
-                .withStartState(SlideUp.State.SHOWED)
+                .withStartState(SlideUp.State.HIDDEN)
                 .build();
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -347,6 +361,9 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
             public void onError(Status status) {
             }
         });
+
+//        MaterialShowcaseView.resetAll(this);
+        presentShowcaseSequence();
     }
 
     private void selectImage() {
@@ -1059,8 +1076,15 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
 //        }, 10000);
     }
 
+    public void updateCamera(LatLngBounds bounds) {
+        int padding = 100;
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        mMap.animateCamera(cu);
+    }
+
     private void updateMyLocation(final GoogleMap googleMap, Location location) {
         this.location = location;
+        final LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
         LatLng myLoc = null;
         if (location != null) {
@@ -1073,18 +1097,50 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                 myMarker = mMap.addMarker(new MarkerOptions().position(myLoc).
                         icon(BitmapDescriptorFactory.fromBitmap(bit)).title("My location"));
                 myLOC = location;
+                builder.include(myMarker.getPosition());
             } else {
                 myMarker.setPosition(myLoc);
                 myLOC = location;
+                builder.include(myMarker.getPosition());
             }
         }
 
         mFirebaseDatabase = FirebaseDatabase.getInstance().getReference().child("geofire");
+        GeoFire geoFire2 = new GeoFire(mFirebaseDatabase);
+        GeoQuery geoQuery2 = geoFire2.queryAtLocation(new GeoLocation(location.getLatitude(), location.getLongitude()), searchWithin);
+        geoQuery2.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                count2++;
+            }
+
+            @Override
+            public void onKeyExited(String key) {
+
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+
+            }
+        });
+
         GeoFire geoFire = new GeoFire(mFirebaseDatabase);
-        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(location.getLatitude(), location.getLongitude()), 5.0);
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(location.getLatitude(), location.getLongitude()), searchWithin);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(final String key, final GeoLocation location) {
+                count3++;
                 mFirebaseDatabase = FirebaseDatabase.getInstance().getReference().child("users/ServiceCenter/" + key);
                 mFirebaseDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -1106,6 +1162,12 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
                                 Bitmap bit = bubbleIconFactory.makeIcon(name + "\n" + dis + " KM");
                                 Marker marker = mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(bit)).position(new LatLng(location.latitude, location.longitude)).title(""));
                                 marker.setTag(key);
+                                builder.include(marker.getPosition());
+
+                                if (count3 == count2) {
+                                    LatLngBounds bounds = builder.build();
+                                    updateCamera(bounds);
+                                }
                             }
                         }
                     }
@@ -1139,7 +1201,7 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
             }
         });
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLoc, 14));
+//        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLoc, 14));
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(final Marker marker) {
@@ -1422,5 +1484,73 @@ public class ShowCentresNearMe extends AppCompatActivity implements OnMapReadyCa
 
         android.app.AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private void presentShowcaseSequence() {
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500);
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, SHOWCASE_ID);
+
+        sequence.setConfig(config);
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(fab)
+                        .setDismissText("OK")
+                        .setContentText("Click on this button to add attachments related to the service and for more options")
+                        .setDismissOnTouch(true)
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(img)
+                        .setDismissText("OK")
+                        .setContentText("Click here to go to current location")
+                        .setDismissOnTouch(true)
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(txt1)
+                        .setShapePadding(200)
+                        .setDismissText("OK")
+                        .setContentText("Tap on the service center for details")
+                        .setDismissOnTouch(true)
+                        .build()
+        );
+
+        sequence.start();
+    }
+
+    public void onRadioButtonClicked(View view) {
+        boolean checked = ((AppCompatRadioButton) view).isChecked();
+
+        switch (view.getId()) {
+            case R.id.radio_pirates:
+                if (checked) {
+                    searchWithin = 5.0;
+                    if (location != null) {
+                        slideUp.hide();
+                        mMap.clear();
+                        myMarker = null;
+                        updateMyLocation(mMap, location);
+                    }
+                }
+                break;
+            case R.id.radio_driver:
+                if (checked) {
+                    searchWithin = 10.0;
+                    if (location != null) {
+                        mMap.clear();
+                        myMarker = null;
+                        slideUp.hide();
+                        updateMyLocation(mMap, location);
+                    }
+                }
+                break;
+        }
     }
 }
